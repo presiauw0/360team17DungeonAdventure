@@ -79,6 +79,7 @@
                 <version>3.6.0</version>
                 <configuration>
                     <configLocation>tcss_checkstyle_sameline.xml</configLocation>
+                    <outputFile>${project.build.directory}/checkstyle/checkstyle-report.xml</outputFile>
                 </configuration>
             </plugin>
         </plugins>
