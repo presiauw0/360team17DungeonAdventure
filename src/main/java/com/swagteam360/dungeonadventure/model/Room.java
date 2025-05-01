@@ -45,43 +45,43 @@ public class Room {
      * Indicates whether the room contains the main entrance of the dungeon.
      * This is represented by an "i" (In) in the toString method.
      */
-    private final boolean isEntrance;
+    private final boolean myEntrance;
 
     /**
      * Indicates whether the room contains the main exit of the dungeon.
      * This is represented by an "O" (Out) in the toString method.
      */
-    private final boolean isExit;
+    private final boolean myExit;
 
     /**
      * Indicates whether the room contains multiple items.
      * This is represented by an "M" in the toString method.
      */
-    private boolean hasMultipleItems;
+    private boolean myMultipleItems;
 
     /**
      * Indicates whether the room contains a pit.
      * This is represented by an "X" in the toString method.
      */
-    private boolean hasPit;
+    private boolean myPit;
 
     /**
      * Indicates whether the room contains a healing potion.
      * This is represented by an "H" in the toString method.
      */
-    private boolean hasHealingPotion;
+    private boolean myHealingPotion;
 
     /**
      * Indicates whether the room contains a vision potion.
      * This is represented by a "V" in the toString method.
      */
-    private boolean hasVisionPotion;
+    private boolean myVisionPotion;
 
     /**
      * Indicates whether the room contains a pillar.
      * This is represented by a "P" in the toString method.
      */
-    private boolean hasPillar;
+    private boolean myPillar;
 
     /**
      * Constructs a new instance of the Room class.
@@ -94,11 +94,11 @@ public class Room {
      */
     protected Room(final boolean theEntrance, final boolean theExit) {
 
-        isEntrance = theEntrance;
-        isExit = theExit;
+        myEntrance = theEntrance;
+        myExit = theExit;
 
-        if (isEntrance || isExit) {
-            hasPillar = false; // Entrance and exit are empty rooms.
+        if (myEntrance || myExit) {
+            myPillar = false; // Entrance and exit are empty rooms.
                                // These rooms must be empty
 
             myDoorTop = false;  // I feel like this is subject to change
@@ -122,15 +122,15 @@ public class Room {
 
         // Course description probabilities for these items.
 
-        hasHealingPotion = Math.random() < 0.10;
-        hasVisionPotion = Math.random() < 0.10;
+        myHealingPotion = Math.random() < 0.10;
+        myVisionPotion = Math.random() < 0.10;
         // hasPillar = Math.random() < 0.10;
 
-        int itemCount = (hasHealingPotion ? 1 : 0) +
-                (hasVisionPotion ? 1 : 0) +
-                (hasPillar ? 1 : 0);
+        int itemCount = (myHealingPotion ? 1 : 0) +
+                (myVisionPotion ? 1 : 0) +
+                (myPillar ? 1 : 0);
 
-        hasMultipleItems = itemCount > 1;
+        myMultipleItems = itemCount > 1;
 
     }
 
@@ -146,7 +146,7 @@ public class Room {
      * the presence of a pit in the room. Otherwise, the field will remain false.
      */
     protected void generatePit() {
-        hasPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
+        myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
     }
 
     /**
@@ -167,19 +167,19 @@ public class Room {
      */
     private char getCenterSymbol() {
 
-        if (isEntrance) {
+        if (myEntrance) {
             return 'i';
-        } else if (isExit) {
+        } else if (myExit) {
             return 'O';
-        } else if (hasPillar) {
+        } else if (myPillar) {
             return 'P';
-        } else if (hasMultipleItems) {
+        } else if (myMultipleItems) {
             return 'M';
-        } else if (hasHealingPotion) {
+        } else if (myHealingPotion) {
             return 'H';
-        } else if (hasVisionPotion) {
+        } else if (myVisionPotion) {
             return 'V';
-        } else if (hasPit) {
+        } else if (myPit) {
             return 'X';
         } else {
             return ' ';
