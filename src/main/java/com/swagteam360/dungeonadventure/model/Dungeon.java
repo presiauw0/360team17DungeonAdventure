@@ -2,8 +2,8 @@ package com.swagteam360.dungeonadventure.model;
 
 public final class Dungeon {
 
-    private static final int DEFAULT_WIDTH = 10;
-    private static final int DEFAULT_HEIGHT = 10;
+    private static final int DEFAULT_WIDTH = 8;
+    private static final int DEFAULT_HEIGHT = 8;
 
     private final int[][] myRoomList; // temporary
     private final int myDungeonWidth;
