@@ -16,11 +16,11 @@ public final class DungeonMaze {
     /**
      * Default width of the maze
      */
-    private static final int DEFAULT_WIDTH = 8;
+    private static final int DEFAULT_WIDTH = 6;
     /**
      * Default height of the maze
      */
-    private static final int DEFAULT_HEIGHT = 8;
+    private static final int DEFAULT_HEIGHT = 4;
     /**
      * Grid of Cells representing the maze
      */
@@ -48,6 +48,49 @@ public final class DungeonMaze {
         generateField();            // Generate an empty field
         buildMaze();                // Build a maze from the empty field
     }
+
+    /**
+     * Print a prettier "collapsed"
+     * version of the maze.
+     */
+    public void printMaze() {
+        final StringBuilder mainString = new StringBuilder();
+
+        // This will "collapse" the maze representation
+        // by reading the top and left wall of each cell
+        // to avoid duplicates
+        for (int i = 0; i < myRoomGrid.length; i++) {
+            final StringBuilder top = new StringBuilder();      // Store chars representing the upper walls
+            final StringBuilder middle = new StringBuilder();   // Left and right walls, path chars
+
+            for (int j = 0; j < myRoomGrid[i].length; j++) {
+                top.append(myRoomGrid[i][j].myTopWall ? "##" : "# "); // append top wall status
+                middle.append(myRoomGrid[i][j].myLeftWall ? "# " : "  "); // append left wall status
+
+                // add extra characters at the end
+                if (j == myRoomGrid[i].length - 1) {
+                    top.append("#");
+                    middle.append(myRoomGrid[i][j].myRightWall ? "#" : " "); // check right wall status at the end
+                }
+            }
+
+            mainString.append(top).append("\n");
+            mainString.append(middle).append("\n");
+
+            // print the last row of rows
+            if (i == myRoomGrid.length - 1) {
+                for (int k = 0; k < myRoomGrid[myRoomGrid.length - 1].length; k++) {
+                    mainString.append("#");
+                    // add characters for bottom wall status
+                    mainString.append(myRoomGrid[myRoomGrid.length - 1][k].myBottomWall ? "#" : " ");
+                }
+                mainString.append("#");
+            }
+        }
+
+        System.out.println(mainString);
+    }
+
 
     /**
      * Generate an empty field with walls surrounding
@@ -210,10 +253,10 @@ public final class DungeonMaze {
             final StringBuilder bottom = new StringBuilder();   // lower walls
 
             for (Cell cell : row) {
-                top.append(cell.myTopWall ? "###" : "   ");
+                top.append(cell.myTopWall ? "###" : "# #");
                 middle.append(cell.myLeftWall ? "#." : " .");
                 middle.append(cell.myRightWall ? "#" : " ");
-                bottom.append(cell.myBottomWall ? "###" : "   ");
+                bottom.append(cell.myBottomWall ? "###" : "# #");
             }
             mainString.append(top).append("\n");
             mainString.append(middle).append("\n");
