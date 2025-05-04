@@ -39,5 +39,5 @@ public abstract class Hero extends DungeonCharacter {
         this.myBlockChance = theBlockChance;
     }
 
-    //incorporate a block() method?
+    //incorporate a block() method? I'm not sure how that would work.
 }
