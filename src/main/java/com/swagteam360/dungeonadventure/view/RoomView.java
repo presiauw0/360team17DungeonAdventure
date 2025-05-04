@@ -6,7 +6,7 @@ import com.swagteam360.dungeonadventure.model.Room;
  * The RoomView class serves as a simplified representation of a Room object,
  * providing access to specific room details and a textual representation
  * of the room's characteristics.
- *
+ * <p>
  * This class is designed to encapsulate a Room object and expose a method
  * to retrieve the associated Room. It also overrides the toString method
  * to provide a string representation of the room's visual structure, as
@@ -17,14 +17,16 @@ import com.swagteam360.dungeonadventure.model.Room;
  */
 public class RoomView {
 
+    // Subject to change.... - Jonathan
+
     /**
      * References the specific {@link Room} instance encapsulated within the RoomView.
-     *
+     * <p>
      * This variable serves as the core representation of a room in the dungeon,
      * encapsulating its attributes such as doors, items, and other special properties.
      * It is used for retrieving details about the room and generating its visual
      * string representation through overridden methods.
-     *
+     * <p>
      * This field is immutable and initialized only once during the construction of
      * the enclosing RoomView class.
      */
