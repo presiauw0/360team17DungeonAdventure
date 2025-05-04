@@ -10,6 +10,10 @@ module com.swagteam360.dungeonadventure {
 
     // New lines - Jonathan
     opens com.swagteam360.dungeonadventure.view to javafx.fxml;
-    exports com.swagteam360.dungeonadventure.view to javafx.graphics;
+    opens com.swagteam360.dungeonadventure.controller to javafx.fxml;
+
+    exports com.swagteam360.dungeonadventure.view;
+    exports com.swagteam360.dungeonadventure.controller;
+
 
 }
