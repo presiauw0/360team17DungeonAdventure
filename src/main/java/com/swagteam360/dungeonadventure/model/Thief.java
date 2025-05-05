@@ -22,8 +22,8 @@ public class Thief extends Hero{
      * @param theCharacterType  represents the enumerated type of the hero.
      * @param theBlockChance    represents the block chance of the hero.
      */
-    public Thief(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, characterType theCharacterType, int theBlockChance) {
-        super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theCharacterType, theBlockChance);
+    public Thief(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theBlockChance) {
+        super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theBlockChance);
     }
 
     /**

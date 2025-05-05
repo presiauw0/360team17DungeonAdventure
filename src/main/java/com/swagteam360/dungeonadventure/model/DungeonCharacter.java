@@ -40,8 +40,6 @@ public abstract class DungeonCharacter {
      */
     private final int myHitChance;
 
-    /** Field myCharacterType helps define the type that a specified character is. */
-    private final characterType myCharacterType;
 
 
     //constructor
@@ -56,11 +54,10 @@ public abstract class DungeonCharacter {
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance represents character hit chance.
-     * @param theCharacterType represents character type.
      */
     public DungeonCharacter(final String theName, final int theAttackDamage, final int theHP,
                             final int theAttackSpeed, final int theDamageRangeMin, final int theDamageRangeMax,
-                            final int theHitChance, final characterType theCharacterType) {
+                            final int theHitChance) {
         myName = theName;
         myAttackDamage = theAttackDamage;
         myHP = theHP;
@@ -68,23 +65,8 @@ public abstract class DungeonCharacter {
         myDamageRangeMin = theDamageRangeMin;
         myDamageRangeMax = theDamageRangeMax;
         myHitChance = theHitChance;
-        myCharacterType = theCharacterType;
     }
 
-    //Im not to sure if this should be defined here or elsewhere as a separate class
-
-    /**
-     * Inner enum class represents enumerated types that a character
-     * can be. For example, a Warrior character will be assigned "WARRIOR."
-     */
-    protected enum characterType {
-        WARRIOR,
-        PRIESTESS,
-        THIEF,
-        OGRE,
-        SKELETON,
-        GOBLIN
-    }
 
     /**
      * Attack method, uses a random number between the minimum and the maximum
