@@ -1,0 +1,21 @@
+.root {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.label, .button, .check-box, .radio-button, .menu-button, .text-field, .text-area {
+    -fx-text-fill: black;
+}
+
+.button {
+    -fx-background-color: #e0e0e0;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.menu-button {
+    -fx-background-color: #e0e0e0;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-text-fill: black;
+}
