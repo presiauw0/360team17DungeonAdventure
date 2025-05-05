@@ -85,14 +85,14 @@ public class Room {
 
     /**
      * Constructs a new instance of the Room class.
-     *
+     * <p>
      * This constructor initializes a Room object with its default properties,
      * including the state of its doors, and whether it contains specific
      * attributes such as an entrance, exit, treasure, pit, or nothing. The
      * default state for all properties is typically false or uninitialized,
      * allowing further customization after object creation.
      */
-    protected Room(final boolean theEntrance, final boolean theExit) {
+    public Room(final boolean theEntrance, final boolean theExit) {
 
         myEntrance = theEntrance;
         myExit = theExit;
@@ -140,7 +140,7 @@ public class Room {
 
     /**
      * Determines if the room should contain a pit and updates the `hasPit` field appropriately.
-     *
+     * <p>
      * The method uses a random probability to decide whether the room will have a pit.
      * There is a 10% chance that the `hasPit` field will be set to true, indicating
      * the presence of a pit in the room. Otherwise, the field will remain false.
@@ -152,7 +152,7 @@ public class Room {
     /**
      * Determines and returns a character symbol representing the central content
      * of the room based on its attributes.
-     *
+     * <p>
      * The symbol is chosen according to the following conditions:
      * - 'i': The room is an entrance.
      * - 'O': The room is an exit.
@@ -192,11 +192,11 @@ public class Room {
      * The method visually represents the room's structure, including
      * its top, bottom, left, and right walls, along with any symbols
      * that represent the contents of the room's center.
-     *
+     * <p>
      * The representation includes:
      * - Symbols representing doors (accessible or not) on each side of the room.
      * - A center symbol derived based on the room's contents.
-     *
+     * <p>
      * The resulting string is structured to reflect the layout of the room
      * in three rows: top, middle, and bottom.
      *
