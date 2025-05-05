@@ -24,10 +24,10 @@ public abstract class DungeonCharacter {
     /** Field myHP represents Health Points given to a character. */
     private int myHP;
 
-    /** Field myDamageRangeMin represents the minimum damage range of a character. */
+    /** Field myDamageRangeMin represents the minimum damage a character can inflict. */
     private int myDamageRangeMin;
 
-    /** Field myDanageRangeMax represents the maximum damage range of a character */
+    /** Field myDanageRangeMax represents the maximum damage a character can inflict.  */
     private int myDamageRangeMax;
 
     /** Field myAttackSpeed represents attack speed of a character (to determine turn order) */
@@ -87,9 +87,10 @@ public abstract class DungeonCharacter {
     }
 
     /**
-     * Attack method ...
-     * @param theDamageRangeMin represents range minimum
-     * @param theDamageRangeMax represents range maximum
+     * Attack method, uses a random number between the minimum and the maximum
+     * to damage the opponent.
+     * @param theDamageRangeMin represents min amount of damage that can be inflicted.
+     * @param theDamageRangeMax represents max amount of damage that can be inflicted.
      * @param theHitChance represents chance to miss a hit
      * @return int representing amount of damage dealt.
      */
