@@ -207,7 +207,7 @@ public abstract class DungeonCharacter {
      */
     @Override
     public String toString() {
-        return  myName + " Type: " + myCharacterType.toString() + "\n" +
+        return  myName + "\n" +
                 "----------\n" +
                 "HP: " + myHP + "\n" +
                 "Attack Speed: " + myAttackSpeed +"\n" +
