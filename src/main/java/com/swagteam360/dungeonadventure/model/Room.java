@@ -6,11 +6,11 @@ package com.swagteam360.dungeonadventure.model;
  * provides methods to configure these attributes and retrieve a string representation
  * of the room's structure.
  *
- * @author Jonathan Hernandez
- * @version 1.0 (April 30th, 2025)
+ * @author Jonathan Hernandez, Preston Sia (psia97)
+ * @version 1.1 9 May 2025
  *
  */
-public class Room {
+public class Room implements Cell {
 
     // private Items[][] myItems;
 
@@ -21,25 +21,31 @@ public class Room {
      * This variable represents the state of the left door in the current room.
      * This is represented by a "|" in the toString method.
      */
-    private final boolean myDoorLeft;
+    private boolean myDoorLeft;
 
     /**
      * Indicates whether the right door of the room is present or accessible.
      * This is represented by a "|" in the toString method.
      */
-    private final boolean myDoorRight;
+    private boolean myDoorRight;
 
     /**
      * Indicates whether the bottom door of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private final boolean myDoorBottom;
+    private boolean myDoorBottom;
 
     /**
      * Indicates whether the top door of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private final boolean myDoorTop;
+    private boolean myDoorTop;
+
+    private final int myRowCoord;
+
+    private final int myColumnCoord;
+
+    private boolean myTraversalFlag;
 
     /**
      * Indicates whether the room contains the main entrance of the dungeon.
@@ -92,25 +98,32 @@ public class Room {
      * default state for all properties is typically false or uninitialized,
      * allowing further customization after object creation.
      */
-    public Room(final boolean theEntrance, final boolean theExit) {
+    public Room(final boolean theEntrance, final boolean theExit,
+                final int theRow, final int theCol) {
+
+        super(); // explicit call to superclass
 
         myEntrance = theEntrance;
         myExit = theExit;
+
+        myRowCoord = theRow;
+        myColumnCoord = theCol;
+        myTraversalFlag = false;
 
         if (myEntrance || myExit) {
             myPillar = false; // Entrance and exit are empty rooms.
                                // These rooms must be empty
 
-            myDoorTop = false;  // I feel like this is subject to change
-            myDoorLeft = false; // via the game logic.
-            myDoorRight = false;
-            myDoorBottom = false;
+            myDoorTop = true;  // I feel like this is subject to change
+            myDoorLeft = true; // via the game logic.
+            myDoorRight = true;
+            myDoorBottom = true;
 
         } else {
-            myDoorTop = false;
-            myDoorLeft = false;
-            myDoorRight = false;
-            myDoorBottom = false;
+            myDoorTop = true;
+            myDoorLeft = true;
+            myDoorRight = true;
+            myDoorBottom = true;
 
             placeItems();
             generatePit();
@@ -147,6 +160,67 @@ public class Room {
      */
     protected void generatePit() {
         myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
+    }
+
+    // Cell implementation
+    @Override
+    public boolean hasLeftWall() {
+        return myDoorLeft;
+    }
+
+    @Override
+    public boolean hasRightWall() {
+        return myDoorRight;
+    }
+
+    @Override
+    public boolean hasTopWall() {
+        return myDoorTop;
+    }
+
+    @Override
+    public boolean hasBottomWall() {
+        return myDoorBottom;
+    }
+
+    @Override
+    public void setLeftWall(final boolean theStatus) {
+        myDoorLeft = theStatus;
+    }
+
+    @Override
+    public void setRightWall(final boolean theStatus) {
+        myDoorRight = theStatus;
+    }
+
+    @Override
+    public void setTopWall(final boolean theStatus) {
+        myDoorTop = theStatus;
+    }
+
+    @Override
+    public void setBottomWall(final boolean theStatus) {
+        myDoorBottom = theStatus;
+    }
+
+    @Override
+    public int getRow() {
+        return myRowCoord;
+    }
+
+    @Override
+    public int getCol() {
+        return myColumnCoord;
+    }
+
+    @Override
+    public boolean traversalVisitFlag() {
+        return myTraversalFlag;
+    }
+
+    @Override
+    public void markTraversalVisit() {
+        myTraversalFlag = true;
     }
 
     /**
