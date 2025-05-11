@@ -300,7 +300,7 @@ public class Room implements Cell, IRoom {
      *
      * @return A character symbol representing the room's central content.
      */
-    private char getCenterSymbol() {
+    char getCenterSymbol() { // using package level visibility
 
         if (IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit)) {
             return 'i';
