@@ -28,7 +28,16 @@ public final class Dungeon {
         // Create new maze using the room factory
         myDungeonMaze = new DungeonMaze(theRowSize, theColSize, roomFactory);
 
+        myDungeonMaze.printMaze();
+    }
 
+    public Room getRoom(final int theRow, final int theCol) {
+        Cell mazeCell = myDungeonMaze.getCell(theRow, theCol);
+        if (mazeCell instanceof Room) {
+            return (Room) mazeCell;
+        } else {
+            throw new ClassCastException("Incorrect cell type stored in the maze. Failed to cast type.");
+        }
     }
 
     private int randomGen(final int theStart, final int theEnd) {
