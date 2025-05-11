@@ -1,5 +1,16 @@
 package com.swagteam360.dungeonadventure.model;
 
+/**
+ * Defines the behavior of a maze cell.
+ * A maze cell has four mutable walls,
+ * and a row and column describing its location.
+ * A cell also must have a mechanism to
+ * keep track of whether it has been visited
+ * by the maze generation algorithm.
+ *
+ * @author Preston Sia (psia97)
+ * @version 1.00, 10 May 2025
+ */
 public interface Cell {
     /**
      * Indicates if the left wall is up.
