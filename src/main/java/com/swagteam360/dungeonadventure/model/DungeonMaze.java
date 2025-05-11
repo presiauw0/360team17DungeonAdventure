@@ -14,14 +14,6 @@ import java.util.Stack;
  */
 public final class DungeonMaze {
     /**
-     * Default width of the maze
-     */
-    private static final int DEFAULT_WIDTH = 6;
-    /**
-     * Default height of the maze
-     */
-    private static final int DEFAULT_HEIGHT = 4;
-    /**
      * Grid of Cells representing the maze
      */
     private final Cell[][] myRoomGrid;
@@ -30,12 +22,6 @@ public final class DungeonMaze {
      */
     private final CellFactory myCellFactory;
 
-    /**
-     * Constructor for the maze using default size parameters
-     */
-    public DungeonMaze(final CellFactory theCellFactory) {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, theCellFactory);
-    }
 
     /**
      * Constructs a new Dungeon Maze using
@@ -55,6 +41,16 @@ public final class DungeonMaze {
         myRoomGrid = new Cell[theRows][theCols];    // Create a new 2D array
         generateField();            // Generate an empty field
         buildMaze();                // Build a maze from the empty field
+    }
+
+    /**
+     * Get the cell at the specified coordinates.
+     * @param theRow Row coordinate
+     * @param theCol Column coordinate
+     * @return Cell at the specified coordinate
+     */
+    public Cell getCell(final int theRow, final int theCol) {
+        return myRoomGrid[theRow][theCol];
     }
 
     /**
@@ -109,7 +105,8 @@ public final class DungeonMaze {
             for (int j = 0; j < myRoomGrid[i].length; j++) {
                 // Create a new instance of a cell (enclosed by 4 walls by default)
                 // for each position of the 2D array/grid
-                myRoomGrid[i][j] = new Room(false, false, i, j); // FIXME
+                //myRoomGrid[i][j] = new Room(false, false, i, j); // FIXME
+                myRoomGrid[i][j] = myCellFactory.createCell(i, j);
             }
         }
     }
@@ -120,7 +117,9 @@ public final class DungeonMaze {
      * depth-first search algorithm.
      */
     private void buildMaze() {
-        Cell current = myRoomGrid[0][0];                // Pick the top-left corner to be the starting point
+        //Cell current = myRoomGrid[0][0];                // Pick the top-left corner to be the starting point
+        // Start generating at the specified starting location
+        Cell current = myRoomGrid[myCellFactory.getEntranceRow()][myCellFactory.getEntranceCol()];
         final Stack<Cell> cellStack = new Stack<>();    // Create a stack to track cells
 
         current.markTraversalVisit();   // Set the corner cell to be marked as visited
