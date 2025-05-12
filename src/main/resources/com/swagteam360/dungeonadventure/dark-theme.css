@@ -47,3 +47,9 @@
     -fx-prompt-text-fill: #bbbbbb;
     -fx-border-color: white;
 }
+
+.game-panel {
+    -fx-background-color: #444444;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+}

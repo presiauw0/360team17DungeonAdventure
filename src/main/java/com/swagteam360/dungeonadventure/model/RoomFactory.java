@@ -7,7 +7,7 @@ package com.swagteam360.dungeonadventure.model;
  * entrance rooms, and exit rooms.
  *
  * @author Jonathan Hernandez
- * @version May 10, 2025
+ * @version 1.0 (May 10, 2025)
  */
 public class RoomFactory {
 

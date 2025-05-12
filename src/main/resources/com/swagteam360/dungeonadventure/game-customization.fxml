@@ -27,7 +27,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <TextField maxWidth="200.0" prefWidth="50.0" promptText="Enter Hero Name Here" />
+            <TextField fx:id="heroNameTextField" maxWidth="200.0" prefWidth="50.0" promptText="Enter Hero Name Here" />
             <Label text="Choose your Hero">
                <font>
                   <Font name="System Bold" size="18.0" />
@@ -60,7 +60,7 @@
                   <RadioButton mnemonicParsing="false" text="Hard" toggleGroup="$DifficultyButtons" />
                </children>
             </VBox>
-            <Button mnemonicParsing="false" text="Start Game" />
+            <Button mnemonicParsing="false" onAction="#startGameButtonEvent" text="Start Game" />
          </children>
       </VBox>
    </children>
