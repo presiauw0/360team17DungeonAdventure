@@ -39,6 +39,11 @@ public class RoomFactory implements CellFactory {
 
         super();
 
+        if (theEntranceRow < 0 || theEntranceCol < 0
+            || theExitRow < 0 || theExitCol < 0) {
+            throw new IllegalArgumentException("Coordinate parameters cannot be negative.");
+        }
+
         myEntranceRow = theEntranceRow;
         myEntranceCol = theEntranceCol;
         myExitRow = theExitRow;
@@ -47,6 +52,10 @@ public class RoomFactory implements CellFactory {
 
     @Override
     public Cell createCell(final int theRow, final int theCol) {
+        if (theRow < 0 || theCol < 0) {
+            throw new IllegalArgumentException("Row and column cannot be negative");
+        }
+
         Cell roomToReturn;
         if (theRow == myEntranceRow && theCol == myEntranceCol) { // create an entrance room
             roomToReturn = new Room(IRoom.PROPERTY_ENTRANCE, theRow, theCol);

@@ -20,6 +20,10 @@ public final class Dungeon {
     public Dungeon(final int theRowSize, final int theColSize) {
         super(); // explicit call to super
 
+        if (theRowSize < 0 || theColSize < 0) {
+            throw new IllegalArgumentException("Row and column size cannot be negative");
+        }
+
         // Set row and column size
         myRowSize = theRowSize;
         myColSize = theColSize;

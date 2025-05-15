@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -36,7 +37,11 @@ public final class DungeonMaze {
         // Explicit call to superclass
         super();
 
-        myCellFactory = theCellFactory;
+        if (theRows < 0 || theCols < 0) {
+            throw new IllegalArgumentException("Rows and columns cannot be negative.");
+        }
+
+        myCellFactory = Objects.requireNonNull(theCellFactory);
 
         myRoomGrid = new Cell[theRows][theCols];    // Create a new 2D array
         generateField();            // Generate an empty field
@@ -105,7 +110,6 @@ public final class DungeonMaze {
             for (int j = 0; j < myRoomGrid[i].length; j++) {
                 // Create a new instance of a cell (enclosed by 4 walls by default)
                 // for each position of the 2D array/grid
-                //myRoomGrid[i][j] = new Room(false, false, i, j); // FIXME
                 myRoomGrid[i][j] = myCellFactory.createCell(i, j);
             }
         }

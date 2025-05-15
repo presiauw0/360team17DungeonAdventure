@@ -131,6 +131,10 @@ public class Room implements Cell, IRoom {
 
         super(); // explicit call to superclass
 
+        if (theRow < 0 || theCol < 0) {
+            throw new IllegalArgumentException("Row and column cannot be negative.");
+        }
+
         // set entrance or exit type
         switch (theEntranceExitType) {
             case IRoom.PROPERTY_NORMAL -> myEntranceExit = IRoom.PROPERTY_NORMAL;
