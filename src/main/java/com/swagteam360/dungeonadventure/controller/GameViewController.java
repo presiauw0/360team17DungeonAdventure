@@ -1,11 +1,17 @@
 package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.GameManager;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
+
+import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -33,6 +39,42 @@ public class GameViewController {
     private ImageView myHeroImageView;
 
     /**
+     * A Label element in the user interface used to display dialogue text from the hero.
+     * This label is part of the game view and is dynamically updated to reflect
+     * the hero's spoken lines during gameplay.
+     * <p>
+     * It is primarily managed by the "GameViewController" class and may be updated programmatically
+     * during the hero's interactions or events in the game.
+     * <p>
+     * This field is associated with an FXML element and is injected by the JavaFX framework.
+     */
+    @FXML
+    private Label myHeroDialogueLabel;
+
+    /**
+     * Represents a Timeline object used for managing and animating hero dialogue sequences
+     * within the game interface.
+     * This variable likely governs the timing and transitions of dialogue displayed for the hero.
+     */
+    private Timeline myHeroDialogueTimeline;
+
+    /**
+     * A Random instance used to generate random values within the GameViewController class.
+     * This variable is final and ensures consistent usage of a single Random object
+     * throughout the lifecycle of the GameViewController.
+     */
+    private final Random myRandom = new Random();
+
+    private final List<String> myHeroDialogues = List.of(
+            "Why is it so quiet down here?",
+            "I hope there's treasure ahead.",
+            "Did I hear something?",
+            "What kind of dungeon is this anyway?",
+            "Stay sharp. Stay alive.",
+            "I have a bad feeling about this place."
+    );
+
+    /**
      * Handles the event triggered by clicking the "Save and Quit" button.
      * This method is intended to save the current game state and exit the application.
      * The saving logic is yet to be implemented.
@@ -57,6 +99,8 @@ public class GameViewController {
         if (heroType != null) {
             setHeroImage(heroType);
         }
+
+        startHeroDialogue();
     }
 
     /**
@@ -109,6 +153,33 @@ public class GameViewController {
                 """);
         alert.showAndWait();
 
+    }
+
+    public void startHeroDialogue() {
+        myHeroDialogueTimeline = new Timeline(new KeyFrame(
+                Duration.seconds(5 + myRandom.nextInt(6)),
+                event -> {
+                    String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
+                    myHeroDialogueLabel.setText(randomSentence);
+                    myHeroDialogueLabel.setOpacity(0); // Start hidden
+
+                    // Fade in
+                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    fadeIn.setFromValue(0);
+                    fadeIn.setToValue(1);
+
+                    // Fade out after a pause
+                    FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    fadeOut.setFromValue(1);
+                    fadeOut.setToValue(0);
+                    fadeOut.setDelay(Duration.seconds(2)); // Label stays visible for 2 seconds
+
+                    fadeIn.setOnFinished(e -> fadeOut.play());
+                    fadeIn.play();
+                }
+        ));
+        myHeroDialogueTimeline.setCycleCount(Animation.INDEFINITE);
+        myHeroDialogueTimeline.play(); // Had help from CHATGPT for this whole method
     }
 
 }

@@ -36,7 +36,6 @@ public class StartMenuView extends Application {
     public void start(Stage thePrimaryStage) {
 
         try {
-
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass()
                     .getResource("/com/swagteam360/dungeonadventure/start-menu.fxml")));
             Scene scene = new Scene(root, 600, 400);

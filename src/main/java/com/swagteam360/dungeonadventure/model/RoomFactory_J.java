@@ -9,7 +9,7 @@ package com.swagteam360.dungeonadventure.model;
  * @author Jonathan Hernandez
  * @version 1.0 (May 10, 2025)
  */
-public class RoomFactory {
+public class RoomFactory_J {
 
     /**
      * Creates a new standard room instance without an entrance or exit.
@@ -19,8 +19,8 @@ public class RoomFactory {
      *
      * @return A newly created standard Room instance.
      */
-    public static Room createRoom() {
-        return new Room(false, false);
+    public static Room createRoom(final int theX, final int theY) {
+        return new Room(theX, theY, false, false);
     }
 
     /**
@@ -31,8 +31,8 @@ public class RoomFactory {
      *
      * @return A Room object configured as the entrance of the dungeon.
      */
-    public static Room createEntranceRoom() {
-        return new Room(true, false);
+    public static Room createEntranceRoom(final int theX, final int theY) {
+        return new Room(theX, theY,true, false);
     }
 
     /**
@@ -42,8 +42,8 @@ public class RoomFactory {
      *
      * @return A Room object configured as the exit of the dungeon.
      */
-    public static Room createExitRoom() {
-        return new Room(false, true);
+    public static Room createExitRoom(final int theX, final int theY) {
+        return new Room(theX, theY,false, true);
     }
 
 }

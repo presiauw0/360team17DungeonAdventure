@@ -32,15 +32,15 @@
               </rowConstraints>
             </GridPane>
             <Label alignment="CENTER" contentDisplay="CENTER" text="Minimap" textAlignment="CENTER" />
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="110.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#saveAndQuitButtonEvent" prefWidth="95.0" text="Save and Quit">
+                  <Button mnemonicParsing="false" onAction="#saveAndQuitButtonEvent" prefHeight="20.0" prefWidth="110.0" text="Save and Quit">
                      <font>
-                        <Font size="12.0" />
+                        <Font size="10.0" />
                      </font></Button>
-                  <Button mnemonicParsing="false" onAction="#helpButtonEvent" prefWidth="95.0" text="Help">
+                  <Button mnemonicParsing="false" onAction="#helpButtonEvent" prefHeight="20.0" prefWidth="110.0" text="Help">
                      <font>
-                        <Font size="12.0" />
+                        <Font size="10.0" />
                      </font></Button>
                </children>
             </VBox>
@@ -50,7 +50,10 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" prefHeight="110.0" prefWidth="600.0" styleClass="game-panel">
          <children>
-            <Label alignment="CENTER" prefHeight="17.0" prefWidth="510.0" text="Label" />
+            <Label fx:id="myHeroDialogueLabel" alignment="CENTER" prefHeight="17.0" prefWidth="510.0" text="Let's go!" wrapText="true">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
             <ImageView fx:id="myHeroImageView" fitHeight="110.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </HBox>
