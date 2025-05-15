@@ -155,21 +155,21 @@ public class GameViewController {
 
     }
 
-    public void startHeroDialogue() {
+    private void startHeroDialogue() {
         myHeroDialogueTimeline = new Timeline(new KeyFrame(
                 Duration.seconds(5 + myRandom.nextInt(6)),
                 event -> {
-                    String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
+                    final String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
                     myHeroDialogueLabel.setText(randomSentence);
                     myHeroDialogueLabel.setOpacity(0); // Start hidden
 
                     // Fade in
-                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    final FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
                     fadeIn.setFromValue(0);
                     fadeIn.setToValue(1);
 
                     // Fade out after a pause
-                    FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    final FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
                     fadeOut.setFromValue(1);
                     fadeOut.setToValue(0);
                     fadeOut.setDelay(Duration.seconds(2)); // Label stays visible for 2 seconds

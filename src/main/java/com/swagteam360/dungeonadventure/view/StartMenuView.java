@@ -24,7 +24,7 @@ public class StartMenuView extends Application {
      * Entry point method for JavaFX.
      * @param theArgs Command line arguments, which are ignored in this application.
      */
-    public static void main(String[] theArgs) {
+    public static void main(final String[] theArgs) {
         launch(theArgs);
     }
 
@@ -33,12 +33,12 @@ public class StartMenuView extends Application {
      * @param thePrimaryStage The primary stage of the application.
      */
     @Override
-    public void start(Stage thePrimaryStage) {
+    public void start(final Stage thePrimaryStage) {
 
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass()
+            final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass()
                     .getResource("/com/swagteam360/dungeonadventure/start-menu.fxml")));
-            Scene scene = new Scene(root, 600, 400);
+            final Scene scene = new Scene(root, 600, 400);
             scene.getStylesheets().add(Objects.requireNonNull(getClass()
                     .getResource("/com/swagteam360/dungeonadventure/light-theme.css")).toExternalForm());
 
