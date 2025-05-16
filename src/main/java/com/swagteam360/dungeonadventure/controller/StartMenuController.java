@@ -1,60 +1,74 @@
 package com.swagteam360.dungeonadventure.controller;
 
+import com.swagteam360.dungeonadventure.model.GameManager;
+import com.swagteam360.dungeonadventure.model.GameSettings;
+import com.swagteam360.dungeonadventure.utility.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * The StartMenuController class manages the interactions and navigation
  * between the scenes within the application. It handles user inputs
  * and events triggered by various UI elements such as buttons, checkboxes,
- * and menu items. It also provides support for toggling between themes
- * (dark mode and light mode) and facilitates scene switching.
+ * and menu items.
  *
  * @author Jonathan Hernandez
- * @version 1.0 (May 4th, 2025)
+ * @version 1.2 (May 14th, 2025)
  */
 public class StartMenuController {
 
     /**
-     * A static boolean variable indicating whether the application is in dark mode.
-     * When set to true, the application uses a dark theme. If set to false, the
-     * application uses a light theme.
+     * A ToggleButton in the user interface for enabling or disabling dark mode.
+     * This button provides users with the option to switch between light mode
+     * and dark mode in the application. The state of the button determines the
+     * active mode:
+     * - Selected: Dark mode is enabled.
+     * - Deselected: Light mode is active.
      * <p>
-     * This variable is used to determine the current theme and affects the
-     * behavior of theme-related methods such as {@code getCurrentTheme()} and
-     * {@code toggleDarkMode()}.
-     */
-    private static boolean darkMode = false;
-
-    /**
-     * A CheckBox UI component used to toggle between dark mode and light mode.
-     * This variable is linked to the corresponding element in the FXML file for the Start Menu.
-     * The state of this checkbox determines whether the application uses the dark or light theme.
+     * This variable is injected via FXML and linked to the application's scene
+     * graph. It may be associated with an event handler to execute the necessary
+     * logic when the button's state changes.
      */
     @FXML
-    private CheckBox darkModeToggle;
+    private ToggleButton myDarkModeToggle;
 
     /**
-     * The file path for the CSS file used to apply the dark theme in the application.
-     * This is a constant value that represents the resource location of the dark theme stylesheet.
-     * It is used to set the application's styles when dark mode is enabled.
+     * A TextField component in the application's user interface used for inputting the hero's name.
+     * This field allows the user to enter or modify the name of their selected hero before starting the game.
+     * It is expected to be initialized and managed by the FXMLLoader and is directly tied to the FXML layout of the start menu.
      */
-    private static final String DARK_THEME = "/com/swagteam360/dungeonadventure/dark-theme.css";
+    @FXML
+    private TextField myHeroNameTextField;
 
     /**
-     * Represents the file path to the light theme CSS file used in the application's graphical interface.
-     * The theme is applied to the user interface when the application is in light mode.
+     * Represents a ToggleGroup that manages the selection of hero types in the user interface.
+     * This group allows the user to choose one specific hero type among multiple options,
+     * typically represented by RadioButtons in the FXML layout.
+     * <p>
+     * This field is linked to the FXML file using the @FXML annotation to support
+     * interaction with the corresponding UI components.
+     * <p>
+     * The currently selected hero type can be retrieved using the {@code getSelectedHeroType} method.
      */
-    private static final String LIGHT_THEME = "/com/swagteam360/dungeonadventure/light-theme.css";
+    @FXML
+    private ToggleGroup myHeroButtons;
+
+    /**
+     * Represents a ToggleGroup for selecting the difficulty level in the game's user interface.
+     * This group contains radio buttons corresponding to various difficulty options and allows
+     * the user to choose one.
+     * <p>
+     * The selected difficulty is used by the application logic to determine the difficulty
+     * level for the game. It is accessed through methods such as {@code getSelectedDifficulty()}
+     * in the containing class to retrieve the currently selected option.
+     * <p>
+     * This field is linked to an FXML definition and is automatically injected at runtime.
+     */
+    @FXML
+    private ToggleGroup myDifficultyButtons;
 
     /**
      * Event handler for the Start button in the application's user interface.
@@ -64,10 +78,10 @@ public class StartMenuController {
      * @param theActionEvent the ActionEvent triggered by the user's interaction with the Start button
      */
     @FXML
-    private void startButtonEvent(ActionEvent theActionEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass()
+    private void startButtonEvent(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/secondary-menu.fxml"));
-        switchScene(theActionEvent, loader);
+        SceneUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -78,17 +92,18 @@ public class StartMenuController {
      * @param theActionEvent the ActionEvent triggered by the user's interaction with the Quit button
      */
     @FXML
-    private void quitButtonEvent(ActionEvent theActionEvent) {
+    private void quitButtonEvent(final ActionEvent theActionEvent) {
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Quit");
         alert.setHeaderText("Are you sure you want to quit?");
         alert.setContentText("Click OK to exit.");
 
-        javafx.scene.control.ButtonType result = alert.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL);
+        final javafx.scene.control.ButtonType result = alert.showAndWait()
+                .orElse(javafx.scene.control.ButtonType.CANCEL);
 
         if (result == javafx.scene.control.ButtonType.OK) {
-            Stage stage = (Stage) ((javafx.scene.Node) theActionEvent.getSource()).getScene().getWindow();
+            final Stage stage = (Stage) ((javafx.scene.Node) theActionEvent.getSource()).getScene().getWindow();
             stage.close();
         }
 
@@ -103,10 +118,10 @@ public class StartMenuController {
      *                       a button press that indicates the start of a new game.
      */
     @FXML
-    private void newGameEvent(ActionEvent theActionEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass()
+    private void newGameEvent(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
-        switchScene(theActionEvent, loader);
+        SceneUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -119,10 +134,10 @@ public class StartMenuController {
      *                       a button press to navigate back to the start screen.
      */
     @FXML
-    private void backButtonToStartScreenEvent(ActionEvent theActionEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass()
+    private void backButtonToStartScreenEvent(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/start-menu.fxml"));
-        switchScene(theActionEvent, loader);
+        SceneUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -135,17 +150,23 @@ public class StartMenuController {
      *                       a button press to navigate back to the secondary menu.
      */
     @FXML
-    private void backButtonToSecondaryMenuEvent(ActionEvent theActionEvent) {
-        FXMLLoader loader = new FXMLLoader(getClass()
+    private void backButtonToSecondaryMenuEvent(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/secondary-menu.fxml"));
-        switchScene(theActionEvent, loader); // Might be refactored because this method is identical
-                                             // to the startButtonEvent method.
+        SceneUtils.switchScene(theActionEvent, loader);
     }
 
+    /**
+     * Event handler for the "About Us" menu item in the application's user interface.
+     * Displays an informational dialog that provides details about the Dungeon Adventure project,
+     * including its creators, purpose, version, and a short message for the user.
+     * <p>
+     * This method is invoked via FXML when the "About Us" menu item is clicked.
+     */
     @FXML
     private void aboutUsMenuEvent() {
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About Us");
         alert.setHeaderText("Dungeon Adventure");
         alert.setContentText("""
@@ -169,77 +190,91 @@ public class StartMenuController {
      *                       a button press to navigate to the options screen.
      */
     @FXML
-    private void optionsButtonEvent(ActionEvent theActionEvent) {
+    private void optionsButtonEvent(final ActionEvent theActionEvent) {
         FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/options.fxml"));
-        switchScene(theActionEvent, loader);
+        SceneUtils.switchScene(theActionEvent, loader);
     }
 
     /**
-     * Retrieves the path to the current theme used in the application.
-     * This method determines the theme based on the application's dark mode setting.
+     * Event handler for the Start Game button in the application's user interface.
+     * This method initializes game settings based on user input (hero name, hero type,
+     * and selected difficulty), starts a new game using these settings, and switches
+     * the application to the game view scene.
      *
-     * @return the string representation of the file path to the current theme stylesheet.
+     * @param theActionEvent the ActionEvent triggered by the user's interaction,
+     *                       typically a button press to start the game.
      */
-    private static String getCurrentTheme() {
-        return darkMode ? DARK_THEME : LIGHT_THEME;
+    @FXML
+    private void startGameButtonEvent(final ActionEvent theActionEvent) {
+
+        final String heroName = myHeroNameTextField.getText();
+        final String heroType = getSelectedHeroType();
+        final String difficulty = getSelectedDifficulty();
+
+        if (heroName.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Missing Hero Name");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a hero name before starting the game.");
+            alert.showAndWait();
+            return;
+        }
+
+        final GameSettings gameSettings = new GameSettings(heroName, heroType, difficulty);
+        GameManager.getInstance().startNewGame(gameSettings);
+
+        final FXMLLoader loader = new FXMLLoader(getClass()
+                .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
+        SceneUtils.switchScene(theActionEvent, loader);
+
     }
 
     /**
-     * Initializes the controller's state after the associated FXML file has been loaded.
-     * This setup method is automatically invoked by the JavaFX framework.
+     * Retrieves the type of hero selected in the user interface.
+     * If no hero type is currently selected, a default value of "Warrior" is returned.
+     *
+     * @return the currently selected hero type as a String, or "Warrior" if none is selected.
+     */
+    private String getSelectedHeroType() {
+        final RadioButton selectedHero = (RadioButton) myHeroButtons.getSelectedToggle();
+        return selectedHero != null ? selectedHero.getText() : "Warrior";
+    }
+
+    /**
+     * Retrieves the selected difficulty level from the DifficultyButtons toggle group in the user interface.
+     * If no difficulty is selected, a default value of "Normal" is returned.
+     *
+     * @return the currently selected difficulty as a String, or "Normal" if none is selected.
+     */
+    private String getSelectedDifficulty() {
+        final RadioButton selectedDifficulty = (RadioButton) myDifficultyButtons.getSelectedToggle();
+        return selectedDifficulty != null ? selectedDifficulty.getText() : "Normal";
+    }
+
+    /**
+     * Initializes the user interface components of the Start Menu.
+     * This method is invoked automatically by the JavaFX framework after
+     * the application loads the FXML file for the Start Menu.
      * <p>
-     * If the dark mode toggle control is not null, it sets the toggle's selected state
-     * based on the current dark mode setting. This ensures that the toggle reflects the
-     * application's current theme preference.
+     * Specifically, it configures the dark mode toggle button by interfacing
+     * with the SceneUtils class to ensure the toggle reflects the current
+     * application theme when the scene is loaded.
      */
     @FXML
     private void initialize() {
-        if (darkModeToggle != null) {
-            darkModeToggle.setSelected(darkMode);
-        }
+        SceneUtils.initializeDarkModeToggle(myDarkModeToggle);
     }
 
     /**
-     * Toggles the application's dark mode setting and updates the current theme applied to the scene.
+     * Toggles the application's theme between dark mode and light mode.
+     * This method uses the SceneUtils class to change the visual appearance
+     * of the application's user interface based on the state of the dark mode toggle.
      * <p>
-     * This method checks the state of the dark mode toggle control and updates the internal
-     * dark mode preference accordingly. It then clears all current stylesheets from the scene
-     * and applies the stylesheet corresponding to the updated theme.
-     * <p>
-     * The method fetches the appropriate stylesheet using the {@link #getCurrentTheme()} method,
-     * which determines the active theme based on the dark mode state. The new theme stylesheet
-     * is then applied to the scene for immediate visual changes.
+     * This method is bound to the JavaFX UI component responsible for the dark mode toggle.
      */
     @FXML
     private void toggleDarkMode() {
-        darkMode = darkModeToggle.isSelected();
-        Scene scene = darkModeToggle.getScene();
-        scene.getStylesheets().clear();
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(getCurrentTheme())).toExternalForm());
-    }
-
-    /**
-     * Switches the current scene in the application to a new scene. This method loads
-     * the specified FXML file using the provided FXMLLoader, creates a new scene using
-     * the loaded layout, applies the current theme stylesheet, and sets it on the current
-     * stage. An IOException during the loading process will result in a runtime exception.
-     *
-     * @param theActionEvent the ActionEvent triggered by the user's interaction, used to
-     *                       retrieve the current stage.
-     * @param theLoader      the FXMLLoader instance pre-configured with the FXML file to
-     *                       be loaded for the new scene transition.
-     */
-    private void switchScene(ActionEvent theActionEvent, FXMLLoader theLoader) {
-        try {
-            Parent root = theLoader.load();
-            Scene scene = new Scene(root, 600, 400);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(getCurrentTheme())).toExternalForm());
-            Stage stage = (Stage) ((javafx.scene.Node) theActionEvent.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-        } catch (IOException e) {
-            throw new RuntimeException(e); // Might want to log this or implement UI feedback.
-        }
-
+        SceneUtils.toggleDarkMode(myDarkModeToggle);
     }
 }

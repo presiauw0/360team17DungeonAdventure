@@ -84,6 +84,20 @@ public class Room {
     private boolean myPillar;
 
     /**
+     * Represents the x-coordinate of the room's position within a grid or map.
+     * This field is initialized during the construction of the Room and is immutable.
+     */
+    private final int myX;
+
+    /**
+     * Represents the Y-coordinate of the Room within the dungeon grid.
+     * This variable is immutable and is finalized at the time of object creation,
+     * ensuring that the room's position in the Y-direction remains constant
+     * throughout its lifecycle.
+     */
+    private final int myY;
+
+    /**
      * Constructs a new instance of the Room class.
      * <p>
      * This constructor initializes a Room object with its default properties,
@@ -92,8 +106,10 @@ public class Room {
      * default state for all properties is typically false or uninitialized,
      * allowing further customization after object creation.
      */
-    public Room(final boolean theEntrance, final boolean theExit) {
+    public Room(final int theX, final int theY, final boolean theEntrance, final boolean theExit) {
 
+        myX = theX;
+        myY = theY;
         myEntrance = theEntrance;
         myExit = theExit;
 
