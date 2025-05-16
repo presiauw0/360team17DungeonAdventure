@@ -14,6 +14,6 @@
           <MenuItem mnemonicParsing="false" onAction="#aboutUsMenuEvent" text="About Us" />
         </items>
       </MenuButton>
-      <ToggleButton fx:id="darkModeToggle" layoutX="249.0" layoutY="187.0" mnemonicParsing="false" onAction="#toggleDarkMode" text="Change Theme" />
+      <ToggleButton fx:id="myDarkModeToggle" layoutX="249.0" layoutY="187.0" mnemonicParsing="false" onAction="#toggleDarkMode" text="Change Theme" />
    </children>
 </AnchorPane>

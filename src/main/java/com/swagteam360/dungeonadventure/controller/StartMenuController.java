@@ -33,7 +33,7 @@ public class StartMenuController {
      * logic when the button's state changes.
      */
     @FXML
-    private ToggleButton darkModeToggle;
+    private ToggleButton myDarkModeToggle;
 
     /**
      * A TextField component in the application's user interface used for inputting the hero's name.
@@ -41,7 +41,7 @@ public class StartMenuController {
      * It is expected to be initialized and managed by the FXMLLoader and is directly tied to the FXML layout of the start menu.
      */
     @FXML
-    private TextField heroNameTextField;
+    private TextField myHeroNameTextField;
 
     /**
      * Represents a ToggleGroup that manages the selection of hero types in the user interface.
@@ -54,7 +54,7 @@ public class StartMenuController {
      * The currently selected hero type can be retrieved using the {@code getSelectedHeroType} method.
      */
     @FXML
-    private ToggleGroup HeroButtons;
+    private ToggleGroup myHeroButtons;
 
     /**
      * Represents a ToggleGroup for selecting the difficulty level in the game's user interface.
@@ -68,7 +68,7 @@ public class StartMenuController {
      * This field is linked to an FXML definition and is automatically injected at runtime.
      */
     @FXML
-    private ToggleGroup DifficultyButtons;
+    private ToggleGroup myDifficultyButtons;
 
     /**
      * Event handler for the Start button in the application's user interface.
@@ -208,9 +208,18 @@ public class StartMenuController {
     @FXML
     private void startGameButtonEvent(final ActionEvent theActionEvent) {
 
-        final String heroName = heroNameTextField.getText();
+        final String heroName = myHeroNameTextField.getText();
         final String heroType = getSelectedHeroType();
         final String difficulty = getSelectedDifficulty();
+
+        if (heroName.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Missing Hero Name");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a hero name before starting the game.");
+            alert.showAndWait();
+            return;
+        }
 
         final GameSettings gameSettings = new GameSettings(heroName, heroType, difficulty);
         GameManager.getInstance().startNewGame(gameSettings);
@@ -228,7 +237,7 @@ public class StartMenuController {
      * @return the currently selected hero type as a String, or "Warrior" if none is selected.
      */
     private String getSelectedHeroType() {
-        final RadioButton selectedHero = (RadioButton) HeroButtons.getSelectedToggle();
+        final RadioButton selectedHero = (RadioButton) myHeroButtons.getSelectedToggle();
         return selectedHero != null ? selectedHero.getText() : "Warrior";
     }
 
@@ -239,7 +248,7 @@ public class StartMenuController {
      * @return the currently selected difficulty as a String, or "Normal" if none is selected.
      */
     private String getSelectedDifficulty() {
-        final RadioButton selectedDifficulty = (RadioButton) DifficultyButtons.getSelectedToggle();
+        final RadioButton selectedDifficulty = (RadioButton) myDifficultyButtons.getSelectedToggle();
         return selectedDifficulty != null ? selectedDifficulty.getText() : "Normal";
     }
 
@@ -254,7 +263,7 @@ public class StartMenuController {
      */
     @FXML
     private void initialize() {
-        SceneUtils.initializeDarkModeToggle(darkModeToggle);
+        SceneUtils.initializeDarkModeToggle(myDarkModeToggle);
     }
 
     /**
@@ -266,6 +275,6 @@ public class StartMenuController {
      */
     @FXML
     private void toggleDarkMode() {
-        SceneUtils.toggleDarkMode(darkModeToggle);
+        SceneUtils.toggleDarkMode(myDarkModeToggle);
     }
 }

@@ -61,7 +61,7 @@ public class SceneUtils {
      * behavior of theme-related methods such as {@code getCurrentTheme()} and
      * {@code toggleDarkMode()}.
      */
-    private static boolean darkMode = false;
+    private static boolean myDarkMode = false;
 
     /**
      * Switches the current scene in the JavaFX application to a new scene defined by the provided
@@ -97,7 +97,7 @@ public class SceneUtils {
      * @return the string representation of the file path to the current theme stylesheet.
      */
     private static String getCurrentTheme() {
-        return darkMode ? DARK_THEME : LIGHT_THEME;
+        return myDarkMode ? DARK_THEME : LIGHT_THEME;
     }
 
     /**
@@ -124,7 +124,7 @@ public class SceneUtils {
      */
     public static void initializeDarkModeToggle(final ToggleButton theToggleButton) {
         if (theToggleButton != null) {
-            theToggleButton.setSelected(darkMode);
+            theToggleButton.setSelected(myDarkMode);
         }
     }
 
@@ -138,7 +138,7 @@ public class SceneUtils {
      *                        should be activated. The current theme of the application is updated accordingly.
      */
     public static void toggleDarkMode(final ToggleButton theToggleButton) {
-        darkMode = theToggleButton.isSelected();
+        myDarkMode = theToggleButton.isSelected();
         applyTheme(theToggleButton.getScene());
     }
 

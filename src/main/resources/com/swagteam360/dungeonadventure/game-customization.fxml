@@ -7,6 +7,8 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -20,28 +22,47 @@
           <MenuItem mnemonicParsing="false" onAction="#aboutUsMenuEvent" text="About Us" />
         </items>
       </MenuButton>
-      <VBox alignment="CENTER" layoutX="65.0" prefHeight="402.0" prefWidth="470.0" spacing="25.0">
+      <VBox alignment="CENTER" layoutX="65.0" prefHeight="402.0" prefWidth="470.0" spacing="10.0">
          <children>
             <Label prefHeight="23.0" prefWidth="172.0" text="Enter Your Hero Name">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="heroNameTextField" maxWidth="200.0" prefWidth="50.0" promptText="Enter Hero Name Here" />
+            <TextField fx:id="myHeroNameTextField" maxWidth="200.0" prefWidth="50.0" promptText="Enter Hero Name Here" />
             <Label text="Choose your Hero">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <HBox alignment="CENTER" prefHeight="26.0" prefWidth="200.0" spacing="20.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/Thief.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/Warrior.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/Priestess.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="26.0" prefWidth="200.0" spacing="40.0">
                <children>
                   <RadioButton mnemonicParsing="false" text="Thief">
                      <toggleGroup>
-                        <ToggleGroup fx:id="HeroButtons" />
+                        <ToggleGroup fx:id="myHeroButtons" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" selected="true" text="Warrior" toggleGroup="$HeroButtons" />
-                  <RadioButton mnemonicParsing="false" text="Priestess" toggleGroup="$HeroButtons" />
+                  <RadioButton mnemonicParsing="false" selected="true" text="Warrior" toggleGroup="$myHeroButtons" />
+                  <RadioButton mnemonicParsing="false" text="Priestess" toggleGroup="$myHeroButtons" />
                </children>
             </HBox>
             <Label text="Select Difficulty Level">
@@ -49,17 +70,17 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <VBox alignment="CENTER" prefHeight="73.0" prefWidth="359.0" spacing="10.0">
+            <HBox alignment="CENTER" prefHeight="10.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <RadioButton mnemonicParsing="false" text="Easy">
                      <toggleGroup>
-                        <ToggleGroup fx:id="DifficultyButtons" />
+                        <ToggleGroup fx:id="myDifficultyButtons" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$DifficultyButtons" />
-                  <RadioButton mnemonicParsing="false" text="Hard" toggleGroup="$DifficultyButtons" />
+                  <RadioButton mnemonicParsing="false" selected="true" text="Normal" toggleGroup="$myDifficultyButtons" />
+                  <RadioButton mnemonicParsing="false" text="Hard" toggleGroup="$myDifficultyButtons" />
                </children>
-            </VBox>
+            </HBox>
             <Button mnemonicParsing="false" onAction="#startGameButtonEvent" text="Start Game" />
          </children>
       </VBox>
