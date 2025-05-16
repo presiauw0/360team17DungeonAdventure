@@ -113,6 +113,7 @@ public class Room implements Cell, IRoom {
     }
 
     /**
+
      * Constructs a room with specific parameters that
      * control its entrance/exit type, coordinates,
      * and status of doors (aka walls).
@@ -142,6 +143,7 @@ public class Room implements Cell, IRoom {
             case IRoom.PROPERTY_EXIT -> myEntranceExit = IRoom.PROPERTY_EXIT;
             case null, default -> throw new IllegalArgumentException("Invalid entrance-exit type.");
         }
+
 
         // Set row, column, and default traversal flag value
         myRow = theRow;

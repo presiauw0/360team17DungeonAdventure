@@ -3,14 +3,30 @@
     -fx-text-fill: white;
 }
 
-.label, .button, .check-box, .radio-button, .menu-button, .text-field, .text-area {
+.label, .button, .check-box, .radio-button, .menu-button, .text-field, .text-area, .toggle-button {
     -fx-text-fill: white;
 }
 
-.button {
+.button, .toggle-button {
     -fx-background-color: #444444;
     -fx-border-color: white;
     -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.1), 1, 0.1, 0, 1);
+}
+
+.button:hover, .toggle-button:hover, .menu-button:hover {
+    -fx-background-color: #555555;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.3), 4, 0.3, 0, 2);
+}
+
+.button:pressed, .toggle-button:pressed, .menu-button:pressed {
+    -fx-background-color: #3a3a3a;
+    -fx-translate-y: 1;
 }
 
 .check-box .box, .radio-button .radio {
@@ -22,6 +38,20 @@
     -fx-border-color: white;
     -fx-border-width: 1;
     -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.1), 1, 0.1, 0, 1);
+}
+
+.menu-button:hover {
+    -fx-background-color: #555555;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #3a3a3a;
+    -fx-translate-y: 1;
 }
 
 .menu-item {
@@ -39,6 +69,8 @@
     -fx-prompt-text-fill: #bbbbbb;
     -fx-border-color: white;
     -fx-border-width: 1;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
 }
 
 .text-area {
@@ -46,4 +78,16 @@
     -fx-background-color: #3d3d3d;
     -fx-prompt-text-fill: #bbbbbb;
     -fx-border-color: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.game-panel {
+    -fx-background-color: #444444;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+}
+
+ImageView {
+    -fx-cursor: hand;
 }
