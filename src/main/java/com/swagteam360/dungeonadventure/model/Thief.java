@@ -19,7 +19,6 @@ public class Thief extends Hero{
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance      represents the hit chance of the hero.
-     * @param theCharacterType  represents the enumerated type of the hero.
      * @param theBlockChance    represents the block chance of the hero.
      */
     public Thief(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theBlockChance) {

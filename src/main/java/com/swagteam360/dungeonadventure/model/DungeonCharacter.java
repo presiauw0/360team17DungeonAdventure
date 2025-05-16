@@ -1,6 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
 import java.util.Random;
+import java.io.Serializable;
 
 /**
  * The DungeonCharacter Abstract Class represents a character, whether
@@ -14,7 +15,7 @@ import java.util.Random;
  * @author Luke Willis
  * @version 1 May 2025
  */
-public abstract class DungeonCharacter {
+public abstract class DungeonCharacter implements Serializable {
     /** Field myName represents name given to a character. */
     private String myName;
 
