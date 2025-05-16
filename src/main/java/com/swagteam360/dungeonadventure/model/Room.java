@@ -6,136 +6,241 @@ package com.swagteam360.dungeonadventure.model;
  * provides methods to configure these attributes and retrieve a string representation
  * of the room's structure.
  *
- * @author Jonathan Hernandez
- * @version 1.0 (April 30th, 2025)
+ * @author Jonathan Hernandez, Preston Sia (psia97)
+ * @version 1.2 10 May 2025
  *
  */
-public class Room {
+public class Room implements Cell, IRoom {
 
-    // private Items[][] myItems;
+    /**
+     * Contains the items in the room, such
+     * as potions.
+     */
+    private Item[] myItems;
 
-    // All the following instance variables help format the toString method.
+    // private Pillar myPillar;
 
+    /**
+     * Specify whether the room is an entrance,
+     * exit, or none.
+     */
+    private final String myEntranceExit;
+
+    // Status of the doors/walls
     /**
      * Indicates whether the left door of the room is present or accessible.
      * This variable represents the state of the left door in the current room.
      * This is represented by a "|" in the toString method.
      */
-    private final boolean myDoorLeft;
+    private boolean myDoorLeft;
 
     /**
      * Indicates whether the right door of the room is present or accessible.
      * This is represented by a "|" in the toString method.
      */
-    private final boolean myDoorRight;
+    private boolean myDoorRight;
 
     /**
      * Indicates whether the bottom door of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private final boolean myDoorBottom;
+    private boolean myDoorBottom;
 
     /**
      * Indicates whether the top door of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private final boolean myDoorTop;
+    private boolean myDoorTop;
 
     /**
-     * Indicates whether the room contains the main entrance of the dungeon.
-     * This is represented by an "i" (In) in the toString method.
+     * Location of the room in the maze - Row coordinate
      */
-    private final boolean myEntrance;
+    private final int myRow;
 
     /**
-     * Indicates whether the room contains the main exit of the dungeon.
-     * This is represented by an "O" (Out) in the toString method.
+     * Location of the room in the maze - Column coordinate
      */
-    private final boolean myExit;
+    private final int myCol;
+
+    /**
+     * Used by the maze algorithm to determine if
+     * a room has been visited during creation
+     */
+    private boolean myTraversalFlag;
 
     /**
      * Indicates whether the room contains multiple items.
      * This is represented by an "M" in the toString method.
      */
-    private boolean myMultipleItems;
+    //private boolean myMultipleItems;
 
     /**
      * Indicates whether the room contains a pit.
      * This is represented by an "X" in the toString method.
      */
-    private boolean myPit;
+    //private boolean myPit;
 
     /**
      * Indicates whether the room contains a healing potion.
      * This is represented by an "H" in the toString method.
      */
-    private boolean myHealingPotion;
+    //private boolean myHealingPotion;
 
     /**
      * Indicates whether the room contains a vision potion.
      * This is represented by a "V" in the toString method.
      */
-    private boolean myVisionPotion;
+    //private boolean myVisionPotion;
 
     /**
      * Indicates whether the room contains a pillar.
      * This is represented by a "P" in the toString method.
      */
-    private boolean myPillar;
+    //private boolean myPillar;
+
 
     /**
-     * Represents the x-coordinate of the room's position within a grid or map.
-     * This field is initialized during the construction of the Room and is immutable.
+     * Constructs a new instance of the Room class with defaults.
+     * A room contains four walls and no items by default.
+     * @param theEntranceExitType Sets entrance or exit type
+     * @param theRow Row coordinate for the room.
+     * @param theCol Column coordinate for the room.
      */
-    private final int myX;
+    public Room(final String theEntranceExitType,
+                final int theRow, final int theCol) {
+        this(theEntranceExitType, theRow, theCol,
+                true, true, true, true);
+    }
 
     /**
-     * Represents the Y-coordinate of the Room within the dungeon grid.
-     * This variable is immutable and is finalized at the time of object creation,
-     * ensuring that the room's position in the Y-direction remains constant
-     * throughout its lifecycle.
+
+     * Constructs a room with specific parameters that
+     * control its entrance/exit type, coordinates,
+     * and status of doors (aka walls).
+     * @param theEntranceExitType Sets entrance or exit type
+     * @param theRow Row coordinate for the room.
+     * @param theCol Column coordinate for the room.
+     * @param theLeftDoor Status of left door/wall.
+     * @param theRightDoor Status of right door/wall.
+     * @param theTopDoor Status of upper door/wall.
+     * @param theBottomDoor Status of lower door/wall.
      */
-    private final int myY;
+    public Room(final String theEntranceExitType,
+                final int theRow, final int theCol,
+                final boolean theLeftDoor, final boolean theRightDoor,
+                final boolean theTopDoor, final boolean theBottomDoor) {
 
-    /**
-     * Constructs a new instance of the Room class.
-     * <p>
-     * This constructor initializes a Room object with its default properties,
-     * including the state of its doors, and whether it contains specific
-     * attributes such as an entrance, exit, treasure, pit, or nothing. The
-     * default state for all properties is typically false or uninitialized,
-     * allowing further customization after object creation.
-     */
-    public Room(final int theX, final int theY, final boolean theEntrance, final boolean theExit) {
+        super(); // explicit call to superclass
 
-        myX = theX;
-        myY = theY;
-        myEntrance = theEntrance;
-        myExit = theExit;
+        if (theRow < 0 || theCol < 0) {
+            throw new IllegalArgumentException("Row and column cannot be negative.");
+        }
 
+        // set entrance or exit type
+        switch (theEntranceExitType) {
+            case IRoom.PROPERTY_NORMAL -> myEntranceExit = IRoom.PROPERTY_NORMAL;
+            case IRoom.PROPERTY_ENTRANCE -> myEntranceExit = IRoom.PROPERTY_ENTRANCE;
+            case IRoom.PROPERTY_EXIT -> myEntranceExit = IRoom.PROPERTY_EXIT;
+            case null, default -> throw new IllegalArgumentException("Invalid entrance-exit type.");
+        }
+
+
+        // Set row, column, and default traversal flag value
+        myRow = theRow;
+        myCol = theCol;
+
+        myTraversalFlag = false;
+
+        myDoorLeft = theLeftDoor;
+        myDoorRight = theRightDoor;
+        myDoorTop = theTopDoor;
+        myDoorBottom = theBottomDoor;
+/*
         if (myEntrance || myExit) {
             myPillar = false; // Entrance and exit are empty rooms.
                                // These rooms must be empty
 
-            myDoorTop = false;  // I feel like this is subject to change
-            myDoorLeft = false; // via the game logic.
-            myDoorRight = false;
-            myDoorBottom = false;
+            myDoorTop = true;  // I feel like this is subject to change
+            myDoorLeft = true; // via the game logic.
+            myDoorRight = true;
+            myDoorBottom = true;
 
         } else {
-            myDoorTop = false;
-            myDoorLeft = false;
-            myDoorRight = false;
-            myDoorBottom = false;
+            myDoorTop = true;
+            myDoorLeft = true;
+            myDoorRight = true;
+            myDoorBottom = true;
 
             placeItems();
             generatePit();
-        }
+        }*/
 
     }
 
-    protected void placeItems() {
+    // Cell implementation
+    @Override
+    public boolean hasLeftWall() {
+        return myDoorLeft;
+    }
 
+    @Override
+    public boolean hasRightWall() {
+        return myDoorRight;
+    }
+
+    @Override
+    public boolean hasTopWall() {
+        return myDoorTop;
+    }
+
+    @Override
+    public boolean hasBottomWall() {
+        return myDoorBottom;
+    }
+
+    @Override
+    public void setLeftWall(final boolean theStatus) {
+        myDoorLeft = theStatus;
+    }
+
+    @Override
+    public void setRightWall(final boolean theStatus) {
+        myDoorRight = theStatus;
+    }
+
+    @Override
+    public void setTopWall(final boolean theStatus) {
+        myDoorTop = theStatus;
+    }
+
+    @Override
+    public void setBottomWall(final boolean theStatus) {
+        myDoorBottom = theStatus;
+    }
+
+    @Override
+    public int getRow() {
+        return myRow;
+    }
+
+    @Override
+    public int getCol() {
+        return myCol;
+    }
+
+    @Override
+    public boolean traversalVisitFlag() {
+        return myTraversalFlag;
+    }
+
+    @Override
+    public void markTraversalVisit() {
+        myTraversalFlag = true;
+    }
+
+    @Override
+    public void placeItems() {
+/*
         // Course description probabilities for these items.
 
         myHealingPotion = Math.random() < 0.10;
@@ -146,12 +251,13 @@ public class Room {
                 (myVisionPotion ? 1 : 0) +
                 (myPillar ? 1 : 0);
 
-        myMultipleItems = itemCount > 1;
-
+        myMultipleItems = itemCount > 1;*/
+        // TODO implement
     }
 
-    protected void placeMonsters() {
-
+    @Override
+    public void placeMonsters() {
+        // TODO implement
     }
 
     /**
@@ -161,8 +267,27 @@ public class Room {
      * There is a 10% chance that the `hasPit` field will be set to true, indicating
      * the presence of a pit in the room. Otherwise, the field will remain false.
      */
-    protected void generatePit() {
-        myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
+    public void generatePits() {
+        //myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
+        // TODO implement
+    }
+
+    // Private helpers
+
+    /**
+     * Indicate whether this room is an entrance or exit.
+     * @return True if the room is an entrance or exit, false otherwise
+     */
+    private boolean isEntranceOrExit() {
+        return !IRoom.PROPERTY_NORMAL.equals(myEntranceExit);
+    }
+
+    /**
+     * Clear all items and pillars.
+     */
+    private void clearRoom() {
+        myItems = new Item[IRoom.DEFAULT_MAX_ITEMS]; // Clear out items
+        // clear pillar code here
     }
 
     /**
@@ -181,13 +306,13 @@ public class Room {
      *
      * @return A character symbol representing the room's central content.
      */
-    private char getCenterSymbol() {
+    char getCenterSymbol() { // using package level visibility
 
-        if (myEntrance) {
+        if (IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit)) {
             return 'i';
-        } else if (myExit) {
+        } else if (IRoom.PROPERTY_EXIT.equals(myEntranceExit)) {
             return 'O';
-        } else if (myPillar) {
+        /*} else if (myPillar) {
             return 'P';
         } else if (myMultipleItems) {
             return 'M';
@@ -196,11 +321,11 @@ public class Room {
         } else if (myVisionPotion) {
             return 'V';
         } else if (myPit) {
-            return 'X';
+            return 'X';*/
         } else {
             return ' ';
         }
-
+        //TODO finish this.
     }
 
     /**

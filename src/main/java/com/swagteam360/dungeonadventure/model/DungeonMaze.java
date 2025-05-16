@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -14,24 +15,14 @@ import java.util.Stack;
  */
 public final class DungeonMaze {
     /**
-     * Default width of the maze
-     */
-    private static final int DEFAULT_WIDTH = 6;
-    /**
-     * Default height of the maze
-     */
-    private static final int DEFAULT_HEIGHT = 4;
-    /**
      * Grid of Cells representing the maze
      */
     private final Cell[][] myRoomGrid;
-
     /**
-     * Constructor for the maze using default size parameters
+     * Reference to the cell factory
      */
-    public DungeonMaze() {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    }
+    private final CellFactory myCellFactory;
+
 
     /**
      * Constructs a new Dungeon Maze using
@@ -39,14 +30,32 @@ public final class DungeonMaze {
      *
      * @param theRows The desired height (number of rows) of the maze
      * @param theCols The desired width (number of columns) or the maze
+     * @param theCellFactory The factory for creating Cell objects
      */
-    public DungeonMaze(final int theRows, final int theCols) {
+    public DungeonMaze(final int theRows, final int theCols,
+                       final CellFactory theCellFactory) {
         // Explicit call to superclass
         super();
+
+        if (theRows < 0 || theCols < 0) {
+            throw new IllegalArgumentException("Rows and columns cannot be negative.");
+        }
+
+        myCellFactory = Objects.requireNonNull(theCellFactory);
 
         myRoomGrid = new Cell[theRows][theCols];    // Create a new 2D array
         generateField();            // Generate an empty field
         buildMaze();                // Build a maze from the empty field
+    }
+
+    /**
+     * Get the cell at the specified coordinates.
+     * @param theRow Row coordinate
+     * @param theCol Column coordinate
+     * @return Cell at the specified coordinate
+     */
+    public Cell getCell(final int theRow, final int theCol) {
+        return myRoomGrid[theRow][theCol];
     }
 
     /**
@@ -64,13 +73,13 @@ public final class DungeonMaze {
             final StringBuilder middle = new StringBuilder();   // Left and right walls, path chars
 
             for (int j = 0; j < myRoomGrid[i].length; j++) {
-                top.append(myRoomGrid[i][j].myTopWall ? "##" : "# "); // append top wall status
-                middle.append(myRoomGrid[i][j].myLeftWall ? "# " : "  "); // append left wall status
+                top.append(myRoomGrid[i][j].hasTopWall() ? "##" : "# "); // append top wall status
+                middle.append(myRoomGrid[i][j].hasLeftWall() ? "# " : "  "); // append left wall status
 
                 // add extra characters at the end
                 if (j == myRoomGrid[i].length - 1) {
                     top.append("#");
-                    middle.append(myRoomGrid[i][j].myRightWall ? "#" : " "); // check right wall status at the end
+                    middle.append(myRoomGrid[i][j].hasRightWall() ? "#" : " "); // check right wall status at the end
                 }
             }
 
@@ -82,7 +91,7 @@ public final class DungeonMaze {
                 for (int k = 0; k < myRoomGrid[myRoomGrid.length - 1].length; k++) {
                     mainString.append("#");
                     // add characters for bottom wall status
-                    mainString.append(myRoomGrid[myRoomGrid.length - 1][k].myBottomWall ? "#" : " ");
+                    mainString.append(myRoomGrid[myRoomGrid.length - 1][k].hasBottomWall() ? "#" : " ");
                 }
                 mainString.append("#");
             }
@@ -101,7 +110,7 @@ public final class DungeonMaze {
             for (int j = 0; j < myRoomGrid[i].length; j++) {
                 // Create a new instance of a cell (enclosed by 4 walls by default)
                 // for each position of the 2D array/grid
-                myRoomGrid[i][j] = new Cell(i, j);
+                myRoomGrid[i][j] = myCellFactory.createCell(i, j);
             }
         }
     }
@@ -112,25 +121,27 @@ public final class DungeonMaze {
      * depth-first search algorithm.
      */
     private void buildMaze() {
-        Cell current = myRoomGrid[0][0];                // Pick the top-left corner to be the starting point
+        //Cell current = myRoomGrid[0][0];                // Pick the top-left corner to be the starting point
+        // Start generating at the specified starting location
+        Cell current = myRoomGrid[myCellFactory.getEntranceRow()][myCellFactory.getEntranceCol()];
         final Stack<Cell> cellStack = new Stack<>();    // Create a stack to track cells
 
-        current.myVisited = true;   // Set the corner cell to be marked as visited
-        cellStack.push(current);    // push the corner cell to the stack
+        current.markTraversalVisit();   // Set the corner cell to be marked as visited
+        cellStack.push(current);        // push the corner cell to the stack
 
 
         while (!cellStack.isEmpty()) { // Continue processing until the stack is empty (all are visited)
             current = cellStack.pop(); // pop stack, set as current
 
-            if (hasUnvisitedNeighbors(current.myRow, current.myCol)) {
+            if (hasUnvisitedNeighbors(current.getRow(), current.getCol())) {
                 cellStack.push(current); // push it back onto the stack if unvisited neighbors exist
 
                 // Pick a random cell that hasn't been visited yet
-                Cell randomUnvisitedCell = pickRandomUnvisitedCell(current.myRow, current.myCol);
+                Cell randomUnvisitedCell = pickRandomUnvisitedCell(current.getRow(), current.getCol());
                 // remove the walls between the current cell and randomly picked cell
                 removeWalls(current, randomUnvisitedCell);
                 // Mark the unvisited cell as visited
-                randomUnvisitedCell.myVisited = true;
+                randomUnvisitedCell.markTraversalVisit();
                 // Push the selected cell onto the stack
                 cellStack.push(randomUnvisitedCell);
             }
@@ -154,16 +165,16 @@ public final class DungeonMaze {
         boolean left = true;
         boolean right = true;
         if (theRow - 1 >= 0) { // check top if in bounds
-            top = myRoomGrid[theRow - 1][theCol].myVisited;
+            top = myRoomGrid[theRow - 1][theCol].traversalVisitFlag();
         }
         if (theRow + 1 < myRoomGrid.length) { // check bottom if in range
-            bottom = myRoomGrid[theRow + 1][theCol].myVisited;
+            bottom = myRoomGrid[theRow + 1][theCol].traversalVisitFlag();
         }
         if (theCol - 1 >= 0) { // check if the left is in range
-            left = myRoomGrid[theRow][theCol - 1].myVisited;
+            left = myRoomGrid[theRow][theCol - 1].traversalVisitFlag();
         }
         if (theCol + 1 < myRoomGrid[theRow].length) { // check if the right is in range
-            right = myRoomGrid[theRow][theCol + 1].myVisited;
+            right = myRoomGrid[theRow][theCol + 1].traversalVisitFlag();
         }
         return !(top && bottom && left && right); // Either all have been visited, or at least one has not
     }
@@ -191,7 +202,7 @@ public final class DungeonMaze {
             randRowCoord = theRow + cellOffsets[random][0];
             randColCoord = theCol + cellOffsets[random][1];
         } while (!isValidCoord(randRowCoord, randColCoord)
-                || myRoomGrid[randRowCoord][randColCoord].myVisited);
+                || myRoomGrid[randRowCoord][randColCoord].traversalVisitFlag());
 
         return myRoomGrid[randRowCoord][randColCoord]; // return the cell at the randomly selected coordinate
     }
@@ -203,20 +214,20 @@ public final class DungeonMaze {
      * @param theCellAdj The neighboring cell evaluated relative to the current cell.
      */
     private void removeWalls(final Cell theCellCurrent, final Cell theCellAdj) {
-        final int dx = theCellAdj.myCol - theCellCurrent.myCol; // change in x (columns)
-        final int dy = theCellAdj.myRow - theCellCurrent.myRow; // change in y (rows)
+        final int dx = theCellAdj.getCol() - theCellCurrent.getCol(); // change in x (columns)
+        final int dy = theCellAdj.getRow() - theCellCurrent.getRow(); // change in y (rows)
         if (dx == -1 && dy == 0) { // remove left wall
-            theCellCurrent.myLeftWall = false;
-            theCellAdj.myRightWall = false;
+            theCellCurrent.setLeftWall(false);
+            theCellAdj.setRightWall(false);
         } else if (dx == 1 && dy == 0) { // remove right wall
-            theCellCurrent.myRightWall = false;
-            theCellAdj.myLeftWall = false;
+            theCellCurrent.setRightWall(false);
+            theCellAdj.setLeftWall(false);
         } else if (dx == 0 && dy == -1) { // remove upper wall
-            theCellCurrent.myTopWall = false;
-            theCellAdj.myBottomWall = false;
+            theCellCurrent.setTopWall(false);
+            theCellAdj.setBottomWall(false);
         } else if (dx == 0 && dy == 1) { // remove lower wall
-            theCellCurrent.myBottomWall = false;
-            theCellAdj.myTopWall = false;
+            theCellCurrent.setBottomWall(false);
+            theCellAdj.setTopWall(false);
         }
     }
 
@@ -253,10 +264,10 @@ public final class DungeonMaze {
             final StringBuilder bottom = new StringBuilder();   // lower walls
 
             for (Cell cell : row) {
-                top.append(cell.myTopWall ? "###" : "# #");
-                middle.append(cell.myLeftWall ? "#." : " .");
-                middle.append(cell.myRightWall ? "#" : " ");
-                bottom.append(cell.myBottomWall ? "###" : "# #");
+                top.append(cell.hasTopWall() ? "###" : "# #");
+                middle.append(cell.hasLeftWall() ? "#." : " .");
+                middle.append(cell.hasRightWall() ? "#" : " ");
+                bottom.append(cell.hasBottomWall() ? "###" : "# #");
             }
             mainString.append(top).append("\n");
             mainString.append(middle).append("\n");
@@ -266,81 +277,5 @@ public final class DungeonMaze {
     }
 
 
-    /**
-     * Cell inner class, representing data on
-     * the cell's walls, coordinates, and
-     * whether it has been visited.
-     *
-     * @author Preston Sia (psia97)
-     * @version 1.00, 02 May 2025
-     */
-    private static final class Cell {
-        /**
-         * Status of the left wall.
-         */
-        private boolean myLeftWall;
-        /**
-         * Status of the right wall.
-         */
-        private boolean myRightWall;
-        /**
-         * Status of the upper wall.
-         */
-        private boolean myTopWall;
-        /**
-         * Status of the lower wall.
-         */
-        private boolean myBottomWall;
-        /**
-         * Visited status set during maze generation.
-         */
-        private boolean myVisited;
-        /**
-         * Row coordinate.
-         */
-        private final int myRow;
-        /**
-         * Column coordinate.
-         */
-        private final int myCol;
 
-        /**
-         * Cell constructor. By default,
-         * all walls are set to true (up),
-         * and visit status to false (not visited).
-         *
-         * @param theRow Row coordinate to assign
-         * @param theCol Column coordinate to assign
-         */
-        public Cell(final int theRow, final int theCol) {
-            // explicit call to super
-            super();
-
-            myLeftWall = true;
-            myRightWall = true;
-            myTopWall = true;
-            myBottomWall = true;
-            myVisited = false;
-
-            myRow = theRow;
-            myCol = theCol;
-        }
-
-        /**
-         * {@inheritDoc}
-         * Returns information about the cell's row and column coordinates,
-         * status of the walls, and whether it has been visited.
-         *
-         * @return String representation of the cell
-         */
-        @Override
-        public String toString() {
-            return "Visited: " + myVisited + "\n" +
-                    "Row: " + myRow + "; Column: " + myCol + ";\n" +
-                    (myLeftWall ? "Left Wall" : "No Left Wall") + "\n" +
-                    (myRightWall ? "Right Wall" : "No Right Wall") + "\n" +
-                    (myTopWall ? "Upper Wall" : "No Upper Wall") + "\n" +
-                    (myBottomWall ? "Lower Wall" : "No Lower Wall") + "\n";
-        }
-    }
 }
