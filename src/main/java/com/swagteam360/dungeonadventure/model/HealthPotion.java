@@ -24,7 +24,7 @@ public class HealthPotion implements Item {
      * Constructs a new instance of the HealthPotion class.
      * @param theHealAmount The amount of HP this health potion can restore.
      */
-    protected HealthPotion(int theHealAmount) {
+    HealthPotion(int theHealAmount) {
         myHealAmount = theHealAmount;
     }
 

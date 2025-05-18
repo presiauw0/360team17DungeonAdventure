@@ -1,5 +1,8 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Room class represents a single room within a dungeon. A room may contain
  * various elements such as doors, items, monsters, or special structures. The class
@@ -16,7 +19,7 @@ public class Room implements Cell, IRoom {
      * Contains the items in the room, such
      * as potions.
      */
-    private Item[] myItems;
+    private final List<Item> myItems;
 
     // private Pillar myPillar;
 
@@ -136,6 +139,8 @@ public class Room implements Cell, IRoom {
             throw new IllegalArgumentException("Row and column cannot be negative.");
         }
 
+        myItems = new ArrayList<>();
+
         // set entrance or exit type
         switch (theEntranceExitType) {
             case IRoom.PROPERTY_NORMAL -> myEntranceExit = IRoom.PROPERTY_NORMAL;
@@ -240,19 +245,18 @@ public class Room implements Cell, IRoom {
 
     @Override
     public void placeItems() {
-/*
-        // Course description probabilities for these items.
-
-        myHealingPotion = Math.random() < 0.10;
-        myVisionPotion = Math.random() < 0.10;
-        // hasPillar = Math.random() < 0.10;
-
-        int itemCount = (myHealingPotion ? 1 : 0) +
-                (myVisionPotion ? 1 : 0) +
-                (myPillar ? 1 : 0);
-
-        myMultipleItems = itemCount > 1;*/
         // TODO implement
+        final boolean genHealingPotion = Math.random() < Item.GENERATION_PROB;
+        final boolean genVisionPotion = Math.random() < Item.GENERATION_PROB;
+
+        if (!isEntranceOrExit()) {
+            if (genHealingPotion) {
+                myItems.add(new HealthPotion((int)(Math.random()*5)+1));
+            }
+            if (genVisionPotion) {
+                myItems.add(new VisionPotion());
+            }
+        }
     }
 
     @Override
@@ -286,7 +290,7 @@ public class Room implements Cell, IRoom {
      * Clear all items and pillars.
      */
     private void clearRoom() {
-        myItems = new Item[IRoom.DEFAULT_MAX_ITEMS]; // Clear out items
+        myItems.clear(); // Clear out items
         // clear pillar code here
     }
 

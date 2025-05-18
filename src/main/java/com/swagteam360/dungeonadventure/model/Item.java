@@ -12,6 +12,11 @@ package com.swagteam360.dungeonadventure.model;
 public interface Item {
 
     /**
+     * Percent probability that an item is generated.
+     */
+    double GENERATION_PROB = 0.10;
+
+    /**
      * Applies the item's effect or enhancement to the Hero.
      *
      * @return A string representation of the item's effect or enhancement.
