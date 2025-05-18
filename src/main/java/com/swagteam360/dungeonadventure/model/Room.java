@@ -22,6 +22,7 @@ public class Room implements Cell, IRoom {
     private final List<Item> myItems;
 
     // private Pillar myPillar;
+    private boolean myPit = false; //FIXME
 
     /**
      * Specify whether the room is an entrance,
@@ -87,13 +88,13 @@ public class Room implements Cell, IRoom {
      * Indicates whether the room contains a healing potion.
      * This is represented by an "H" in the toString method.
      */
-    //private boolean myHealingPotion;
+    //private boolean myHasHealingPotion;
 
     /**
      * Indicates whether the room contains a vision potion.
      * This is represented by a "V" in the toString method.
      */
-    //private boolean myVisionPotion;
+    //private boolean myHasVisionPotion;
 
     /**
      * Indicates whether the room contains a pillar.
@@ -160,6 +161,12 @@ public class Room implements Cell, IRoom {
         myDoorRight = theRightDoor;
         myDoorTop = theTopDoor;
         myDoorBottom = theBottomDoor;
+
+        // generate items and pits
+        if (!isEntranceOrExit()) {
+            generateItems();
+            generatePits();
+        }
 /*
         if (myEntrance || myExit) {
             myPillar = false; // Entrance and exit are empty rooms.
@@ -243,38 +250,49 @@ public class Room implements Cell, IRoom {
         myTraversalFlag = true;
     }
 
-    @Override
-    public void placeItems() {
-        // TODO implement
+
+    /**
+     * Randomly generated potions and other items for a room.
+     */
+    private void generateItems() {
         final boolean genHealingPotion = Math.random() < Item.GENERATION_PROB;
         final boolean genVisionPotion = Math.random() < Item.GENERATION_PROB;
 
-        if (!isEntranceOrExit()) {
-            if (genHealingPotion) {
-                myItems.add(new HealthPotion((int)(Math.random()*5)+1));
-            }
-            if (genVisionPotion) {
-                myItems.add(new VisionPotion());
-            }
+        if (genHealingPotion) {
+            myItems.add(new HealthPotion((int)(Math.random()*5)+1));
+        }
+        if (genVisionPotion) {
+            myItems.add(new VisionPotion());
         }
     }
 
-    @Override
-    public void placeMonsters() {
-        // TODO implement
-    }
-
     /**
-     * Determines if the room should contain a pit and updates the `hasPit` field appropriately.
+     * Determines if the room should contain a pit.
      * <p>
      * The method uses a random probability to decide whether the room will have a pit.
      * There is a 10% chance that the `hasPit` field will be set to true, indicating
      * the presence of a pit in the room. Otherwise, the field will remain false.
      */
-    public void generatePits() {
+    private void generatePits() {
         //myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
         // TODO implement
+        final boolean genPit = Math.random() < Item.GENERATION_PROB;
+
+        if (genPit) {
+            myPit = true; //FIXME
+        }
     }
+
+    @Override
+    public void addMonster() {
+        // TODO implement
+    }
+
+    @Override
+    public void setPillar() {
+        // TODO implement
+    }
+
 
     // Private helpers
 
@@ -316,7 +334,7 @@ public class Room implements Cell, IRoom {
             return 'i';
         } else if (IRoom.PROPERTY_EXIT.equals(myEntranceExit)) {
             return 'O';
-        /*} else if (myPillar) {
+        }/* else if (myPillar) {
             return 'P';
         } else if (myMultipleItems) {
             return 'M';
@@ -325,10 +343,34 @@ public class Room implements Cell, IRoom {
         } else if (myVisionPotion) {
             return 'V';
         } else if (myPit) {
-            return 'X';*/
+            return 'X';
         } else {
             return ' ';
         }
+        */
+
+        else {
+            char returnChar = ' ';
+
+            if (myPit) {
+                returnChar = 'X'; //FIXME
+            }
+
+            for (Item x : myItems) {
+                if (returnChar == ' ') {
+                    if (x instanceof HealthPotion) {
+                        returnChar = 'H';
+                    } else if (x instanceof VisionPotion) {
+                        returnChar = 'V';
+                    }
+                } else {
+                    returnChar = 'M'; // multiple items
+                }
+            }
+
+            return returnChar;
+        }
+
         //TODO finish this.
     }
 
