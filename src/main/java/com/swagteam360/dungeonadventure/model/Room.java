@@ -2,6 +2,7 @@ package com.swagteam360.dungeonadventure.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Room class represents a single room within a dungeon. A room may contain
@@ -21,7 +22,7 @@ public class Room implements Cell, IRoom {
      */
     private final List<Item> myItems;
 
-    // private Pillar myPillar;
+    private Pillar myPillar;
     private boolean myPit = false; //FIXME
 
     /**
@@ -289,8 +290,13 @@ public class Room implements Cell, IRoom {
     }
 
     @Override
-    public void setPillar() {
-        // TODO implement
+    public void setPillar(final Pillar thePillar) {
+        if (isEntranceOrExit()) {
+            throw new IllegalStateException(
+                    "The pillar cannot be set on an entrance or exit room.");
+        } else {
+            myPillar = Objects.requireNonNull(thePillar);
+        }
     }
 
 
@@ -300,7 +306,8 @@ public class Room implements Cell, IRoom {
      * Indicate whether this room is an entrance or exit.
      * @return True if the room is an entrance or exit, false otherwise
      */
-    private boolean isEntranceOrExit() {
+    boolean isEntranceOrExit() {
+        // using package-level visibility
         return !IRoom.PROPERTY_NORMAL.equals(myEntranceExit);
     }
 

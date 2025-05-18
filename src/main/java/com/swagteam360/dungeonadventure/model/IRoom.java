@@ -27,7 +27,7 @@ public interface IRoom {
     /**
      * Assign a pillar to a room.
      */
-    void setPillar();
+    void setPillar(final Pillar thePillar);
 
     /**
      * Adds a monster to a room.
