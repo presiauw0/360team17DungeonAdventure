@@ -2,12 +2,16 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.GameManager;
 import com.swagteam360.dungeonadventure.model.GameSettings;
-import com.swagteam360.dungeonadventure.utility.SceneUtils;
+import com.swagteam360.dungeonadventure.utility.GUIUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
+import java.util.Map;
 
 /**
  * The StartMenuController class manages the interactions and navigation
@@ -71,6 +75,38 @@ public class StartMenuController {
     private ToggleGroup myDifficultyButtons;
 
     /**
+     * The ImageView component in the UI that represents the Thief character image.
+     * This UI element is used as part of the character selection functionality
+     * on the start menu.
+     * <p>
+     * It is defined in the associated FXML file and linked to this class using
+     * the @FXML annotation. This allows it to be accessed and manipulated
+     * programmatically within the controller.
+     */
+    @FXML
+    private ImageView myThiefImageView;
+
+    /**
+     * An ImageView component in the Start Menu user interface that visually represents
+     * the "Warrior" hero selection option.
+     * This UI element may respond to user interactions or to changes in the application's state
+     * to indicate the selection of the Warrior hero type.
+     * <p>
+     * This field is linked to the corresponding FXML element and is managed by the
+     * JavaFX framework.
+     */
+    @FXML
+    private ImageView myWarriorImageView;
+
+    /**
+     * The `ImageView` component that represents the Priestess character in the start menu interface.
+     * This UI element is linked to its corresponding definition in the associated FXML file.
+     * It is primarily used to display the visual representation of the Priestess hero.
+     */
+    @FXML
+    private ImageView myPriestessImageView;
+
+    /**
      * Event handler for the Start button in the application's user interface.
      * This method loads the secondary menu scene and switches the application's
      * current view to it. The scene is loaded from the corresponding FXML file.
@@ -81,7 +117,7 @@ public class StartMenuController {
     private void startButtonEvent(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/secondary-menu.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -121,7 +157,7 @@ public class StartMenuController {
     private void newGameEvent(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -137,7 +173,7 @@ public class StartMenuController {
     private void backButtonToStartScreenEvent(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/start-menu.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -153,7 +189,7 @@ public class StartMenuController {
     private void backButtonToSecondaryMenuEvent(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/secondary-menu.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -181,6 +217,17 @@ public class StartMenuController {
     }
 
     /**
+     * Event handler for the "How to Play" menu item in the application's user interface.
+     * Displays an informational dialog that explains how to play the game.
+     * <p>
+     * This method is invoked via FXML when the "How to Play" menu item is selected.
+     */
+    @FXML
+    private void howToPlayMenuEvent() {
+        GUIUtils.showHowToPlayInfo();
+    }
+
+    /**
      * Event handler for the Options button in the application's user interface.
      * This method loads the options screen and switches the application's current view to it.
      * The scene is loaded from the corresponding FXML file. If loading the FXML file fails,
@@ -193,7 +240,7 @@ public class StartMenuController {
     private void optionsButtonEvent(final ActionEvent theActionEvent) {
         FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/options.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
     /**
@@ -226,7 +273,7 @@ public class StartMenuController {
 
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
-        SceneUtils.switchScene(theActionEvent, loader);
+        GUIUtils.switchScene(theActionEvent, loader);
 
     }
 
@@ -258,23 +305,40 @@ public class StartMenuController {
      * the application loads the FXML file for the Start Menu.
      * <p>
      * Specifically, it configures the dark mode toggle button by interfacing
-     * with the SceneUtils class to ensure the toggle reflects the current
+     * with the GUIUtils class to ensure the toggle reflects the current
      * application theme when the scene is loaded.
      */
     @FXML
     private void initialize() {
-        SceneUtils.initializeDarkModeToggle(myDarkModeToggle);
+        GUIUtils.initializeDarkModeToggle(myDarkModeToggle);
     }
 
     /**
      * Toggles the application's theme between dark mode and light mode.
-     * This method uses the SceneUtils class to change the visual appearance
+     * This method uses the GUIUtils class to change the visual appearance
      * of the application's user interface based on the state of the dark mode toggle.
      * <p>
      * This method is bound to the JavaFX UI component responsible for the dark mode toggle.
      */
     @FXML
     private void toggleDarkMode() {
-        SceneUtils.toggleDarkMode(myDarkModeToggle);
+        GUIUtils.toggleDarkMode(myDarkModeToggle);
+    }
+
+    /**
+     * Handles the click event on different character ImageViews in the application's user interface.
+     * Displays a pop-up dialog containing specific information about the selected character,
+     * including their stats and special skills.
+     *
+     * @param theEvent the MouseEvent triggered by the user's click on a character's ImageView
+     */
+    @FXML
+    private void handleImageViewClick(final MouseEvent theEvent) {
+        Map<String, ImageView> heroViews = Map.of(
+                "Thief", myThiefImageView,
+                "Warrior", myWarriorImageView,
+                "Priestess", myPriestessImageView
+        );
+        GUIUtils.showCharacterInfo(theEvent, heroViews);
     }
 }

@@ -12,6 +12,7 @@
       <MenuButton layoutY="1.0" mnemonicParsing="false" text="Help" underline="true">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#aboutUsMenuEvent" text="About Us" />
+            <MenuItem mnemonicParsing="false" onAction="#howToPlayMenuEvent" text="How To Play" />
         </items>
       </MenuButton>
       <VBox layoutX="225.0" layoutY="133.0" prefHeight="105.0" prefWidth="151.0" spacing="10.0">
