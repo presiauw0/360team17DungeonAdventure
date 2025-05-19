@@ -1,5 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Stack;
+
 /**
  * The Dungeon class contains logic related to the
  * operations of the maze.
@@ -9,7 +11,15 @@ package com.swagteam360.dungeonadventure.model;
  */
 public final class Dungeon {
 
+    /**
+     * Represents the number of rows making up the maze.
+     * A value of y means there are y rows (1, 2, ..., y).
+     */
     private final int myRowSize;
+    /**
+     * Represents the number of columns making up the maze.
+     * A value of x means there are x rows (1, 2, ..., x).
+     */
     private final int myColSize;
     /**
      * Instance of the dungeon maze which generates
@@ -39,6 +49,8 @@ public final class Dungeon {
         // Create new maze using the room factory
         myDungeonMaze = new DungeonMaze(myRowSize, myColSize, roomFactory);
 
+        // Place pillars in the maze
+        placePillarsInRooms();
     }
 
     public Room getRoom(final int theRow, final int theCol) {
@@ -50,6 +62,39 @@ public final class Dungeon {
         }
     }
 
+    private Stack<Pillar> generatePillars() {
+        final Stack<Pillar> pillarStack = new Stack<>();
+
+        for (PillarType ptype : PillarType.values()) {
+            pillarStack.push(new Pillar(ptype));
+        }
+
+        return pillarStack;
+    }
+
+    private void placePillarsInRooms() {
+        final Stack<Pillar> pillarStack = generatePillars();
+
+        while (!pillarStack.isEmpty()) {
+            int randomRow = randomGen(0, myRowSize);
+            int randomCol = randomGen(0, myColSize);
+
+            if (getRoom(randomRow, randomCol).isEntranceOrExit()
+                || getRoom(randomRow, randomCol).hasPillar()) {
+                continue;
+            } else {
+                getRoom(randomRow, randomCol).setPillar(pillarStack.pop());
+            }
+        }
+    }
+
+    /**
+     * Generates a random number between values
+     * theStart and (theEnd - 1) inclusive.
+     * @param theStart Starting value (inclusive)
+     * @param theEnd Ending value (non-inclusive)
+     * @return A random integer between the specified range
+     */
     private int randomGen(final int theStart, final int theEnd) {
         return (int)(Math.random() * (theEnd-theStart)) + theStart;
     }

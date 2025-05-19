@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -300,7 +301,7 @@ public class Room implements Cell, IRoom {
     }
 
 
-    // Private helpers
+    // Package helpers
 
     /**
      * Indicate whether this room is an entrance or exit.
@@ -310,6 +311,16 @@ public class Room implements Cell, IRoom {
         // using package-level visibility
         return !IRoom.PROPERTY_NORMAL.equals(myEntranceExit);
     }
+
+    /**
+     * Reports whether the room has a pillar or not
+     * @return
+     */
+    boolean hasPillar() {
+        return myPillar != null;
+    }
+
+    // Private helpers
 
     /**
      * Clear all items and pillars.
@@ -341,9 +352,9 @@ public class Room implements Cell, IRoom {
             return 'i';
         } else if (IRoom.PROPERTY_EXIT.equals(myEntranceExit)) {
             return 'O';
-        }/* else if (myPillar) {
+        } else if (myPillar != null) {
             return 'P';
-        } else if (myMultipleItems) {
+        }/* else if (myMultipleItems) {
             return 'M';
         } else if (myHealingPotion) {
             return 'H';
