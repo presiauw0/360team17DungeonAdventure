@@ -1,16 +1,20 @@
 package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.GameManager;
+import com.swagteam360.dungeonadventure.utility.GUIUtils;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -24,6 +28,21 @@ import java.util.Random;
  * @version 1.0 (May 11, 2025)
  */
 public class GameViewController {
+
+    /**
+     * A ToggleButton in the user interface for enabling or disabling dark mode.
+     * This button provides users with the option to switch between light mode
+     * and dark mode in the application. The state of the button determines the
+     * active mode:
+     * - Selected: Dark mode is enabled.
+     * - Deselected: Light mode is active.
+     * <p>
+     * This variable is injected via FXML and linked to the application's scene
+     * graph. It may be associated with an event handler to execute the necessary
+     * logic when the button's state changes.
+     */
+    @FXML
+    private ToggleButton myDarkModeToggle;
 
     /**
      * A reference to an ImageView in the game view's user interface that displays
@@ -50,6 +69,18 @@ public class GameViewController {
      */
     @FXML
     private Label myHeroDialogueLabel;
+
+    /**
+     * A Label element in the FXML file, used to display the name of the player's hero in the game.
+     * <p>
+     * This label is part of the graphical user interface controlled by GameViewController.
+     * It provides a visual representation of the hero's name during gameplay.
+     * <p>
+     * This field is associated with the corresponding FXML element and is managed by JavaFX.
+     * It may be updated dynamically based on the current game state or interactions.
+     */
+    @FXML
+    private Label myHeroNameLabel;
 
     /**
      * Represents a Timeline object used for managing and animating hero dialogue sequences
@@ -88,18 +119,24 @@ public class GameViewController {
     }
 
     /**
-     * Initializes the game view by setting up the hero image based on the hero type
-     * specified in the current game settings.
-     * This method retrieves the selected hero type from the GameManager's game settings
-     * and calls the setHeroImage method to update the displayed hero image.
-     * If no hero type is specified, no action is performed.
+     * Initializes the game view controller by setting up the hero image, hero name label,
+     * and starting the hero dialogue. This method should be invoked to prepare the user
+     * interface for the current game session based on the player's selection and game settings.
+     * <p>
+     * - If a hero type is specified in the game settings, the corresponding hero image is
+     *   retrieved and displayed using the `setHeroImage` method.
+     * - The hero name label is updated to reflect the player's chosen name from the game settings.
+     * - Finally, the hero dialogue sequence is started to interact with the player.
      */
-    public void initialize() {
+    @FXML
+    private void initialize() {
+        GUIUtils.initializeDarkModeToggle(myDarkModeToggle);
         final String heroType = GameManager.getInstance().getGameSettings().getHero();
         if (heroType != null) {
             setHeroImage(heroType);
         }
 
+        myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
         startHeroDialogue();
     }
 
@@ -137,24 +174,23 @@ public class GameViewController {
      * This method is invoked via FXML when the "Help" button is clicked.
      */
     @FXML
-    private void helpButtonEvent() {
-
-        // TODO: Elaborate more here.
-
-        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("How to play");
-        alert.setHeaderText("Dungeon Adventure - Instructions");
-        alert.setContentText("""
-                Objectives: Explore the dungeon, collect treasure, and defeat the boss.
-                
-                Movement: Use WASD or arrow keys to move the hero.
-                
-                Good luck.
-                """);
-        alert.showAndWait();
-
+    private void howToPlayButtonEvent() {
+        GUIUtils.showHowToPlayInfo();
     }
 
+    /**
+     * Starts the hero dialogue sequence in the game view.
+     * This method initializes a timeline to periodically select random dialogue sentences
+     * for the hero to display, creating a dynamic and interactive experience for the user.
+     * <p>
+     * The dialogue text is displayed with fade-in and fade-out effects:
+     * - A random sentence is selected from the list of available hero dialogues.
+     * - The label displaying the dialogue is initially hidden, then it fades in over 1 second.
+     * - After remaining visible for 2 seconds, it fades out over another second.
+     * <p>
+     * The timeline is set to repeat indefinitely, ensuring that the hero conversations continue
+     * throughout the gameplay or until the timeline is stopped manually.
+     */
     private void startHeroDialogue() {
         myHeroDialogueTimeline = new Timeline(new KeyFrame(
                 Duration.seconds(5 + myRandom.nextInt(6)),
@@ -180,6 +216,26 @@ public class GameViewController {
         ));
         myHeroDialogueTimeline.setCycleCount(Animation.INDEFINITE);
         myHeroDialogueTimeline.play(); // Had help from CHATGPT for this whole method
+    }
+
+    /**
+     * Handles the event triggered by clicking on the hero image.
+     * This method provides a visual representation of character information
+     * based on the hero type selected in the game settings.
+     *
+     * @param theEvent the MouseEvent instance containing details about the mouse
+     *                 interaction with the hero image.
+     */
+    @FXML
+    private void handleHeroImageClick(MouseEvent theEvent) {
+        final String heroType = GameManager.getInstance().getGameSettings().getHero();
+        Map<String, ImageView> heroView = Map.of(heroType, myHeroImageView);
+        GUIUtils.showCharacterInfo(theEvent, heroView);
+    }
+
+    @FXML
+    private void toggleDarkMode() {
+        GUIUtils.toggleDarkMode(myDarkModeToggle);
     }
 
 }

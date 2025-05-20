@@ -20,6 +20,7 @@
       <MenuButton layoutY="1.0" mnemonicParsing="false" text="Help" underline="true">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#aboutUsMenuEvent" text="About Us" />
+            <MenuItem mnemonicParsing="false" onAction="#howToPlayMenuEvent" text="How To Play" />
         </items>
       </MenuButton>
       <VBox alignment="CENTER" layoutX="65.0" prefHeight="402.0" prefWidth="470.0" spacing="10.0">
@@ -37,17 +38,17 @@
             </Label>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="myThiefImageView" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#handleImageViewClick" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../images/Thief.png" />
                      </image>
                   </ImageView>
-                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="myWarriorImageView" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#handleImageViewClick" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../images/Warrior.png" />
                      </image>
                   </ImageView>
-                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="myPriestessImageView" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#handleImageViewClick" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../images/Priestess.png" />
                      </image>

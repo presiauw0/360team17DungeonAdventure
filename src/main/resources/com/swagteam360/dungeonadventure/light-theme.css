@@ -50,3 +50,9 @@
 ImageView {
     -fx-cursor: hand;
 }
+
+.progress-bar {
+    -fx-accent: #4caf50;
+    -fx-control-inner-background: #cccccc;
+    -fx-border-color: black;
+}

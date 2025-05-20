@@ -91,3 +91,9 @@
 ImageView {
     -fx-cursor: hand;
 }
+
+.dark-mode .progress-bar {
+    -fx-accent: #81c784;
+    -fx-control-inner-background: #444444;
+    -fx-border-color: white;
+}

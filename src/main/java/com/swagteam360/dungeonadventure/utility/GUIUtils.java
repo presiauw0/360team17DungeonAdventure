@@ -4,14 +4,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 /**
- * The SceneUtils class provides utility methods for managing JavaFX scenes
+ * The GUIUtils class provides utility methods for managing JavaFX scenes
  * within the application. It includes methods for switching between scenes
  * with predefined dimensions and applying a specified CSS stylesheet to the new scene.
  * <p>
@@ -23,7 +27,7 @@ import java.util.Objects;
  * @author Jonathan Hernandez
  * @version 1.1 (May 14, 2025)
  */
-public class SceneUtils {
+public final class GUIUtils {
 
     /**
      * Represents the fixed width of the scene in pixels.
@@ -64,6 +68,15 @@ public class SceneUtils {
     private static boolean myDarkMode = false;
 
     /**
+     * Private constructor to prevent instantiation of the utility class.
+     * The GUIUtils class is designed to provide static utility methods for managing
+     * and customizing graphical user interface elements in a JavaFX application.
+     */
+    private GUIUtils() {
+
+    }
+
+    /**
      * Switches the current scene in the JavaFX application to a new scene defined by the provided
      * FXMLLoader and theme stylesheet. The new scene is created with fixed dimensions and includes
      * a specified CSS stylesheet for customization.
@@ -78,7 +91,7 @@ public class SceneUtils {
             final Parent root = theLoader.load();
             final Scene scene = new Scene(root, WIDTH, HEIGHT);
             scene.getStylesheets().add(Objects.requireNonNull
-                    (SceneUtils.class.getResource(getCurrentTheme())).toExternalForm());
+                    (GUIUtils.class.getResource(getCurrentTheme())).toExternalForm());
 
             final Stage stage = (Stage) ((javafx.scene.Node) theEvent.getSource())
                     .getScene().getWindow();
@@ -111,7 +124,7 @@ public class SceneUtils {
      */
     public static void applyTheme(final Scene theScene) {
         theScene.getStylesheets().clear();
-        theScene.getStylesheets().add(Objects.requireNonNull(SceneUtils.class.getResource(getCurrentTheme()))
+        theScene.getStylesheets().add(Objects.requireNonNull(GUIUtils.class.getResource(getCurrentTheme()))
                 .toExternalForm());
     }
 
@@ -140,6 +153,108 @@ public class SceneUtils {
     public static void toggleDarkMode(final ToggleButton theToggleButton) {
         myDarkMode = theToggleButton.isSelected();
         applyTheme(theToggleButton.getScene());
+    }
+
+    /**
+     * Displays a pop-up dialog with detailed information about a character
+     * when their respective {@code ImageView} is clicked.
+     * The dialog contains the character's stats and special skills.
+     *
+     * @param theEvent the {@code MouseEvent} triggered by the user's click on a character's {@code ImageView}
+     * @param theHeroViews a map where the keys are character names (e.g., "Thief", "Warrior", "Priestess")
+     *                     and the values are their associated {@code ImageView} elements
+     */
+    public static void showCharacterInfo(final MouseEvent theEvent,
+                                         Map<String, ImageView> theHeroViews) {
+        final Object source = theEvent.getSource();
+        String message = "";
+
+        // The following stats are given by the course project description.
+        // Unsure if these are supposed to be hard-coded in or if we need to use SQLite for these entries.
+        // Nonetheless, these stats may be subject to change.
+
+        for (Map.Entry<String, ImageView> entry : theHeroViews.entrySet()) {
+            if (source == entry.getValue()) {
+                message = switch (entry.getKey()) {
+                    case "Thief" -> """
+                        🗡️ Thief
+                        
+                        Special Skill: Surprise Attack
+                        ➤ 40% extra attack
+                        ➤ 40% normal attack
+                        ➤ 20% no attack (caught)
+                        
+                        Stats:
+                        • Hit Points: 75
+                        • Attack Speed: 6
+                        • Chance to Hit: 80%
+                        • Damage Range: 20–40
+                        • Chance to Block: 40%
+                        """;
+                    case "Warrior" -> """
+                        🛡️ Warrior
+    
+                        Special Skill: Crushing Blow (40% chance)
+                        ➤ Deals 75–175 damage on success
+    
+                        Stats:
+                        • Hit Points: 125
+                        • Attack Speed: 4
+                        • Chance to Hit: 80%
+                        • Damage Range: 35–60
+                        • Chance to Block: 20%
+                        """;
+                    case "Priestess" -> """
+                        ✨ Priestess
+    
+                        Special Skill: Heal (restores HP over a range)
+    
+                        Stats:
+                        • Hit Points: 75
+                        • Attack Speed: 5
+                        • Chance to Hit: 70%
+                        • Damage Range: 25–45
+                        • Chance to Block: 30%
+                        """;
+                    default -> "";
+                };
+                break;
+            }
+
+        }
+
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Character Info");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * Displays an informational pop-up dialog box that provides instructions on how to play
+     * the game "Dungeon Adventure." The dialog contains details about the game's objectives,
+     * controls, and general guidance for players.
+     * <p>
+     * This method is typically invoked when the user selects the "How to Play" option
+     * from the user interface, offering easy access to game instructions.
+     * <p>
+     * The pop-up dialog uses JavaFX's Alert of type INFORMATION to present the content
+     * with a title, header text, and instructions formatted as a multi-line string.
+     */
+    public static void showHowToPlayInfo() {
+        // TODO: Elaborate more here.
+
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("How to play");
+        alert.setHeaderText("Dungeon Adventure - Instructions");
+        alert.setContentText("""
+                Objectives: Explore the dungeon, collect treasure, and defeat the boss.
+                
+                Movement: Use WASD or arrow keys to move the hero.
+                
+                Good luck.
+                """);
+        alert.showAndWait();
     }
 
 }
