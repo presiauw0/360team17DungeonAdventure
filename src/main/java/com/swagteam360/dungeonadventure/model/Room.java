@@ -1,5 +1,10 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * The Room class represents a single room within a dungeon. A room may contain
  * various elements such as doors, items, monsters, or special structures. The class
@@ -16,9 +21,10 @@ public class Room implements Cell, IRoom {
      * Contains the items in the room, such
      * as potions.
      */
-    private Item[] myItems;
+    private final List<Item> myItems;
 
-    // private Pillar myPillar;
+    private Pillar myPillar;
+    private boolean myPit = false; //FIXME
 
     /**
      * Specify whether the room is an entrance,
@@ -84,13 +90,13 @@ public class Room implements Cell, IRoom {
      * Indicates whether the room contains a healing potion.
      * This is represented by an "H" in the toString method.
      */
-    //private boolean myHealingPotion;
+    //private boolean myHasHealingPotion;
 
     /**
      * Indicates whether the room contains a vision potion.
      * This is represented by a "V" in the toString method.
      */
-    //private boolean myVisionPotion;
+    //private boolean myHasVisionPotion;
 
     /**
      * Indicates whether the room contains a pillar.
@@ -136,6 +142,8 @@ public class Room implements Cell, IRoom {
             throw new IllegalArgumentException("Row and column cannot be negative.");
         }
 
+        myItems = new ArrayList<>();
+
         // set entrance or exit type
         switch (theEntranceExitType) {
             case IRoom.PROPERTY_NORMAL -> myEntranceExit = IRoom.PROPERTY_NORMAL;
@@ -155,6 +163,12 @@ public class Room implements Cell, IRoom {
         myDoorRight = theRightDoor;
         myDoorTop = theTopDoor;
         myDoorBottom = theBottomDoor;
+
+        // generate items and pits
+        if (!isEntranceOrExit()) {
+            generateItems();
+            generatePits();
+        }
 /*
         if (myEntrance || myExit) {
             myPillar = false; // Entrance and exit are empty rooms.
@@ -238,55 +252,81 @@ public class Room implements Cell, IRoom {
         myTraversalFlag = true;
     }
 
-    @Override
-    public void placeItems() {
-/*
-        // Course description probabilities for these items.
 
-        myHealingPotion = Math.random() < 0.10;
-        myVisionPotion = Math.random() < 0.10;
-        // hasPillar = Math.random() < 0.10;
+    /**
+     * Randomly generated potions and other items for a room.
+     */
+    private void generateItems() {
+        final boolean genHealingPotion = Math.random() < Item.GENERATION_PROB;
+        final boolean genVisionPotion = Math.random() < Item.GENERATION_PROB;
 
-        int itemCount = (myHealingPotion ? 1 : 0) +
-                (myVisionPotion ? 1 : 0) +
-                (myPillar ? 1 : 0);
-
-        myMultipleItems = itemCount > 1;*/
-        // TODO implement
-    }
-
-    @Override
-    public void placeMonsters() {
-        // TODO implement
+        if (genHealingPotion) {
+            myItems.add(new HealthPotion((int)(Math.random()*5)+1));
+        }
+        if (genVisionPotion) {
+            myItems.add(new VisionPotion());
+        }
     }
 
     /**
-     * Determines if the room should contain a pit and updates the `hasPit` field appropriately.
+     * Determines if the room should contain a pit.
      * <p>
      * The method uses a random probability to decide whether the room will have a pit.
      * There is a 10% chance that the `hasPit` field will be set to true, indicating
      * the presence of a pit in the room. Otherwise, the field will remain false.
      */
-    public void generatePits() {
+    private void generatePits() {
         //myPit = Math.random() < 0.10; // Description says 10% so may adjust later for difficulty.
+        // TODO implement
+        final boolean genPit = Math.random() < Item.GENERATION_PROB;
+
+        if (genPit) {
+            myPit = true; //FIXME
+        }
+    }
+
+    @Override
+    public void addMonster() {
         // TODO implement
     }
 
-    // Private helpers
+    @Override
+    public void setPillar(final Pillar thePillar) {
+        if (isEntranceOrExit()) {
+            throw new IllegalStateException(
+                    "The pillar cannot be set on an entrance or exit room.");
+        } else {
+            myPillar = Objects.requireNonNull(thePillar);
+        }
+    }
+
+
+    // Package helpers
 
     /**
      * Indicate whether this room is an entrance or exit.
      * @return True if the room is an entrance or exit, false otherwise
      */
-    private boolean isEntranceOrExit() {
+    boolean isEntranceOrExit() {
+        // using package-level visibility
         return !IRoom.PROPERTY_NORMAL.equals(myEntranceExit);
     }
+
+    /**
+     * Reports whether the room has a pillar or not
+     * @return
+     */
+    boolean hasPillar() {
+        return myPillar != null;
+    }
+
+    // Private helpers
 
     /**
      * Clear all items and pillars.
      */
     private void clearRoom() {
-        myItems = new Item[IRoom.DEFAULT_MAX_ITEMS]; // Clear out items
+        myItems.clear(); // Clear out items
         // clear pillar code here
     }
 
@@ -312,19 +352,43 @@ public class Room implements Cell, IRoom {
             return 'i';
         } else if (IRoom.PROPERTY_EXIT.equals(myEntranceExit)) {
             return 'O';
-        /*} else if (myPillar) {
+        } else if (myPillar != null) {
             return 'P';
-        } else if (myMultipleItems) {
+        }/* else if (myMultipleItems) {
             return 'M';
         } else if (myHealingPotion) {
             return 'H';
         } else if (myVisionPotion) {
             return 'V';
         } else if (myPit) {
-            return 'X';*/
+            return 'X';
         } else {
             return ' ';
         }
+        */
+
+        else {
+            char returnChar = ' ';
+
+            if (myPit) {
+                returnChar = 'X'; //FIXME
+            }
+
+            for (Item x : myItems) {
+                if (returnChar == ' ') {
+                    if (x instanceof HealthPotion) {
+                        returnChar = 'H';
+                    } else if (x instanceof VisionPotion) {
+                        returnChar = 'V';
+                    }
+                } else {
+                    returnChar = 'M'; // multiple items
+                }
+            }
+
+            return returnChar;
+        }
+
         //TODO finish this.
     }
 

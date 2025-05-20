@@ -20,7 +20,7 @@ public class VisionPotion implements Item {
     /**
      * Constructs a new instance of the VisionPotion class.
      */
-    protected VisionPotion() {
+    VisionPotion() {
 
     }
 

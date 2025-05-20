@@ -25,17 +25,12 @@ public interface IRoom {
 
 
     /**
-     * Generate items for a room.
+     * Assign a pillar to a room.
      */
-    void placeItems();
+    void setPillar(final Pillar thePillar);
 
     /**
-     * Place monsters in a room if desired.
+     * Adds a monster to a room.
      */
-    void placeMonsters();
-
-    /**
-     * Generate pits for a room.
-     */
-    void generatePits();
+    void addMonster();
 }
