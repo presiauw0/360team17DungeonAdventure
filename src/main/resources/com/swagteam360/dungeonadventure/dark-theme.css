@@ -97,3 +97,9 @@ ImageView {
     -fx-control-inner-background: #444444;
     -fx-border-color: white;
 }
+
+.list-view {
+    -fx-background-color: #444444;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+}

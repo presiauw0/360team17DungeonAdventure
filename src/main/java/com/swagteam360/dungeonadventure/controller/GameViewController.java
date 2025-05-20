@@ -6,6 +6,7 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -119,21 +120,36 @@ public class GameViewController {
     }
 
     /**
-     * Initializes the game view controller by setting up the hero image, hero name label,
-     * and starting the hero dialogue. This method should be invoked to prepare the user
-     * interface for the current game session based on the player's selection and game settings.
+     * Initializes the GameViewController instance and its associated user interface elements.
+     * This method is called automatically by the JavaFX framework as part of the FXML initialization process.
      * <p>
-     * - If a hero type is specified in the game settings, the corresponding hero image is
-     *   retrieved and displayed using the `setHeroImage` method.
-     * - The hero name label is updated to reflect the player's chosen name from the game settings.
-     * - Finally, the hero dialogue sequence is started to interact with the player.
+     * The initialize method performs the following tasks:
+     * 1. Ensures required UI components such as ImageView and Labels are not null by initializing them if necessary.
+     * 2. Configures the dark mode toggle button using predefined utilities.
+     * 3. Retrieves the hero type and name from the game settings and updates the corresponding UI elements.
+     * 4. Sets the hero image in the user interface based on the retrieved hero type.
+     * 5. Initiates the hero dialogue sequence to display random dynamic dialogues in the UI.
      */
     @FXML
     private void initialize() {
+
+        if (myHeroImageView == null) {
+            myHeroImageView = new ImageView();
+        }
+
+        if (myHeroDialogueLabel == null) {
+            myHeroDialogueLabel = new Label();
+        }
+
         GUIUtils.initializeDarkModeToggle(myDarkModeToggle);
         final String heroType = GameManager.getInstance().getGameSettings().getHero();
         if (heroType != null) {
             setHeroImage(heroType);
+        }
+
+        if (myHeroNameLabel == null) {
+            myHeroNameLabel = new Label();
+            myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
         }
 
         myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
@@ -233,9 +249,49 @@ public class GameViewController {
         GUIUtils.showCharacterInfo(theEvent, heroView);
     }
 
+    /**
+     * Toggles the dark mode theme for the application's user interface.
+     * This method updates the user interface appearance between dark mode
+     * and light mode by interacting with the application's dark mode settings.
+     * <p>
+     * The dark mode toggle state is managed through the provided toggle control.
+     * <p>
+     * This method is invoked via FXML when the associated toggle control is
+     * interacted with.
+     */
     @FXML
     private void toggleDarkMode() {
         GUIUtils.toggleDarkMode(myDarkModeToggle);
+    }
+
+    /**
+     * Navigates to the Inventory View of the application.
+     * This method loads the "inventory-view.fxml" file and switches the scene
+     * to display the Inventory View.
+     *
+     * @param theActionEvent the ActionEvent instance triggered by the user interaction
+     *                       that initiates the navigation to the Inventory View.
+     */
+    @FXML
+    private void goToInventoryView(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
+                .getResource("/com/swagteam360/dungeonadventure/inventory-view.fxml"));
+        GUIUtils.switchScene(theActionEvent, loader);
+    }
+
+    /**
+     * Navigates back to the Game View of the application.
+     * This method loads the "game-view.fxml" file and switches the scene
+     * to display the Game View.
+     *
+     * @param theActionEvent the ActionEvent instance triggered by the user interaction
+     *                       that initiates the navigation back to the Game View.
+     */
+    @FXML
+    private void goBackToGameView(final ActionEvent theActionEvent) {
+        final FXMLLoader loader = new FXMLLoader(getClass()
+                .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
+        GUIUtils.switchScene(theActionEvent, loader);
     }
 
 }
