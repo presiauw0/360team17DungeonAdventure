@@ -96,12 +96,12 @@
                            <children>
                               <Label fx:id="myHeroNameLabel" alignment="CENTER" prefHeight="17.0" prefWidth="253.0" text="Hero Name" />
                               <ProgressBar prefHeight="20.0" prefWidth="234.0" progress="0.0" />
-                              <Button alignment="CENTER" mnemonicParsing="false" text="Inventory 🎒" />
+                              <Button alignment="CENTER" mnemonicParsing="false" onAction="#goToInventoryView" text="Inventory 🎒" />
                            </children>
                         </VBox>
                      </children>
                   </HBox>
-                  <Label fx:id="myHeroDialogueLabel" alignment="CENTER" prefHeight="38.0" prefWidth="490.0" text="Let's go!">
+                  <Label fx:id="myHeroDialogueLabel" alignment="CENTER" prefHeight="38.0" prefWidth="490.0">
                      <font>
                         <Font size="24.0" />
                      </font>
