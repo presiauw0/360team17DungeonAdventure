@@ -1,9 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * The Room class represents a single room within a dungeon. A room may contain
@@ -73,6 +71,12 @@ public class Room implements Cell, IRoom {
      * a room has been visited during creation
      */
     private boolean myTraversalFlag;
+
+    private MonsterFactory myMonsterFactory;
+
+    private boolean myHasMonster;
+
+    private Monster myMonster;
 
     /**
      * Indicates whether the room contains multiple items.
@@ -288,6 +292,20 @@ public class Room implements Cell, IRoom {
     @Override
     public void addMonster() {
         // TODO implement
+
+        // Three random choices. We need to randomly call this method
+
+        double choice = Math.random();
+        if (choice < 0.25) {
+            myMonster = myMonsterFactory.createMonster("Ogre");
+        } else if (choice < 0.50) {
+            myMonster = myMonsterFactory.createMonster("Gremlin");
+        } else {
+            myMonster = myMonsterFactory.createMonster("Skeleton");
+        }
+
+        myHasMonster = true;
+
     }
 
     @Override
@@ -445,5 +463,61 @@ public class Room implements Cell, IRoom {
         return sb.toString();
 
     }
+
+    /**
+     * Determines and returns the set of directions for which doors are accessible
+     * in the current room. Accessibility is based on the state of the doors in
+     * each direction (top, bottom, left, right).
+     *
+     * @return A Set of {@link Direction} representing the accessible directions
+     *         from the current room. The Set may contain one or more of the following
+     *         directions: UP, DOWN, LEFT, RIGHT, depending on which doors are open.
+     */
+    public Set<Direction> getAvailableDirections() {
+        Set<Direction> directions = new HashSet<>();
+
+        if (myDoorTop) { directions.add(Direction.NORTH);}
+        if (myDoorBottom) { directions.add(Direction.SOUTH);}
+        if (myDoorLeft) { directions.add(Direction.WEST);}
+        if (myDoorRight) { directions.add(Direction.EAST);}
+
+        return directions;
+
+    }
+
+    /**
+     * Determines whether the room contains a monster.
+     *
+     * @return True if the room has a monster, false otherwise.
+     */
+    public boolean hasMonster() { return myHasMonster; }
+
+    /**
+     * Retrieves the monster present in the room, if any.
+     * The method checks whether the room contains a monster
+     * and returns it. If no monster is present, the method
+     * returns null.
+     *
+     * @return The Monster object if the room contains a monster,
+     *         or null if no monster is present.
+     */
+    public Monster getMonster() { return (hasMonster()) ? myMonster : null; }
+
+    /**
+     * Determines whether the room contains any items.
+     *
+     * @return True if the room has one or more items, false otherwise.
+     */
+    public boolean hasItems() { return !myItems.isEmpty(); }
+
+    /**
+     * Retrieves the list of items present in the room.
+     * The returned list contains all the items currently
+     * available in the room.
+     *
+     * @return A list of {@link Item} objects representing
+     *         the items present in the room.
+     */
+    public List<Item> getItems() { return myItems; }
 
 }

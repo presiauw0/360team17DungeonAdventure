@@ -6,8 +6,8 @@ import java.util.Stack;
  * The Dungeon class contains logic related to the
  * operations of the maze.
  *
- * @author Preston Sia (psia97)
- * @version 1.00, 09 May 2025
+ * @author Preston Sia (psia97), Jonathan Hernandez
+ * @version 1.01, 20 May 2025
  */
 public final class Dungeon {
 
@@ -27,6 +27,21 @@ public final class Dungeon {
      */
     private final DungeonMaze myDungeonMaze;
 
+    /**
+     * Represents the row index of the dungeon's entrance.
+     * This value is set during the dungeon's creation and
+     * defines the starting point for traversing or exploring
+     * the dungeon.
+     */
+    private final int myEntranceRow;
+
+    /**
+     * Represents the column index of the entrance in the dungeon maze.
+     * This value is set when the dungeon is initialized and remains constant
+     * throughout the lifetime of the Dungeon instance.
+     */
+    private final int myEntranceCol;
+
     public Dungeon(final int theRowSize, final int theColSize) {
         super(); // explicit call to super
 
@@ -41,6 +56,9 @@ public final class Dungeon {
         // Determine start and end coordinates
         final int startCol = randomGen(0, theColSize);
         final int endCol = randomGen(0, theColSize);
+
+        myEntranceRow = 0;
+        myEntranceCol = startCol;
 
         // Create room factory with start and end coordinates
         final CellFactory roomFactory = new RoomFactory(0, startCol,
@@ -132,5 +150,41 @@ public final class Dungeon {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Retrieves the row coordinate of the entrance in the dungeon.
+     *
+     * @return An integer representing the row index of the dungeon's entrance.
+     */
+    public int getEntranceRow() {
+        return myEntranceRow;
+    }
+
+    /**
+     * Retrieves the column coordinate of the entrance in the dungeon.
+     *
+     * @return An integer representing the column index of the dungeon's entrance.
+     */
+    public int getEntranceCol() {
+        return myEntranceCol;
+    }
+
+    /**
+     * Retrieves the number of rows in the dungeon.
+     *
+     * @return An integer representing the total number of rows in the dungeon.
+     */
+    public int getRowSize() {
+        return myRowSize;
+    }
+
+    /**
+     * Retrieves the number of columns in the dungeon.
+     *
+     * @return An integer representing the total number of columns in the dungeon.
+     */
+    public int getColSize() {
+        return myColSize;
     }
 }

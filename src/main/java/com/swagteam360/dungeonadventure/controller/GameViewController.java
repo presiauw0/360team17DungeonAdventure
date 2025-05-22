@@ -1,12 +1,13 @@
 package com.swagteam360.dungeonadventure.controller;
 
-import com.swagteam360.dungeonadventure.model.GameManager;
+import com.swagteam360.dungeonadventure.model.*;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -17,6 +18,7 @@ import javafx.util.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -91,6 +93,53 @@ public class GameViewController {
     private Timeline myHeroDialogueTimeline;
 
     /**
+     * Represents the button in the user interface that initiates movement
+     * towards the "North" direction within the game's room navigation system.
+     * <p>
+     * This button is part of the room movement controls and is initialized
+     * and managed by the GameViewController. Its functionality is tied to
+     * the roomMovementButtons event handling method, which determines the
+     * player's direction of movement within the game.
+     * <p>
+     * The button's visibility, text, and functionality can be updated dynamically
+     * based on the game's state or conditions.
+     */
+    @FXML
+    private Button myNorthButton;
+
+    /**
+     * Represents a button located on the south side of the user interface,
+     * typically used for navigating or performing an action associated
+     * with the "south" direction in the game view.
+     * <p>
+     * This button is controlled via FXML and is part of the {@code GameViewController} class.
+     * It interacts directly with other user interface elements,
+     * assisting in managing directional movement or commands in the game.
+     */
+    @FXML
+    private Button mySouthButton;
+
+    /**
+     * Represents the button in the user interface associated with the Eastward movement in the game.
+     * This button enables the player to navigate their character to the East direction within the game world.
+     * <p>
+     * The button is linked to the event handling logic that processes movement actions, allowing for seamless interaction.
+     * It is configured and managed via FXML and integrates with the game's movement controls.
+     */
+    @FXML
+    private Button myEastButton;
+
+    /**
+     * Represents the button in the Game View used to navigate the hero to the western room.
+     * This button triggers movement logic connected to the game when interacted with.
+     * <p>
+     * Mapped as an FXML component, it is linked to an action event handler that manages
+     * room traversal within the game's environment.
+     */
+    @FXML
+    private Button myWestButton;
+
+    /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
      * throughout the lifecycle of the GameViewController.
@@ -153,6 +202,7 @@ public class GameViewController {
         }
 
         myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
+        updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
         startHeroDialogue();
     }
 
@@ -292,6 +342,57 @@ public class GameViewController {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
         GUIUtils.switchScene(theActionEvent, loader);
+    }
+
+    /**
+     * Handles the room movement buttons in the game interface.
+     * This method updates the player's position in the game by determining the direction
+     * based on the button clicked and calling the movePlayer method with new coordinates.
+     * If an invalid button is clicked, an error message is displayed.
+     *
+     * @param theActionEvent the ActionEvent instance triggered by the user interaction
+     *                       with one of the movement buttons (e.g., north, south, east, west).
+     */
+    @FXML
+    private void roomMovementButtons(final ActionEvent theActionEvent) {
+
+        Button clickedButton = (Button) theActionEvent.getSource();
+        int newRow = GameManager.getInstance().getCurrPositionRow();
+        int newCol = GameManager.getInstance().getCurrPositionCol();
+
+        switch (clickedButton.getId()) {
+            case "myNorthButton" -> newRow--;
+            case "mySouthButton" -> newRow++;
+            case "myEastButton" -> newCol++;
+            case "myWestButton" -> newCol--;
+            default -> {
+                System.out.println("Invalid button clicked");
+                return;
+            }
+        }
+
+        GameManager.getInstance().movePlayer(newRow, newCol);
+        updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
+
+    }
+
+    /**
+     * Updates the movement buttons in the user interface to reflect the availability
+     * of directions the player can move within the game. If a direction is present
+     * in the provided set of available directions, the corresponding button is
+     * enabled; otherwise, it is disabled to indicate that movement in that
+     * direction is not possible.
+     *
+     * @param availableDirections a set of directions that are currently available
+     *                            for movement (e.g., {@code Direction.NORTH},
+     *                            {@code Direction.SOUTH}, {@code Direction.EAST},
+     *                            {@code Direction.WEST}).
+     */
+    private void updateMovementButtons(Set<Direction> availableDirections) {
+        myNorthButton.setVisible(availableDirections.contains(Direction.NORTH));
+        mySouthButton.setVisible(availableDirections.contains(Direction.SOUTH));
+        myEastButton.setVisible(availableDirections.contains(Direction.EAST));
+        myWestButton.setVisible(availableDirections.contains(Direction.WEST));
     }
 
 }
