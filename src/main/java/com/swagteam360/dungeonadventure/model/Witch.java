@@ -1,8 +1,8 @@
 package com.swagteam360.dungeonadventure.model;
 
-public class Skeleton extends Monster {
+public class Witch extends Monster {
     /**
-     * Parametered constructor defining what a "Skeleton" is and the attributes
+     * Parametered constructor defining what a "Witch" is and the attributes
      * that go along with them.
      *
      * @param theName           represents character name.
@@ -14,7 +14,7 @@ public class Skeleton extends Monster {
      * @param theHitChance      represents character hit chance.
      * @param theHealChance     represents percent chance to heal in combat.
      */
-    public Skeleton(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theHealChance) {
+    public Witch(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theHealChance) {
         super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theHealChance);
     }
 
