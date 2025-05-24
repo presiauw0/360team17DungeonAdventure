@@ -456,14 +456,18 @@ public class Room implements Cell, IRoom {
      * @return The Monster object if the room contains a monster,
      *         or null if no monster is present.
      */
-    public Monster getMonster() { return (hasMonster()) ? myMonster : null; }
+    public Monster getMonster() {
+        return myMonster;
+    }
 
     /**
      * Determines whether the room contains any items.
      *
      * @return True if the room has one or more items, false otherwise.
      */
-    public boolean hasItems() { return !myItems.isEmpty(); }
+    public boolean hasItems() {
+        return !myItems.isEmpty();
+    }
 
     /**
      * Retrieves the list of items present in the room.
@@ -473,6 +477,8 @@ public class Room implements Cell, IRoom {
      * @return A list of {@link Item} objects representing
      *         the items present in the room.
      */
-    public List<Item> getItems() { return myItems; }
+    public List<Item> getItems() {
+        return myItems;
+    }
 
 }
