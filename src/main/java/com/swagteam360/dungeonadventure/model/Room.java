@@ -247,7 +247,6 @@ public class Room implements Cell, IRoom {
 
     @Override
     public void addMonster() {
-        // TODO implement
 
         // Three random choices. We need to randomly call this method
 
@@ -271,6 +270,33 @@ public class Room implements Cell, IRoom {
         }
     }
 
+    @Override
+    public boolean hasMonster() {
+        return myMonster != null;
+    }
+
+    @Override
+    public Monster getMonster() {
+        return myMonster;
+    }
+
+    @Override
+    public boolean hasItems() {
+        return !myItems.isEmpty();
+    }
+
+    @Override
+    public List<Item> getAllItems() {
+        return myItems;
+    }
+
+    @Override
+    public List<Item> collectAllItems() {
+        //TODO implement checks to ensure that items aren't collected during certain conditions
+        final List<Item> roomItems = new ArrayList<>(myItems); // create a copy of the list
+        myItems.clear(); // clear the list for the room so that items cannot be collected again
+        return roomItems; // return the list of items to the player
+    }
 
     // Package helpers
 
@@ -342,7 +368,7 @@ public class Room implements Cell, IRoom {
             char returnChar = ' ';
 
             if (myPit) {
-                returnChar = 'X'; //FIXME
+                returnChar = 'X'; //FIXME when the pit is implemented
             }
 
             for (Item x : myItems) {
@@ -359,8 +385,6 @@ public class Room implements Cell, IRoom {
 
             return returnChar;
         }
-
-        //TODO finish this.
     }
 
     /**
@@ -436,49 +460,6 @@ public class Room implements Cell, IRoom {
 
         return directions;
 
-    }
-
-    /**
-     * Determines whether the room contains a monster.
-     *
-     * @return True if the room has a monster, false otherwise.
-     */
-    public boolean hasMonster() {
-        return myMonster != null;
-    }
-
-    /**
-     * Retrieves the monster present in the room, if any.
-     * The method checks whether the room contains a monster
-     * and returns it. If no monster is present, the method
-     * returns null.
-     *
-     * @return The Monster object if the room contains a monster,
-     *         or null if no monster is present.
-     */
-    public Monster getMonster() {
-        return myMonster;
-    }
-
-    /**
-     * Determines whether the room contains any items.
-     *
-     * @return True if the room has one or more items, false otherwise.
-     */
-    public boolean hasItems() {
-        return !myItems.isEmpty();
-    }
-
-    /**
-     * Retrieves the list of items present in the room.
-     * The returned list contains all the items currently
-     * available in the room.
-     *
-     * @return A list of {@link Item} objects representing
-     *         the items present in the room.
-     */
-    public List<Item> getItems() {
-        return myItems;
     }
 
 }
