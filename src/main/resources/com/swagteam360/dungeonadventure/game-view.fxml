@@ -74,19 +74,19 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Go North" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                              <Button fx:id="myNorthButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#roomMovementButtons" text="Go North" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
-                              <Button alignment="CENTER" mnemonicParsing="false" text="Go West" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <Button fx:id="myWestButton" alignment="CENTER" mnemonicParsing="false" onAction="#roomMovementButtons" text="Go West" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
-                              <Button alignment="CENTER" mnemonicParsing="false" text="Go South" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <Button fx:id="mySouthButton" alignment="CENTER" mnemonicParsing="false" onAction="#roomMovementButtons" text="Go South" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
-                              <Button alignment="CENTER" mnemonicParsing="false" text="Go East" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <Button fx:id="myEastButton" alignment="CENTER" mnemonicParsing="false" onAction="#roomMovementButtons" text="Go East" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
