@@ -1,8 +1,8 @@
 module com.swagteam360.dungeonadventure {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.xml;
     requires java.desktop;
+    requires java.sql;
 
 
     opens com.swagteam360.dungeonadventure to javafx.fxml;

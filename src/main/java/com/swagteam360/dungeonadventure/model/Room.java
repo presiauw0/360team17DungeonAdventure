@@ -72,41 +72,16 @@ public class Room implements Cell, IRoom {
      */
     private boolean myTraversalFlag;
 
+    /**
+     * Store a reference to an instance of a monster factory for
+     * generating monsters.
+     */
     private MonsterFactory myMonsterFactory;
 
-    private boolean myHasMonster;
-
+    /**
+     * Store the room's monster
+     */
     private Monster myMonster;
-
-    /**
-     * Indicates whether the room contains multiple items.
-     * This is represented by an "M" in the toString method.
-     */
-    //private boolean myMultipleItems;
-
-    /**
-     * Indicates whether the room contains a pit.
-     * This is represented by an "X" in the toString method.
-     */
-    //private boolean myPit;
-
-    /**
-     * Indicates whether the room contains a healing potion.
-     * This is represented by an "H" in the toString method.
-     */
-    //private boolean myHasHealingPotion;
-
-    /**
-     * Indicates whether the room contains a vision potion.
-     * This is represented by a "V" in the toString method.
-     */
-    //private boolean myHasVisionPotion;
-
-    /**
-     * Indicates whether the room contains a pillar.
-     * This is represented by a "P" in the toString method.
-     */
-    //private boolean myPillar;
 
 
     /**
@@ -173,25 +148,6 @@ public class Room implements Cell, IRoom {
             generateItems();
             generatePits();
         }
-/*
-        if (myEntrance || myExit) {
-            myPillar = false; // Entrance and exit are empty rooms.
-                               // These rooms must be empty
-
-            myDoorTop = true;  // I feel like this is subject to change
-            myDoorLeft = true; // via the game logic.
-            myDoorRight = true;
-            myDoorBottom = true;
-
-        } else {
-            myDoorTop = true;
-            myDoorLeft = true;
-            myDoorRight = true;
-            myDoorBottom = true;
-
-            placeItems();
-            generatePit();
-        }*/
 
     }
 
@@ -303,9 +259,6 @@ public class Room implements Cell, IRoom {
         } else {
             myMonster = myMonsterFactory.createMonster("Skeleton");
         }
-
-        myHasMonster = true;
-
     }
 
     @Override
@@ -332,7 +285,7 @@ public class Room implements Cell, IRoom {
 
     /**
      * Reports whether the room has a pillar or not
-     * @return
+     * @return Boolean value indicating whether a pillar is present
      */
     boolean hasPillar() {
         return myPillar != null;
@@ -490,7 +443,9 @@ public class Room implements Cell, IRoom {
      *
      * @return True if the room has a monster, false otherwise.
      */
-    public boolean hasMonster() { return myHasMonster; }
+    public boolean hasMonster() {
+        return myMonster != null;
+    }
 
     /**
      * Retrieves the monster present in the room, if any.
