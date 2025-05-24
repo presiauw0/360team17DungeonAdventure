@@ -1,6 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IRoom {
     /**
@@ -75,7 +76,19 @@ public interface IRoom {
      * and subsequently clears them from the room.
      * This can be used when the player comes to collect
      * the items.
-     * @return A list of all items in the room
+     * @return A list of {@link Item} objects representing
+     *         the items present in the room.
      */
     List<Item> collectAllItems();
+
+    /**
+     * Determines and returns the set of directions for which doors are accessible
+     * in the current room. Accessibility is based on the state of the doors in
+     * each direction (top, bottom, left, right).
+     *
+     * @return A Set of {@link Direction} representing the accessible directions
+     *         from the current room. The Set may contain one or more of the following
+     *         directions: UP, DOWN, LEFT, RIGHT, depending on which doors are open.
+     */
+    Set<Direction> getAvailableDirections();
 }

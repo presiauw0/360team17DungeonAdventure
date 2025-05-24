@@ -287,6 +287,10 @@ public class Room implements Cell, IRoom {
 
     @Override
     public List<Item> getAllItems() {
+        // TODO should we allow any method to retrieve the items
+        //   WITHOUT clearing them? This might allow a poorly written
+        //   player class to collect items over and over again
+        //   if they use this method instead of collectAllItems
         return myItems;
     }
 
@@ -296,6 +300,18 @@ public class Room implements Cell, IRoom {
         final List<Item> roomItems = new ArrayList<>(myItems); // create a copy of the list
         myItems.clear(); // clear the list for the room so that items cannot be collected again
         return roomItems; // return the list of items to the player
+    }
+
+    @Override
+    public Set<Direction> getAvailableDirections() {
+        Set<Direction> directions = new HashSet<>();
+
+        if (myDoorTop) { directions.add(Direction.NORTH);}
+        if (myDoorBottom) { directions.add(Direction.SOUTH);}
+        if (myDoorLeft) { directions.add(Direction.WEST);}
+        if (myDoorRight) { directions.add(Direction.EAST);}
+
+        return directions;
     }
 
     // Package helpers
@@ -438,27 +454,6 @@ public class Room implements Cell, IRoom {
         sb.append("*"); // Printed the bottom side of the room (last row)
 
         return sb.toString();
-
-    }
-
-    /**
-     * Determines and returns the set of directions for which doors are accessible
-     * in the current room. Accessibility is based on the state of the doors in
-     * each direction (top, bottom, left, right).
-     *
-     * @return A Set of {@link Direction} representing the accessible directions
-     *         from the current room. The Set may contain one or more of the following
-     *         directions: UP, DOWN, LEFT, RIGHT, depending on which doors are open.
-     */
-    public Set<Direction> getAvailableDirections() {
-        Set<Direction> directions = new HashSet<>();
-
-        if (myDoorTop) { directions.add(Direction.NORTH);}
-        if (myDoorBottom) { directions.add(Direction.SOUTH);}
-        if (myDoorLeft) { directions.add(Direction.WEST);}
-        if (myDoorRight) { directions.add(Direction.EAST);}
-
-        return directions;
 
     }
 
