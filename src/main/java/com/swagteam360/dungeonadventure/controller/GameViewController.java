@@ -356,7 +356,6 @@ public class GameViewController {
     @FXML
     private void roomMovementButtons(final ActionEvent theActionEvent) {
         Button clickedButton = (Button) theActionEvent.getSource();
-        Set<Direction> availableDirections = GameManager.getInstance().getCurrentRoom().getAvailableDirections();
         Direction targetDirection = null;
 
         switch (clickedButton.getId()) {
@@ -370,6 +369,15 @@ public class GameViewController {
             }
         }
 
+        // TELL the player to move. If it's illegal, handle the exception and print a notice.
+        try {
+            GameManager.getInstance().movePlayer(targetDirection);
+            updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
+        } catch(IllegalArgumentException e) {
+            System.out.println("Illegal Move!");
+        }
+
+/*
         if (availableDirections.contains(targetDirection)) {
             int newRow = GameManager.getInstance().getCurrPositionRow();
             int newCol = GameManager.getInstance().getCurrPositionCol();
@@ -396,7 +404,7 @@ public class GameViewController {
                 GameManager.getInstance().movePlayer(newRow, newCol);
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
             }
-        }
+        }*/
     }
 
     /**
