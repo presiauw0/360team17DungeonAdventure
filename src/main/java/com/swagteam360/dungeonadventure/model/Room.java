@@ -306,10 +306,10 @@ public class Room implements Cell, IRoom {
     public Set<Direction> getAvailableDirections() {
         Set<Direction> directions = new HashSet<>();
 
-        if (myDoorTop) { directions.add(Direction.NORTH);}
-        if (myDoorBottom) { directions.add(Direction.SOUTH);}
-        if (myDoorLeft) { directions.add(Direction.WEST);}
-        if (myDoorRight) { directions.add(Direction.EAST);}
+        if (!myDoorTop) { directions.add(Direction.NORTH);}
+        if (!myDoorBottom) { directions.add(Direction.SOUTH);}
+        if (!myDoorLeft) { directions.add(Direction.WEST);}
+        if (!myDoorRight) { directions.add(Direction.EAST);}
 
         return directions;
     }
