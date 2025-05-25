@@ -424,14 +424,14 @@ public class Room implements Cell, IRoom {
         StringBuilder sb = new StringBuilder();
         sb.append("*");
 
-        if (myDoorTop) {
+        if (!myDoorTop) {
             sb.append("-");
         } else {
             sb.append("*");
         }
         sb.append("*\n"); // Printed the top side of the room (first row)
 
-        if (myDoorLeft) {
+        if (!myDoorLeft) {
             sb.append("|");
         } else {
             sb.append("*");
@@ -439,14 +439,14 @@ public class Room implements Cell, IRoom {
 
         sb.append(getCenterSymbol()); // Get the symbol of what the room contains
 
-        if (myDoorRight) {
+        if (!myDoorRight) {
             sb.append("|\n");
         } else {
             sb.append("*\n"); // Printed the left/right and middle of the room (second row)
         }
         sb.append("*");
 
-        if (myDoorBottom) {
+        if (!myDoorBottom) {
             sb.append("-");
         } else {
             sb.append("*");
