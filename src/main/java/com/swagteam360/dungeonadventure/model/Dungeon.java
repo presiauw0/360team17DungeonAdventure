@@ -42,6 +42,12 @@ public final class Dungeon {
      */
     private final int myEntranceCol;
 
+    private Hero myHero;
+
+    private int myHeroRow;
+
+    private int myHeroCol;
+
     public Dungeon(final int theRowSize, final int theColSize) {
         super(); // explicit call to super
 
@@ -128,7 +134,14 @@ public final class Dungeon {
                 Room room = getRoom(i, j);
                 top.append(room.hasTopWall() ? "##" : "# ");   // append top wall chars
                 middle.append(room.hasLeftWall() ? "#" : " "); // append left, right and middle data
-                middle.append(room.getCenterSymbol());
+
+                if (i == myHeroRow && j == myHeroCol && myHero != null) {
+                    middle.append('J'); // Display Hero over existing elements in the room
+                } else {
+                    middle.append(room.getCenterSymbol());
+                }
+
+
 
                 // add right wall characters
                 if (j == myColSize - 1) {
@@ -151,6 +164,52 @@ public final class Dungeon {
 
         return sb.toString();
     }
+
+    // Claude gave me this detailed toString method
+
+    public String toDetailedString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < myRowSize; i++) {
+            String[][] roomLines = new String[myColSize][];
+
+            // Get all rooms in this row and split their string representations
+            for (int j = 0; j < myColSize; j++) {
+                Room room = getRoom(i, j);
+                String roomStr = room.toString();
+
+                // If this is the hero's position, replace the center character with 'J'
+                if (i == myHeroRow && j == myHeroCol) {
+                    // Split the room string into lines
+                    String[] lines = roomStr.split("\n");
+                    // The center character is in the middle line (index 1), at position 1
+                    StringBuilder middleLine = new StringBuilder(lines[1]);
+                    middleLine.setCharAt(1, 'J');
+                    lines[1] = middleLine.toString();
+                    // Reassemble the modified room string
+                    roomStr = String.join("\n", lines);
+                }
+
+                roomLines[j] = roomStr.split("\n");
+            }
+
+            // Combine each line from all rooms in this row
+            for (int line = 0; line < 3; line++) {
+                for (int j = 0; j < myColSize; j++) {
+                    sb.append(roomLines[j][line]);
+                    if (j < myColSize - 1) {
+                        sb.append(" ");  // Add space between rooms
+                    }
+                }
+                sb.append("\n");
+            }
+
+        }
+
+        return sb.toString();
+    }
+
+
 
     /**
      * Retrieves the row coordinate of the entrance in the dungeon.
@@ -187,4 +246,21 @@ public final class Dungeon {
     public int getColSize() {
         return myColSize;
     }
+
+    public void setHero(final Hero theHero) {
+        myHero = theHero;
+        myHeroRow = myEntranceRow;
+        myHeroCol = myEntranceCol;
+    }
+
+    public void updateHeroPosition(final int theRow, final int theCol) {
+        if (theRow < 0 || theRow >= myRowSize || theCol < 0 || theCol >= myColSize) {
+            throw new IllegalArgumentException("Row and/or column coordinates are invalid");
+        }
+
+        myHeroRow = theRow;
+        myHeroCol = theCol;
+
+    }
+
 }

@@ -100,13 +100,16 @@ public class GameManager {
         myHero = createHero(theGameSettings);
         myHealth = myHero.getHP();
         myDungeon = createDungeon(theGameSettings);
+        myDungeon.setHero(myHero);
         myCurrentPositionRow = myDungeon.getEntranceRow();
         myCurrentPositionCol = myDungeon.getEntranceCol();
         myInventoryList = new ArrayList<>();
 
         myCurrentRoom = myDungeon.getRoom(myCurrentPositionRow, myCurrentPositionCol);
         Set<Direction> availableDirection = myCurrentRoom.getAvailableDirections();
-        System.out.println(myDungeon.toString());
+        System.out.println(myDungeon.toString()); // Debugging
+        System.out.println();
+        System.out.println(myDungeon.toDetailedString());
         notifyObservers();
 
     }
@@ -135,7 +138,12 @@ public class GameManager {
         myCurrentPositionRow = theNewRow;
         myCurrentPositionCol = theNewCol;
         myCurrentRoom = myDungeon.getRoom(myCurrentPositionRow, myCurrentPositionCol);
+        myDungeon.updateHeroPosition(myCurrentPositionRow, myCurrentPositionCol);
         Set<Direction> availableDirection = myCurrentRoom.getAvailableDirections();
+        System.out.println(myDungeon.toString()); // Debugging
+        System.out.println();
+        System.out.println(myDungeon.toDetailedString());
+        System.out.println();
         notifyObservers();
     }
 
@@ -207,6 +215,8 @@ public class GameManager {
     public int getCurrPositionRow() { return myCurrentPositionRow; }
 
     public int getCurrPositionCol() { return myCurrentPositionCol; }
+
+    public Dungeon getDungeon() { return myDungeon; }
 
     /**
      * Adds a DungeonObserver to the list of observers.
