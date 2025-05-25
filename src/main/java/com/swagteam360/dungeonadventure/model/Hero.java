@@ -1,5 +1,8 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Hero abstract class represents the possible player characters, and their
  * baseline attributes. All Heroes have the same characteristics as a "DungeonCharacter"
@@ -16,6 +19,8 @@ public abstract class Hero extends DungeonCharacter {
      * receiving attack.
      */
     private int myBlockChance;
+
+    private final List<Item> myInventory;
 
     /**
      * Parametered constructor, calls upon the super constructor to help establish the object.
@@ -34,7 +39,12 @@ public abstract class Hero extends DungeonCharacter {
                             final int theHitChance, final int theBlockChance) {
         super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax,
                 theHitChance);
+        myInventory = new ArrayList<>();
         this.myBlockChance = theBlockChance;
+    }
+
+    public void addToInventory(final List<Item> theItems) {
+        myInventory.addAll(theItems);
     }
 
     //incorporate a block() method? I'm not sure how that would work.
