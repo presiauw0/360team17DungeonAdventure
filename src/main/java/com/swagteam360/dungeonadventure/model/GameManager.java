@@ -46,22 +46,19 @@ public class GameManager {
     private Dungeon myDungeon;
 
     /**
-     * Represents the player's current health within the game.
-     * This value determines the player's survivability and changes
-     * based on interactions such as taking damage, healing, or other
-     * game events affecting the player's health.
+     * Represents the currently active room in use by the game.
+     * This room will initially be set to the entrance coordinates
+     * specified in the Dungeon class.
      */
-    private int myHealth;
-
-    private int myCurrentPositionRow;
-
-    private int myCurrentPositionCol;
-
-    private List<Item> myInventoryList;
-
     private Room myCurrentRoom;
 
-    private List<DungeonObserver> myObservers = new ArrayList<>();
+    //private int myCurrentPositionRow;
+
+    //private int myCurrentPositionCol;
+
+    //private List<Item> myInventoryList;
+
+    private final List<DungeonObserver> myObservers = new ArrayList<>();
 
 
     /**
@@ -98,18 +95,17 @@ public class GameManager {
         // Initialize the game.
         myGameSettings = theGameSettings;
         myHero = createHero(theGameSettings);
-        myHealth = myHero.getHP();
         myDungeon = createDungeon(theGameSettings);
-        myDungeon.setHero(myHero);
-        myCurrentPositionRow = myDungeon.getEntranceRow();
-        myCurrentPositionCol = myDungeon.getEntranceCol();
-        myInventoryList = new ArrayList<>();
+        myCurrentRoom = myDungeon.getRoom(
+                myDungeon.getEntranceRow(),
+                myDungeon.getEntranceCol()
+        );
 
-        myCurrentRoom = myDungeon.getRoom(myCurrentPositionRow, myCurrentPositionCol);
-        Set<Direction> availableDirection = myCurrentRoom.getAvailableDirections();
-        System.out.println(myDungeon.toString()); // Debugging
-        System.out.println();
-        System.out.println(myDungeon.toDetailedString());
+//FIXME DEBUG
+System.out.println(myDungeon.toStringWithPlayer(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+System.out.println();
+System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+
         notifyObservers();
 
     }
@@ -121,29 +117,39 @@ public class GameManager {
      * Notifies all observers of the updated game state after the player's position
      * has been updated. Throws an exception if the inputs are invalid.
      *
-     * @param theNewRow the new row index to move the player to.
-     *                  Must be between 0 and the maximum row index of the dungeon (inclusive).
-     * @param theNewCol the new column index to move the player to.
-     *                  Must be between 0 and the maximum column index of the dungeon (inclusive).
+     * @param theDirection Direction enumeration type - either NORTH, SOUTH, WEST or EAST
      * @throws IllegalArgumentException if the specified row or column is out of bounds.
      */
-    public void movePlayer(int theNewRow, int theNewCol) {
+    public void movePlayer(final Direction theDirection) {
+        int row = myCurrentRoom.getRow(); // store the current row
+        int col = myCurrentRoom.getCol(); // store the current column
+        final int maxRow = myDungeon.getRowSize() - 1; // maximum row index inclusive
+        final int maxCol = myDungeon.getColSize() - 1; // maximum column index inclusive
 
-        // Check if the new position is valid
-        if (theNewRow < 0 || theNewRow > myDungeon.getRowSize() - 1) {
-            throw new IllegalArgumentException("Invalid row index.");
-        } else if (theNewCol < 0 || theNewCol > myDungeon.getColSize() - 1) {
-            throw new IllegalArgumentException("Invalid column index");
+        // Update the row and column given the direction
+        switch (theDirection) {
+            case NORTH -> {
+                if (row > 0) row--;
+            }
+            case SOUTH -> {
+                if (row < maxRow) row++;
+            }
+            case EAST -> {
+                if (col < maxCol) col++;
+            }
+            case WEST -> {
+                if (col > 0) col--;
+            }
         }
 
-        // Update position coordinates
-        myCurrentPositionRow = theNewRow;
-        myCurrentPositionCol = theNewCol;
 
-        // Update room and hero's position in the dungeon via the position coordinates
-        myCurrentRoom = myDungeon.getRoom(myCurrentPositionRow, myCurrentPositionCol);
-        myDungeon.updateHeroPosition(myCurrentPositionRow, myCurrentPositionCol);
-        Set<Direction> availableDirection = myCurrentRoom.getAvailableDirections();
+        // throw exception when out of bounds
+        if (row < 0 || row > maxRow || col < 0 || col > maxCol) {
+            throw new IllegalArgumentException(
+                    "Row and/or column coordinates of the given directional step are invalid");
+        }
+
+        myCurrentRoom = myDungeon.getRoom(row, col); // moves the character by updating the room
 
         // Initiate fight with monster if present in the room
         if (myCurrentRoom.hasMonster()) {
@@ -167,11 +173,15 @@ public class GameManager {
             System.out.println("Collected " + roomItems.size() + " items!");
         }
 
-        // Debugging
-        System.out.println(myDungeon.toString());
-        System.out.println();
-        System.out.println(myDungeon.toDetailedString());
-        System.out.println();
+
+
+
+// FIXME DEBUGGING
+System.out.println(myDungeon.toStringWithPlayer(row, col));
+System.out.println();
+System.out.println(myDungeon.toDetailedString(row, col));
+System.out.println();
+
 
         notifyObservers();
     }
@@ -237,15 +247,17 @@ public class GameManager {
      * @return the current instance of GameSettings representing the
      *         configuration settings for the game session.
      */
-    public GameSettings getGameSettings() { return myGameSettings; }
+    public GameSettings getGameSettings() {
+        return myGameSettings;
+    }
 
-    public Room getCurrentRoom() { return myCurrentRoom; }
+    public Room getCurrentRoom() {
+        return myCurrentRoom;
+    }
 
-    public int getCurrPositionRow() { return myCurrentPositionRow; }
-
-    public int getCurrPositionCol() { return myCurrentPositionCol; }
-
-    public Dungeon getDungeon() { return myDungeon; }
+    public Dungeon getDungeon() {
+        return myDungeon;
+    }
 
     /**
      * Adds a DungeonObserver to the list of observers.
@@ -277,7 +289,7 @@ public class GameManager {
     private void notifyObservers() {
         Room currentRoom = getCurrentRoom();
         for (DungeonObserver observer : myObservers) {
-            observer.update(currentRoom, myHero, myInventoryList);
+            observer.update(currentRoom, myHero, myHero.getInventory());
         }
     }
 

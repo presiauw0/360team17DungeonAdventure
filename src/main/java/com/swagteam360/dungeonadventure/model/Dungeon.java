@@ -42,11 +42,16 @@ public final class Dungeon {
      */
     private final int myEntranceCol;
 
-    private Hero myHero;
+    /**
+     * A reference to the active player.
+     */
+    //private Hero myHero;
 
-    private int myHeroRow;
+    /**
+     * Room that is currently active for the player.
+     */
+    //private Room myActiveRoom;
 
-    private int myHeroCol;
 
     public Dungeon(final int theRowSize, final int theColSize) {
         super(); // explicit call to super
@@ -123,8 +128,15 @@ public final class Dungeon {
         return (int)(Math.random() * (theEnd-theStart)) + theStart;
     }
 
-    @Override
-    public String toString() {
+    /**
+     * Returns a string representation of the dungeon with
+     * coordinates specifying where to draw the player.
+     *
+     * @param theCurRow Row position to draw the player.
+     * @param theCurCol Column position to draw the player.
+     * @return String representation of this dungeon.
+     */
+    public String toStringWithPlayer(final int theCurRow, final int theCurCol) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < myRowSize; i++) {
             final StringBuilder top = new StringBuilder();      // Store upper wall characters
@@ -135,7 +147,7 @@ public final class Dungeon {
                 top.append(room.hasTopWall() ? "##" : "# ");   // append top wall chars
                 middle.append(room.hasLeftWall() ? "#" : " "); // append left, right and middle data
 
-                if (i == myHeroRow && j == myHeroCol && myHero != null) {
+                if (i == theCurRow && j == theCurCol) {
                     middle.append('J'); // Display Hero over existing elements in the room
                 } else {
                     middle.append(room.getCenterSymbol());
@@ -165,9 +177,16 @@ public final class Dungeon {
         return sb.toString();
     }
 
+    @Override
+    public String toString() {
+        // return the text provided by toStringWithPlayer but with
+        // no specified player position (-1, -1 will be out of range)
+        return toStringWithPlayer(-1, -1);
+    }
+
     // Claude gave me this detailed toString method
 
-    public String toDetailedString() {
+    public String toDetailedString(final int theRow, final int theCol) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < myRowSize; i++) {
@@ -179,7 +198,7 @@ public final class Dungeon {
                 String roomStr = room.toString();
 
                 // If this is the hero's position, replace the center character with 'J'
-                if (i == myHeroRow && j == myHeroCol) {
+                if (i == theRow && j == theCol) {
                     // Split the room string into lines
                     String[] lines = roomStr.split("\n");
                     // The center character is in the middle line (index 1), at position 1
@@ -207,6 +226,11 @@ public final class Dungeon {
         }
 
         return sb.toString();
+    }
+
+    public String toDetailedString() {
+        // return without player coordinates drawn.
+        return toDetailedString(-1, -1);
     }
 
 
@@ -247,10 +271,14 @@ public final class Dungeon {
         return myColSize;
     }
 
+    /**
+     * Set's the instance of the active hero.
+     * //@param theHero A Hero instance to set
+     */
+/*
     public void setHero(final Hero theHero) {
         myHero = theHero;
-        myHeroRow = myEntranceRow;
-        myHeroCol = myEntranceCol;
+        myActiveRoom = getRoom(myEntranceRow, myEntranceCol);
     }
 
     public void updateHeroPosition(final int theRow, final int theCol) {
@@ -258,9 +286,8 @@ public final class Dungeon {
             throw new IllegalArgumentException("Row and/or column coordinates are invalid");
         }
 
-        myHeroRow = theRow;
-        myHeroCol = theCol;
+        myActiveRoom = getRoom(theRow, theCol);
 
     }
-
+*/
 }

@@ -1,6 +1,5 @@
 package com.swagteam360.dungeonadventure.model;
 
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -32,29 +31,29 @@ public class Room implements Cell, IRoom {
 
     // Status of the doors/walls
     /**
-     * Indicates whether the left door of the room is present or accessible.
-     * This variable represents the state of the left door in the current room.
+     * Indicates whether the left wall of the room is present.
+     * This variable represents the state of the left wall in the current room.
      * This is represented by a "|" in the toString method.
      */
-    private boolean myDoorLeft;
+    private boolean myWallLeft;
 
     /**
-     * Indicates whether the right door of the room is present or accessible.
+     * Indicates whether the right wall of the room is present.
      * This is represented by a "|" in the toString method.
      */
-    private boolean myDoorRight;
+    private boolean myWallRight;
 
     /**
-     * Indicates whether the bottom door of the room is present or accessible.
+     * Indicates whether the bottom wall of the room is present.
      * This is represented by a "-" in the toString method.
      */
-    private boolean myDoorBottom;
+    private boolean myWallBottom;
 
     /**
-     * Indicates whether the top door of the room is present or accessible.
+     * Indicates whether the top wall of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private boolean myDoorTop;
+    private boolean myWallTop;
 
     /**
      * Location of the room in the maze - Row coordinate
@@ -72,41 +71,16 @@ public class Room implements Cell, IRoom {
      */
     private boolean myTraversalFlag;
 
+    /**
+     * Store a reference to an instance of a monster factory for
+     * generating monsters.
+     */
     private MonsterFactory myMonsterFactory;
 
-    private boolean myHasMonster;
-
+    /**
+     * Store the room's monster
+     */
     private Monster myMonster;
-
-    /**
-     * Indicates whether the room contains multiple items.
-     * This is represented by an "M" in the toString method.
-     */
-    //private boolean myMultipleItems;
-
-    /**
-     * Indicates whether the room contains a pit.
-     * This is represented by an "X" in the toString method.
-     */
-    //private boolean myPit;
-
-    /**
-     * Indicates whether the room contains a healing potion.
-     * This is represented by an "H" in the toString method.
-     */
-    //private boolean myHasHealingPotion;
-
-    /**
-     * Indicates whether the room contains a vision potion.
-     * This is represented by a "V" in the toString method.
-     */
-    //private boolean myHasVisionPotion;
-
-    /**
-     * Indicates whether the room contains a pillar.
-     * This is represented by a "P" in the toString method.
-     */
-    //private boolean myPillar;
 
 
     /**
@@ -163,10 +137,10 @@ public class Room implements Cell, IRoom {
 
         myTraversalFlag = false;
 
-        myDoorLeft = theLeftDoor;
-        myDoorRight = theRightDoor;
-        myDoorTop = theTopDoor;
-        myDoorBottom = theBottomDoor;
+        myWallLeft = theLeftDoor;
+        myWallRight = theRightDoor;
+        myWallTop = theTopDoor;
+        myWallBottom = theBottomDoor;
 
         // generate items and pits
         if (!isEntranceOrExit()) {
@@ -174,67 +148,48 @@ public class Room implements Cell, IRoom {
             generatePits();
 
         }
-/*
-        if (myEntrance || myExit) {
-            myPillar = false; // Entrance and exit are empty rooms.
-                               // These rooms must be empty
-
-            myDoorTop = true;  // I feel like this is subject to change
-            myDoorLeft = true; // via the game logic.
-            myDoorRight = true;
-            myDoorBottom = true;
-
-        } else {
-            myDoorTop = true;
-            myDoorLeft = true;
-            myDoorRight = true;
-            myDoorBottom = true;
-
-            placeItems();
-            generatePit();
-        }*/
 
     }
 
     // Cell implementation
     @Override
     public boolean hasLeftWall() {
-        return myDoorLeft;
+        return myWallLeft;
     }
 
     @Override
     public boolean hasRightWall() {
-        return myDoorRight;
+        return myWallRight;
     }
 
     @Override
     public boolean hasTopWall() {
-        return myDoorTop;
+        return myWallTop;
     }
 
     @Override
     public boolean hasBottomWall() {
-        return myDoorBottom;
+        return myWallBottom;
     }
 
     @Override
     public void setLeftWall(final boolean theStatus) {
-        myDoorLeft = theStatus;
+        myWallLeft = theStatus;
     }
 
     @Override
     public void setRightWall(final boolean theStatus) {
-        myDoorRight = theStatus;
+        myWallRight = theStatus;
     }
 
     @Override
     public void setTopWall(final boolean theStatus) {
-        myDoorTop = theStatus;
+        myWallTop = theStatus;
     }
 
     @Override
     public void setBottomWall(final boolean theStatus) {
-        myDoorBottom = theStatus;
+        myWallBottom = theStatus;
     }
 
     @Override
@@ -292,7 +247,6 @@ public class Room implements Cell, IRoom {
 
     @Override
     public void addMonster() {
-        // TODO implement
 
         // Three random choices. We need to randomly call this method
 
@@ -304,9 +258,6 @@ public class Room implements Cell, IRoom {
         } else {
             myMonster = myMonsterFactory.createMonster("Skeleton");
         }
-
-        myHasMonster = true;
-
     }
 
     @Override
@@ -319,6 +270,49 @@ public class Room implements Cell, IRoom {
         }
     }
 
+    @Override
+    public boolean hasMonster() {
+        return myMonster != null;
+    }
+
+    @Override
+    public Monster getMonster() {
+        return myMonster;
+    }
+
+    @Override
+    public boolean hasItems() {
+        return !myItems.isEmpty();
+    }
+
+    @Override
+    public List<Item> getAllItems() {
+        // TODO should we allow any method to retrieve the items
+        //   WITHOUT clearing them? This might allow a poorly written
+        //   player class to collect items over and over again
+        //   if they use this method instead of collectAllItems
+        return myItems;
+    }
+
+    @Override
+    public List<Item> collectAllItems() {
+        //TODO implement checks to ensure that items aren't collected during certain conditions
+        final List<Item> roomItems = new ArrayList<>(myItems); // create a copy of the list
+        myItems.clear(); // clear the list for the room so that items cannot be collected again
+        return roomItems; // return the list of items to the player
+    }
+
+    @Override
+    public Set<Direction> getAvailableDirections() {
+        Set<Direction> directions = new HashSet<>();
+
+        if (!myWallTop) { directions.add(Direction.NORTH);}
+        if (!myWallBottom) { directions.add(Direction.SOUTH);}
+        if (!myWallLeft) { directions.add(Direction.WEST);}
+        if (!myWallRight) { directions.add(Direction.EAST);}
+
+        return directions;
+    }
 
     // Package helpers
 
@@ -333,7 +327,7 @@ public class Room implements Cell, IRoom {
 
     /**
      * Reports whether the room has a pillar or not
-     * @return
+     * @return Boolean value indicating whether a pillar is present
      */
     boolean hasPillar() {
         return myPillar != null;
@@ -390,7 +384,7 @@ public class Room implements Cell, IRoom {
             char returnChar = ' ';
 
             if (myPit) {
-                returnChar = 'X'; //FIXME
+                returnChar = 'X'; //FIXME when the pit is implemented
             }
 
             for (Item x : myItems) {
@@ -407,8 +401,6 @@ public class Room implements Cell, IRoom {
 
             return returnChar;
         }
-
-        //TODO finish this.
     }
 
     /**
@@ -432,14 +424,14 @@ public class Room implements Cell, IRoom {
         StringBuilder sb = new StringBuilder();
         sb.append("*");
 
-        if (myDoorTop) {
+        if (!myWallTop) {
             sb.append("-");
         } else {
             sb.append("*");
         }
         sb.append("*\n"); // Printed the top side of the room (first row)
 
-        if (myDoorLeft) {
+        if (!myWallLeft) {
             sb.append("|");
         } else {
             sb.append("*");
@@ -447,14 +439,14 @@ public class Room implements Cell, IRoom {
 
         sb.append(getCenterSymbol()); // Get the symbol of what the room contains
 
-        if (myDoorRight) {
+        if (!myWallRight) {
             sb.append("|\n");
         } else {
             sb.append("*\n"); // Printed the left/right and middle of the room (second row)
         }
         sb.append("*");
 
-        if (myDoorBottom) {
+        if (!myWallBottom) {
             sb.append("-");
         } else {
             sb.append("*");
@@ -465,61 +457,6 @@ public class Room implements Cell, IRoom {
 
     }
 
-    /**
-     * Determines and returns the set of directions for which doors are accessible
-     * in the current room. Accessibility is based on the state of the doors in
-     * each direction (top, bottom, left, right).
-     *
-     * @return A Set of {@link Direction} representing the accessible directions
-     *         from the current room. The Set may contain one or more of the following
-     *         directions: UP, DOWN, LEFT, RIGHT, depending on which doors are open.
-     */
-    public Set<Direction> getAvailableDirections() {
-        Set<Direction> directions = new HashSet<>();
-
-        if (!myDoorTop) { directions.add(Direction.NORTH);}
-        if (!myDoorBottom) { directions.add(Direction.SOUTH);}
-        if (!myDoorLeft) { directions.add(Direction.WEST);}
-        if (!myDoorRight) { directions.add(Direction.EAST);}
-
-        return directions;
-
-    }
-
-    /**
-     * Determines whether the room contains a monster.
-     *
-     * @return True if the room has a monster, false otherwise.
-     */
-    public boolean hasMonster() { return myHasMonster; }
-
-    /**
-     * Retrieves the monster present in the room, if any.
-     * The method checks whether the room contains a monster
-     * and returns it. If no monster is present, the method
-     * returns null.
-     *
-     * @return The Monster object if the room contains a monster,
-     *         or null if no monster is present.
-     */
-    public Monster getMonster() { return (hasMonster()) ? myMonster : null; }
-
-    /**
-     * Determines whether the room contains any items.
-     *
-     * @return True if the room has one or more items, false otherwise.
-     */
-    public boolean hasItems() { return !myItems.isEmpty(); }
-
-    /**
-     * Retrieves the list of items present in the room.
-     * The returned list contains all the items currently
-     * available in the room.
-     *
-     * @return A list of {@link Item} objects representing
-     *         the items present in the room.
-     */
-    public List<Item> getItems() { return myItems; }
 
     public void removeMonster() { myMonster = null;}
 
