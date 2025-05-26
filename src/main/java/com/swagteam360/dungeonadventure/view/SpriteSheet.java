@@ -3,6 +3,7 @@ package com.swagteam360.dungeonadventure.view;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
+
 public class SpriteSheet {
     private Image mySheet;
     private int mySpriteWidth;
