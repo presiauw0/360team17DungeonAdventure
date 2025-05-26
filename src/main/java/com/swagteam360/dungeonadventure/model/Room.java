@@ -1,6 +1,5 @@
 package com.swagteam360.dungeonadventure.model;
 
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -32,29 +31,29 @@ public class Room implements Cell, IRoom {
 
     // Status of the doors/walls
     /**
-     * Indicates whether the left door of the room is present or accessible.
-     * This variable represents the state of the left door in the current room.
+     * Indicates whether the left wall of the room is present.
+     * This variable represents the state of the left wall in the current room.
      * This is represented by a "|" in the toString method.
      */
-    private boolean myDoorLeft;
+    private boolean myWallLeft;
 
     /**
-     * Indicates whether the right door of the room is present or accessible.
+     * Indicates whether the right wall of the room is present.
      * This is represented by a "|" in the toString method.
      */
-    private boolean myDoorRight;
+    private boolean myWallRight;
 
     /**
-     * Indicates whether the bottom door of the room is present or accessible.
+     * Indicates whether the bottom wall of the room is present.
      * This is represented by a "-" in the toString method.
      */
-    private boolean myDoorBottom;
+    private boolean myWallBottom;
 
     /**
-     * Indicates whether the top door of the room is present or accessible.
+     * Indicates whether the top wall of the room is present or accessible.
      * This is represented by a "-" in the toString method.
      */
-    private boolean myDoorTop;
+    private boolean myWallTop;
 
     /**
      * Location of the room in the maze - Row coordinate
@@ -138,10 +137,10 @@ public class Room implements Cell, IRoom {
 
         myTraversalFlag = false;
 
-        myDoorLeft = theLeftDoor;
-        myDoorRight = theRightDoor;
-        myDoorTop = theTopDoor;
-        myDoorBottom = theBottomDoor;
+        myWallLeft = theLeftDoor;
+        myWallRight = theRightDoor;
+        myWallTop = theTopDoor;
+        myWallBottom = theBottomDoor;
 
         // generate items and pits
         if (!isEntranceOrExit()) {
@@ -154,42 +153,42 @@ public class Room implements Cell, IRoom {
     // Cell implementation
     @Override
     public boolean hasLeftWall() {
-        return myDoorLeft;
+        return myWallLeft;
     }
 
     @Override
     public boolean hasRightWall() {
-        return myDoorRight;
+        return myWallRight;
     }
 
     @Override
     public boolean hasTopWall() {
-        return myDoorTop;
+        return myWallTop;
     }
 
     @Override
     public boolean hasBottomWall() {
-        return myDoorBottom;
+        return myWallBottom;
     }
 
     @Override
     public void setLeftWall(final boolean theStatus) {
-        myDoorLeft = theStatus;
+        myWallLeft = theStatus;
     }
 
     @Override
     public void setRightWall(final boolean theStatus) {
-        myDoorRight = theStatus;
+        myWallRight = theStatus;
     }
 
     @Override
     public void setTopWall(final boolean theStatus) {
-        myDoorTop = theStatus;
+        myWallTop = theStatus;
     }
 
     @Override
     public void setBottomWall(final boolean theStatus) {
-        myDoorBottom = theStatus;
+        myWallBottom = theStatus;
     }
 
     @Override
@@ -306,10 +305,10 @@ public class Room implements Cell, IRoom {
     public Set<Direction> getAvailableDirections() {
         Set<Direction> directions = new HashSet<>();
 
-        if (!myDoorTop) { directions.add(Direction.NORTH);}
-        if (!myDoorBottom) { directions.add(Direction.SOUTH);}
-        if (!myDoorLeft) { directions.add(Direction.WEST);}
-        if (!myDoorRight) { directions.add(Direction.EAST);}
+        if (!myWallTop) { directions.add(Direction.NORTH);}
+        if (!myWallBottom) { directions.add(Direction.SOUTH);}
+        if (!myWallLeft) { directions.add(Direction.WEST);}
+        if (!myWallRight) { directions.add(Direction.EAST);}
 
         return directions;
     }
@@ -424,14 +423,14 @@ public class Room implements Cell, IRoom {
         StringBuilder sb = new StringBuilder();
         sb.append("*");
 
-        if (myDoorTop) {
+        if (!myWallTop) {
             sb.append("-");
         } else {
             sb.append("*");
         }
         sb.append("*\n"); // Printed the top side of the room (first row)
 
-        if (myDoorLeft) {
+        if (!myWallLeft) {
             sb.append("|");
         } else {
             sb.append("*");
@@ -439,14 +438,14 @@ public class Room implements Cell, IRoom {
 
         sb.append(getCenterSymbol()); // Get the symbol of what the room contains
 
-        if (myDoorRight) {
+        if (!myWallRight) {
             sb.append("|\n");
         } else {
             sb.append("*\n"); // Printed the left/right and middle of the room (second row)
         }
         sb.append("*");
 
-        if (myDoorBottom) {
+        if (!myWallBottom) {
             sb.append("-");
         } else {
             sb.append("*");

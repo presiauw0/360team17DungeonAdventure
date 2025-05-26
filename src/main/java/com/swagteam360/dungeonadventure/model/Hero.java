@@ -47,5 +47,9 @@ public abstract class Hero extends DungeonCharacter {
         myInventory.addAll(theItems);
     }
 
+    public List<Item> getInventory() {
+        return new ArrayList<>(myInventory); // create a copy of the list to return
+    }
+
     //incorporate a block() method? I'm not sure how that would work.
 }
