@@ -355,7 +355,7 @@ public class GameViewController {
      */
     @FXML
     private void roomMovementButtons(final ActionEvent theActionEvent) {
-        Button clickedButton = (Button) theActionEvent.getSource();
+        Button clickedButton = (Button) theActionEvent.getSource(); // Get button clicked and directions
         Direction targetDirection = null;
 
         switch (clickedButton.getId()) {
@@ -369,6 +369,7 @@ public class GameViewController {
             }
         }
 
+
         // TELL the player to move. If it's illegal, handle the exception and print a notice.
         try {
             GameManager.getInstance().movePlayer(targetDirection);
@@ -377,34 +378,6 @@ public class GameViewController {
             System.out.println("Illegal Move!");
         }
 
-/*
-        if (availableDirections.contains(targetDirection)) {
-            int newRow = GameManager.getInstance().getCurrPositionRow();
-            int newCol = GameManager.getInstance().getCurrPositionCol();
-            int maxRow = GameManager.getInstance().getDungeon().getRowSize() - 1;
-            int maxCol = GameManager.getInstance().getDungeon().getColSize() - 1;
-
-            switch (targetDirection) {
-                case NORTH -> {
-                    if (newRow > 0) newRow--;
-                }
-                case SOUTH -> {
-                    if (newRow < maxRow) newRow++;
-                }
-                case EAST -> {
-                    if (newCol < maxCol) newCol++;
-                }
-                case WEST -> {
-                    if (newCol > 0) newCol--;
-                }
-            }
-
-            // Only move if the new position is valid
-            if (newRow >= 0 && newRow <= maxRow && newCol >= 0 && newCol <= maxCol) {
-                GameManager.getInstance().movePlayer(newRow, newCol);
-                updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
-            }
-        }*/
     }
 
     /**

@@ -146,6 +146,7 @@ public class Room implements Cell, IRoom {
         if (!isEntranceOrExit()) {
             generateItems();
             generatePits();
+
         }
 
     }
@@ -456,5 +457,13 @@ public class Room implements Cell, IRoom {
 
     }
 
+
+    public void removeMonster() { myMonster = null;}
+
+    public List<Item> collectItems() {
+        List<Item> items = new ArrayList<>(myItems);
+        myItems.clear();
+        return items; // Collects and clears items from room
+    }
 
 }

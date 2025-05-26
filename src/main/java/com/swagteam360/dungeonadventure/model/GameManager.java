@@ -142,19 +142,46 @@ System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentR
             }
         }
 
+
         // throw exception when out of bounds
         if (row < 0 || row > maxRow || col < 0 || col > maxCol) {
             throw new IllegalArgumentException(
                     "Row and/or column coordinates of the given directional step are invalid");
         }
 
-        myCurrentRoom = myDungeon.getRoom(row, col);
+        myCurrentRoom = myDungeon.getRoom(row, col); // moves the character by updating the room
+
+        // Initiate fight with monster if present in the room
+        if (myCurrentRoom.hasMonster()) {
+            Monster monster = myCurrentRoom.getMonster();
+            BattleSystem battleSystem = new BattleSystem(myHero, monster);
+            boolean heroWon = battleSystem.startBattle();
+
+            // Remove monster from room, handle the case if we lost the fight
+            if (heroWon) {
+                myCurrentRoom.removeMonster();
+            } else {
+                System.out.println("Game Over!");
+                return;
+            }
+
+        }
+
+        if (myCurrentRoom.hasItems()) {
+            List<Item> roomItems = myCurrentRoom.collectItems();
+            myInventoryList.addAll(roomItems);
+            System.out.println("Collected " + roomItems.size() + " items!");
+        }
+
+
+
 
 // FIXME DEBUGGING
 System.out.println(myDungeon.toStringWithPlayer(row, col));
 System.out.println();
 System.out.println(myDungeon.toDetailedString(row, col));
 System.out.println();
+
 
         notifyObservers();
     }
