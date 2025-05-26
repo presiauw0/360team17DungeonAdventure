@@ -355,7 +355,7 @@ public class GameViewController {
      */
     @FXML
     private void roomMovementButtons(final ActionEvent theActionEvent) {
-        Button clickedButton = (Button) theActionEvent.getSource();
+        Button clickedButton = (Button) theActionEvent.getSource(); // Get button clicked and directions
         Set<Direction> availableDirections = GameManager.getInstance().getCurrentRoom().getAvailableDirections();
         Direction targetDirection = null;
 
@@ -370,11 +370,14 @@ public class GameViewController {
             }
         }
 
+        // Double-check if the direction clicked is valid (present in availableDirections).
+
         if (availableDirections.contains(targetDirection)) {
             int newRow = GameManager.getInstance().getCurrPositionRow();
             int newCol = GameManager.getInstance().getCurrPositionCol();
             int maxRow = GameManager.getInstance().getDungeon().getRowSize() - 1;
-            int maxCol = GameManager.getInstance().getDungeon().getColSize() - 1;
+            int maxCol = GameManager.getInstance().getDungeon().getColSize() - 1; // Update position and define
+                                                                                  // boundaries
 
             switch (targetDirection) {
                 case NORTH -> {
@@ -393,7 +396,7 @@ public class GameViewController {
 
             // Only move if the new position is valid
             if (newRow >= 0 && newRow <= maxRow && newCol >= 0 && newCol <= maxCol) {
-                GameManager.getInstance().movePlayer(newRow, newCol);
+                GameManager.getInstance().movePlayer(newRow, newCol); // Move player and update buttons
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
             }
         }

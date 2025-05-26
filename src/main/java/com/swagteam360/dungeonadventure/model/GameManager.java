@@ -129,21 +129,50 @@ public class GameManager {
      */
     public void movePlayer(int theNewRow, int theNewCol) {
 
+        // Check if the new position is valid
         if (theNewRow < 0 || theNewRow > myDungeon.getRowSize() - 1) {
             throw new IllegalArgumentException("Invalid row index.");
         } else if (theNewCol < 0 || theNewCol > myDungeon.getColSize() - 1) {
             throw new IllegalArgumentException("Invalid column index");
         }
 
+        // Update position coordinates
         myCurrentPositionRow = theNewRow;
         myCurrentPositionCol = theNewCol;
+
+        // Update room and hero's position in the dungeon via the position coordinates
         myCurrentRoom = myDungeon.getRoom(myCurrentPositionRow, myCurrentPositionCol);
         myDungeon.updateHeroPosition(myCurrentPositionRow, myCurrentPositionCol);
         Set<Direction> availableDirection = myCurrentRoom.getAvailableDirections();
-        System.out.println(myDungeon.toString()); // Debugging
+
+        // Initiate fight with monster if present in the room
+        if (myCurrentRoom.hasMonster()) {
+            Monster monster = myCurrentRoom.getMonster();
+            BattleSystem battleSystem = new BattleSystem(myHero, monster);
+            boolean heroWon = battleSystem.startBattle();
+
+            // Remove monster from room, handle the case if we lost the fight
+            if (heroWon) {
+                myCurrentRoom.removeMonster();
+            } else {
+                System.out.println("Game Over!");
+                return;
+            }
+
+        }
+
+        if (myCurrentRoom.hasItems()) {
+            List<Item> roomItems = myCurrentRoom.collectItems();
+            myInventoryList.addAll(roomItems);
+            System.out.println("Collected " + roomItems.size() + " items!");
+        }
+
+        // Debugging
+        System.out.println(myDungeon.toString());
         System.out.println();
         System.out.println(myDungeon.toDetailedString());
         System.out.println();
+
         notifyObservers();
     }
 

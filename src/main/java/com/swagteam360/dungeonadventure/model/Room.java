@@ -172,6 +172,7 @@ public class Room implements Cell, IRoom {
         if (!isEntranceOrExit()) {
             generateItems();
             generatePits();
+
         }
 /*
         if (myEntrance || myExit) {
@@ -519,5 +520,13 @@ public class Room implements Cell, IRoom {
      *         the items present in the room.
      */
     public List<Item> getItems() { return myItems; }
+
+    public void removeMonster() { myMonster = null;}
+
+    public List<Item> collectItems() {
+        List<Item> items = new ArrayList<>(myItems);
+        myItems.clear();
+        return items; // Collects and clears items from room
+    }
 
 }
