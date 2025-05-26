@@ -168,8 +168,8 @@ System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentR
         }
 
         if (myCurrentRoom.hasItems()) {
-            List<Item> roomItems = myCurrentRoom.collectItems();
-            myInventoryList.addAll(roomItems);
+            List<Item> roomItems = myCurrentRoom.collectAllItems();
+            //myInventoryList.addAll(roomItems);
             System.out.println("Collected " + roomItems.size() + " items!");
         }
 

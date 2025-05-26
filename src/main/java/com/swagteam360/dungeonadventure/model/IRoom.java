@@ -91,4 +91,9 @@ public interface IRoom {
      *         directions: UP, DOWN, LEFT, RIGHT, depending on which doors are open.
      */
     Set<Direction> getAvailableDirections();
+
+    /**
+     * Remove the monster from the room.
+     */
+    void removeMonster();
 }

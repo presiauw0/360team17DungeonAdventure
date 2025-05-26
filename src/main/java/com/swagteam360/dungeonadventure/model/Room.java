@@ -72,12 +72,6 @@ public class Room implements Cell, IRoom {
     private boolean myTraversalFlag;
 
     /**
-     * Store a reference to an instance of a monster factory for
-     * generating monsters.
-     */
-    private MonsterFactory myMonsterFactory;
-
-    /**
      * Store the room's monster
      */
     private Monster myMonster;
@@ -252,11 +246,11 @@ public class Room implements Cell, IRoom {
 
         double choice = Math.random();
         if (choice < 0.25) {
-            myMonster = myMonsterFactory.createMonster("Ogre");
+            myMonster = MonsterFactory.createMonster("Ogre");
         } else if (choice < 0.50) {
-            myMonster = myMonsterFactory.createMonster("Gremlin");
+            myMonster = MonsterFactory.createMonster("Gremlin");
         } else {
-            myMonster = myMonsterFactory.createMonster("Skeleton");
+            myMonster = MonsterFactory.createMonster("Witch");
         }
     }
 
@@ -314,6 +308,11 @@ public class Room implements Cell, IRoom {
         return directions;
     }
 
+    @Override
+    public void removeMonster() {
+        myMonster = null;
+    }
+
     // Package helpers
 
     /**
@@ -367,20 +366,7 @@ public class Room implements Cell, IRoom {
             return 'O';
         } else if (myPillar != null) {
             return 'P';
-        }/* else if (myMultipleItems) {
-            return 'M';
-        } else if (myHealingPotion) {
-            return 'H';
-        } else if (myVisionPotion) {
-            return 'V';
-        } else if (myPit) {
-            return 'X';
         } else {
-            return ' ';
-        }
-        */
-
-        else {
             char returnChar = ' ';
 
             if (myPit) {
@@ -455,15 +441,6 @@ public class Room implements Cell, IRoom {
 
         return sb.toString();
 
-    }
-
-
-    public void removeMonster() { myMonster = null;}
-
-    public List<Item> collectItems() {
-        List<Item> items = new ArrayList<>(myItems);
-        myItems.clear();
-        return items; // Collects and clears items from room
     }
 
 }

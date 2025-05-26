@@ -10,6 +10,10 @@ package com.swagteam360.dungeonadventure.model;
  */
 public class MonsterFactory {
 
+    private MonsterFactory() {
+        super();
+    }
+
     /**
      * Creates and returns a specific Monster object based on the provided monster name.
      * The method determines the type of Monster to instantiate and provides its
@@ -20,7 +24,7 @@ public class MonsterFactory {
      * @return a Monster object corresponding to the specified name, or null if the
      *         name does not match any predefined monster type.
      */
-    public Monster createMonster(String theMonsterName) {
+    public static Monster createMonster(String theMonsterName) {
 
         Monster theMonster = null;
 
@@ -28,8 +32,8 @@ public class MonsterFactory {
         // We might just need to remove it altogether tbh.
         // We also need to get data through SQL queries. - Jonathan
 
-        if (theMonsterName.equalsIgnoreCase("skeleton")) {
-            theMonster = new Skeleton("Skeleton", 40, 100, 3,
+        if (theMonsterName.equalsIgnoreCase("witch")) {
+            theMonster = new Witch("Witch", 40, 100, 3,
                     15, 30, 80, 40);
         } else if (theMonsterName.equalsIgnoreCase("gremlin")) {
             theMonster = new Gremlin("Gremlin", 23, 70, 5,
