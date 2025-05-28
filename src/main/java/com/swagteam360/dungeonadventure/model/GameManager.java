@@ -184,15 +184,17 @@ public class GameManager {
             return;
         }
 
+
         if (myCurrentRoom.hasPit()) {
             myHero.takeDamage(PIT_DAMAGE);
         }
 
         // Preston will handle inventory management/implementation (back-end and maybe front-end)
+
+        // Hero collect items
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
-            //myInventoryList.addAll(roomItems);
-            System.out.println("Collected " + roomItems.size() + " items!");
+            myHero.addToInventory(roomItems);
         }
 
         // Check if we are at the exit room of the dungeon
