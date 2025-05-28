@@ -7,11 +7,11 @@ import com.swagteam360.dungeonadventure.model.Room;
 
 import java.util.List;
 
-public class RoomView implements DungeonObserver {
+public class RoomView {
 
-    @Override
-    public void update(Room theRoom, Hero theHero, List<Item> theInventory) {
-
-    }
+//    @Override
+//    public void update(Room theRoom, Hero theHero, List<Item> theInventory) {
+//        // TODO: IMPLEMENT THIS
+//    }
 
 }

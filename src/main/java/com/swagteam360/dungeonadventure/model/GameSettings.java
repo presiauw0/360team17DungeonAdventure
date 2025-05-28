@@ -38,7 +38,7 @@ public class GameSettings {
      * @param theHero the name of the hero selected by the player.
      * @param theDifficulty the selected difficulty level for the game session.
      */
-    public GameSettings(String theName, String theHero, String theDifficulty) {
+    public GameSettings(final String theName, final String theHero, final String theDifficulty) {
         myName = theName;
         myHero = theHero;
         myDifficulty = theDifficulty;
@@ -76,14 +76,14 @@ public class GameSettings {
      *
      * @param theName the name to be associated with the player.
      */
-    public void setName(String theName) {
+    public void setName(final String theName) {
         myName = theName;
     }
 
     /**
      * Sets the name of the hero selected by the player for the game session.
      */
-    public void setHero(String theHero) {
+    public void setHero(final String theHero) {
         myHero = theHero;
     }
 
@@ -93,7 +93,7 @@ public class GameSettings {
      *
      * @param theDifficulty the difficulty level to be set, expressed as a String.
      */
-    public void setDifficulty(String theDifficulty) {
+    public void setDifficulty(final String theDifficulty) {
         myDifficulty = theDifficulty;
     }
 

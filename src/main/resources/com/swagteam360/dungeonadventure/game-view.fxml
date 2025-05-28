@@ -17,7 +17,10 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.swagteam360.dungeonadventure.controller.GameViewController">
    <center>
-      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="myBattleStatusLabel" alignment="CENTER" layoutY="268.0" prefHeight="17.0" prefWidth="491.0" />
+         </children></Pane>
    </center>
    <right>
       <VBox alignment="CENTER" prefHeight="300.0" prefWidth="110.0" styleClass="game-panel" BorderPane.alignment="CENTER">
@@ -90,12 +93,27 @@
                                  <font>
                                     <Font size="10.0" />
                                  </font></Button>
+                              <Button fx:id="myAttackButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleAttackButton" text="Attack" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="mySpecialMoveButton" mnemonicParsing="false" text="Special" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="myUseHealthPotionButton" mnemonicParsing="false" onAction="#handleHealthPotionButton" text="Quick Heal" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
                            </children>
                         </GridPane>
                         <VBox alignment="TOP_CENTER" prefHeight="73.0" prefWidth="274.0" spacing="5.0">
                            <children>
                               <Label fx:id="myHeroNameLabel" alignment="CENTER" prefHeight="17.0" prefWidth="253.0" text="Hero Name" />
-                              <ProgressBar prefHeight="20.0" prefWidth="234.0" progress="0.0" />
+                              <ProgressBar fx:id="myHealthBar" prefHeight="20.0" prefWidth="234.0" progress="0.0" />
                               <Button alignment="CENTER" mnemonicParsing="false" onAction="#goToInventoryView" text="Inventory 🎒" />
                            </children>
                         </VBox>
