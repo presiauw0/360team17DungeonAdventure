@@ -334,7 +334,7 @@ public class StartMenuController {
      */
     @FXML
     private void handleImageViewClick(final MouseEvent theEvent) {
-        Map<String, ImageView> heroViews = Map.of(
+        final Map<String, ImageView> heroViews = Map.of(
                 "Thief", myThiefImageView,
                 "Warrior", myWarriorImageView,
                 "Priestess", myPriestessImageView

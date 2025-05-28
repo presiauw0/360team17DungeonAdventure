@@ -73,7 +73,7 @@ public final class GUIUtils {
      * and customizing graphical user interface elements in a JavaFX application.
      */
     private GUIUtils() {
-
+        super();
     }
 
     /**

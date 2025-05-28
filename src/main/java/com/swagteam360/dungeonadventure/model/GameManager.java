@@ -2,7 +2,6 @@ package com.swagteam360.dungeonadventure.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The GameManager class serves as a singleton responsible for managing the game's lifecycle.
@@ -13,6 +12,8 @@ import java.util.Set;
  * @version 1.1 (May 20, 2025)
  */
 public class GameManager {
+
+    public static final int PIT_DAMAGE = 10;
 
     /**
      * A singleton instance of the GameManager class. This instance ensures that only one
@@ -52,14 +53,7 @@ public class GameManager {
      */
     private Room myCurrentRoom;
 
-    //private int myCurrentPositionRow;
-
-    //private int myCurrentPositionCol;
-
-    //private List<Item> myInventoryList;
-
     private final List<DungeonObserver> myObservers = new ArrayList<>();
-
 
     /**
      * Constructs a new instance of the GameManager class.
@@ -101,12 +95,12 @@ public class GameManager {
                 myDungeon.getEntranceCol()
         );
 
-//FIXME DEBUG
-System.out.println(myDungeon.toStringWithPlayer(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
-System.out.println();
-System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+        //FIXME DEBUG
+        System.out.println(myDungeon.toStringWithPlayer(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+        System.out.println();
+        System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
 
-        notifyObservers();
+        // notifyObservers();
 
     }
 
@@ -117,7 +111,7 @@ System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentR
      * Notifies all observers of the updated game state after the player's position
      * has been updated. Throws an exception if the inputs are invalid.
      *
-     * @param theDirection Direction enumeration type - either NORTH, SOUTH, WEST or EAST
+     * @param theDirection Direction enumeration type - either NORTH, SOUTH, WEST, or EAST
      * @throws IllegalArgumentException if the specified row or column is out of bounds.
      */
     public void movePlayer(final Direction theDirection) {
@@ -149,41 +143,69 @@ System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentR
                     "Row and/or column coordinates of the given directional step are invalid");
         }
 
-        myCurrentRoom = myDungeon.getRoom(row, col); // moves the character by updating the room
+        Room newRoom = myDungeon.getRoom(row, col);
+
+        if (!newRoom.isEntranceOrExit()) {
+            double monsterSpawnChance = Math.random();
+
+            final String difficulty = myGameSettings.getDifficulty();
+
+            if (difficulty.equals("easy")) {
+                if (monsterSpawnChance > 0.75) {
+                    newRoom.addMonster();
+                }
+            } else if (difficulty.equals("normal")) {
+                if (monsterSpawnChance > 0.66) {
+                    newRoom.addMonster();
+                }
+            } else {
+                if (monsterSpawnChance > 0.50) {
+                    newRoom.addMonster();
+                }
+            }
+        }
+
+        myCurrentRoom = newRoom; // moves the character by updating the room
+
+        // FIXME DEBUGGING
+        System.out.println(myDungeon.toStringWithPlayer(row, col));
+        System.out.println();
+        System.out.println(myDungeon.toDetailedString(row, col));
+        System.out.println();
+
+        notifyObservers();
 
         // Initiate fight with monster if present in the room
         if (myCurrentRoom.hasMonster()) {
-            Monster monster = myCurrentRoom.getMonster();
-            BattleSystem battleSystem = new BattleSystem(myHero, monster);
-            boolean heroWon = battleSystem.startBattle();
-
-            // Remove monster from room, handle the case if we lost the fight
-            if (heroWon) {
-                myCurrentRoom.removeMonster();
-            } else {
-                System.out.println("Game Over!");
-                return;
+            final Monster monster = myCurrentRoom.getMonster();
+            for (final DungeonObserver observer : myObservers) {
+                observer.onBattleStart(myCurrentRoom, myHero, monster);
             }
-
+            return;
         }
 
+        if (myCurrentRoom.hasPit()) {
+            myHero.takeDamage(PIT_DAMAGE);
+        }
+
+        // Preston will handle inventory management/implementation (back-end and maybe front-end)
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             //myInventoryList.addAll(roomItems);
             System.out.println("Collected " + roomItems.size() + " items!");
         }
 
+        // Check if we are at the exit room of the dungeon
+        if (myCurrentRoom.getCenterSymbol() == 'O') {
 
+            if (myHero.getPillarCount() == 4) {
+                // gameComplete();
+            } else {
+                System.out.println("You must collect all four pillars to exit the dungeon. ");
+            }
 
+        }
 
-// FIXME DEBUGGING
-System.out.println(myDungeon.toStringWithPlayer(row, col));
-System.out.println();
-System.out.println(myDungeon.toDetailedString(row, col));
-System.out.println();
-
-
-        notifyObservers();
     }
 
     /**
@@ -247,17 +269,13 @@ System.out.println();
      * @return the current instance of GameSettings representing the
      *         configuration settings for the game session.
      */
-    public GameSettings getGameSettings() {
-        return myGameSettings;
-    }
+    public GameSettings getGameSettings() {return myGameSettings;}
 
-    public Room getCurrentRoom() {
-        return myCurrentRoom;
-    }
+    public Room getCurrentRoom() {return myCurrentRoom;}
 
-    public Dungeon getDungeon() {
-        return myDungeon;
-    }
+    public Dungeon getDungeon() {return myDungeon;}
+
+    public Hero getHero() {return myHero;}
 
     /**
      * Adds a DungeonObserver to the list of observers.
@@ -266,9 +284,7 @@ System.out.println();
      *
      * @param theObserver the DungeonObserver to be added to the list of observers
      */
-    public void addObserver(final DungeonObserver theObserver) {
-        myObservers.add(theObserver);
-    }
+    public void addObserver(final DungeonObserver theObserver) {myObservers.add(theObserver);}
 
     /**
      * Removes a specified DungeonObserver from the list of observers.
@@ -276,9 +292,7 @@ System.out.println();
      *
      * @param theObserver the DungeonObserver to be removed from the list of observers
      */
-    public void removeObserver(final DungeonObserver theObserver) {
-        myObservers.remove(theObserver);
-    }
+    public void removeObserver(final DungeonObserver theObserver) {myObservers.remove(theObserver);}
 
     /**
      * Notifies all registered observers of changes in the current game state.
@@ -287,9 +301,15 @@ System.out.println();
      * update occurs that observers need to be informed about.
      */
     private void notifyObservers() {
-        Room currentRoom = getCurrentRoom();
+        final Room currentRoom = getCurrentRoom();
         for (DungeonObserver observer : myObservers) {
             observer.update(currentRoom, myHero, myHero.getInventory());
+        }
+    }
+
+    public void notifyBattleEnd(final boolean theHeroWon) {
+        for (DungeonObserver observer : myObservers) {
+            observer.onBattleEnd(myCurrentRoom, myHero, theHeroWon);
         }
     }
 

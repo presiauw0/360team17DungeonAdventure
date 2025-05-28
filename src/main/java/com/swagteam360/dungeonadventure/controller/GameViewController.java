@@ -9,16 +9,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -30,7 +28,7 @@ import java.util.Set;
  * @author Jonathan Hernandez
  * @version 1.0 (May 11, 2025)
  */
-public class GameViewController {
+public class GameViewController implements DungeonObserver {
 
     /**
      * A ToggleButton in the user interface for enabling or disabling dark mode.
@@ -72,6 +70,9 @@ public class GameViewController {
      */
     @FXML
     private Label myHeroDialogueLabel;
+
+    @FXML
+    private Label myBattleStatusLabel;
 
     /**
      * A Label element in the FXML file, used to display the name of the player's hero in the game.
@@ -139,6 +140,18 @@ public class GameViewController {
     @FXML
     private Button myWestButton;
 
+    @FXML
+    private Button myAttackButton;
+
+    @FXML
+    private Button mySpecialMoveButton;
+
+    @FXML
+    private Button myUseHealthPotionButton;
+
+    @FXML
+    private ProgressBar myHealthBar;
+
     /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
@@ -154,6 +167,8 @@ public class GameViewController {
             "Stay sharp. Stay alive.",
             "I have a bad feeling about this place."
     );
+
+    private BattleSystem myCurrentBattle;
 
     /**
      * Handles the event triggered by clicking the "Save and Quit" button.
@@ -182,6 +197,8 @@ public class GameViewController {
     @FXML
     private void initialize() {
 
+        GameManager gameManager = GameManager.getInstance();
+
         if (myHeroImageView == null) {
             myHeroImageView = new ImageView();
         }
@@ -190,19 +207,24 @@ public class GameViewController {
             myHeroDialogueLabel = new Label();
         }
 
-        GUIUtils.initializeDarkModeToggle(myDarkModeToggle);
-        final String heroType = GameManager.getInstance().getGameSettings().getHero();
+        gameManager.addObserver(this); // Add the controller as an observer of GameManager
+
+        GUIUtils.initializeDarkModeToggle(myDarkModeToggle); // Initialize dark mode toggle button
+        final String heroType = gameManager.getGameSettings().getHero();
         if (heroType != null) {
-            setHeroImage(heroType);
+            setHeroImage(heroType); // Set the bottom-right image based on the hero type
         }
 
         if (myHeroNameLabel == null) {
             myHeroNameLabel = new Label();
-            myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
+            myHeroNameLabel.setText(gameManager.getGameSettings().getName()); // Set the name label
         }
 
-        myHeroNameLabel.setText(GameManager.getInstance().getGameSettings().getName());
-        updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
+        // Set the name label, update movement buttons, hide battle controls, set health bar, and start hero dialogue
+        myHeroNameLabel.setText(gameManager.getGameSettings().getName());
+        updateMovementButtons(gameManager.getCurrentRoom().getAvailableDirections());
+        showBattleControls(false);
+        updateHealthBar(gameManager.getHero());
         startHeroDialogue();
     }
 
@@ -295,7 +317,7 @@ public class GameViewController {
     @FXML
     private void handleHeroImageClick(MouseEvent theEvent) {
         final String heroType = GameManager.getInstance().getGameSettings().getHero();
-        Map<String, ImageView> heroView = Map.of(heroType, myHeroImageView);
+        final Map<String, ImageView> heroView = Map.of(heroType, myHeroImageView);
         GUIUtils.showCharacterInfo(theEvent, heroView);
     }
 
@@ -355,8 +377,23 @@ public class GameViewController {
      */
     @FXML
     private void roomMovementButtons(final ActionEvent theActionEvent) {
-        Button clickedButton = (Button) theActionEvent.getSource(); // Get button clicked and directions
+
+        if (theActionEvent == null || theActionEvent.getSource() == null) {
+            System.out.println("Invalid action event or source");
+            return;
+        }
+
+        final Object source = theActionEvent.getSource();
+        if (!(source instanceof Button clickedButton)) {
+            System.out.println("Event source is not a button");
+            return;
+        }
+
         Direction targetDirection = null;
+        if (clickedButton.getId() == null) {
+            System.out.println("Button ID is null");
+            return;
+        }
 
         switch (clickedButton.getId()) {
             case "myNorthButton" -> targetDirection = Direction.NORTH;
@@ -392,11 +429,191 @@ public class GameViewController {
      *                            {@code Direction.SOUTH}, {@code Direction.EAST},
      *                            {@code Direction.WEST}).
      */
-    private void updateMovementButtons(Set<Direction> availableDirections) {
-        myNorthButton.setVisible(availableDirections.contains(Direction.NORTH));
-        mySouthButton.setVisible(availableDirections.contains(Direction.SOUTH));
-        myEastButton.setVisible(availableDirections.contains(Direction.EAST));
-        myWestButton.setVisible(availableDirections.contains(Direction.WEST));
+    private void updateMovementButtons(final Set<Direction> availableDirections) {
+
+        if (myCurrentBattle != null) {
+            hideMovementButtons();
+        } else {
+            if (myNorthButton != null) {
+                myNorthButton.setVisible(availableDirections.contains(Direction.NORTH));
+            }
+            if (mySouthButton != null) {
+                mySouthButton.setVisible(availableDirections.contains(Direction.SOUTH));
+            }
+            if (myEastButton != null) {
+                myEastButton.setVisible(availableDirections.contains(Direction.EAST));
+            }
+            if (myWestButton != null) {
+                myWestButton.setVisible(availableDirections.contains(Direction.WEST));
+            }
+        }
+    }
+
+    /**
+     * Updates the visibility of battle-related controls and movement buttons.
+     * When battle controls are shown, movement buttons are hidden and vice versa.
+     * Additionally, the visibility of the health potion button depends on the
+     * player's inventory.
+     *
+     * @param theShow a boolean indicating whether to display the battle controls.
+     *                If {@code true}, the battle controls (attack and special move buttons)
+     *                will be made visible while movement controls will be hidden.
+     *                If {@code false}, movement controls will be enabled, and
+     *                battle controls will be hidden.
+     */
+    private void showBattleControls(final boolean theShow) {
+
+        if (myAttackButton != null) {
+            myAttackButton.setVisible(theShow);
+        }
+
+        if (mySpecialMoveButton != null) {
+            mySpecialMoveButton.setVisible(theShow); // Show buttons for attacking when we encounter a monster
+        }
+
+        boolean hasHealthPotions = false;
+        if (GameManager.getInstance().getHero() != null
+                && GameManager.getInstance().getHero().getInventory() != null) {
+            hasHealthPotions = GameManager.getInstance().getHero().getInventory()
+                    .stream().anyMatch(item -> item instanceof HealthPotion);
+        }
+
+        if (myUseHealthPotionButton != null) {
+            myUseHealthPotionButton.setVisible(theShow && hasHealthPotions);
+        }
+
+        if (!theShow) {
+            if (GameManager.getInstance().getCurrentRoom() != null) {
+                updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
+            }
+        }
+
+    }
+
+    private void hideMovementButtons() {
+        if (myNorthButton != null) {
+            myNorthButton.setVisible(false);
+        }
+        if (mySouthButton != null) {
+            mySouthButton.setVisible(false);
+        }
+        if (myEastButton != null) {
+            myEastButton.setVisible(false);
+        }
+        if (myWestButton != null) {
+            myWestButton.setVisible(false);
+        }
+    }
+
+    private void updateBattleStatus(final String theMessage) {
+
+        if (myBattleStatusLabel != null) {
+            myBattleStatusLabel.setText(theMessage);
+        }
+    }
+
+    private void updateHealthBar(final Hero theHero) {
+
+        if (theHero == null || myHealthBar == null) {
+            return;
+        }
+
+        int currentHP = theHero.getHP();
+        int maxHP = theHero.getMaxHP();
+
+        if (maxHP == 0) {
+            myHealthBar.setProgress(0);
+            return;
+        }
+
+        double percentage = (double) currentHP / maxHP;
+        myHealthBar.setProgress(percentage);
+    }
+
+    @FXML
+    private void handleAttackButton() {
+
+        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
+            final String result = myCurrentBattle.processPlayerAttack(); // Get the result from player's attack
+            updateBattleStatus(result); // Update the label
+
+            final boolean battleOverAfterPlayer = myCurrentBattle.isBattleOver(); // Double-check if we won
+
+            // If not (aka battle is going)
+            if (!battleOverAfterPlayer) {
+                // Start a timeline
+                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+
+                    // Check if a battle remains and is ongoing, this means it is the monster's turn
+                    if (myCurrentBattle != null && !myCurrentBattle.isBattleOver()) {
+                        final String monsterResult = myCurrentBattle.processMonsterTurn(); // Get the result from monster
+                        updateBattleStatus(monsterResult); // Update the label
+                        updateHealthBar(GameManager.getInstance().getHero());
+
+                        if (myCurrentBattle.isBattleOver()) {
+                            GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
+                        }
+
+                    }
+                }));
+                timeline.play();
+            } else {
+                GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
+            }
+        }
+
+    }
+
+    @FXML
+    private void handleHealthPotionButton() {
+
+        List<Item> inventory = GameManager.getInstance().getHero().getInventory();
+        Optional<Item> healthPotion = inventory.stream()
+                .filter(item -> item instanceof HealthPotion).findFirst();
+
+        if (healthPotion.isPresent()) {
+            HealthPotion hp = (HealthPotion) healthPotion.get();
+            GameManager.getInstance().getHero().heal(hp.getHealAmount());
+            inventory.remove(hp);
+            updateBattleStatus("You have been healed!");
+        }
+
+        showBattleControls(true);
+
+    }
+
+    @Override
+    public void update(final Room theRoom, final Hero theHero, final List<Item> theInventory) {
+
+        if (myCurrentBattle == null) {
+            showBattleControls(false);
+            updateMovementButtons(theRoom.getAvailableDirections());
+        }
+
+    }
+
+    @Override
+    public void onBattleStart(final Room theRoom, final Hero theHero, final Monster theMonster) {
+
+        myCurrentBattle = new BattleSystem(theHero, theMonster);
+        showBattleControls(true);
+        hideMovementButtons();
+        updateBattleStatus("A fight has begun!");
+
+    }
+
+    @Override
+    public void onBattleEnd(final Room theRoom, final Hero theHero, final boolean theHeroWon) {
+        if (theHeroWon) {
+            updateBattleStatus("You won!");
+        } else {
+            updateBattleStatus("You lost!");
+        }
+
+        showBattleControls(false);
+        myCurrentBattle = null;
+        updateMovementButtons(theRoom.getAvailableDirections());
+
     }
 
 }
