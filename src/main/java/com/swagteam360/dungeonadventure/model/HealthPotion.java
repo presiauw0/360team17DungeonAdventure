@@ -44,7 +44,7 @@ public class HealthPotion implements Item {
      *
      * @return The health restoration amount of this potion as an integer.
      */
-    protected int getHealAmount() {
+    public int getHealAmount() {
         return myHealAmount;
     }
 

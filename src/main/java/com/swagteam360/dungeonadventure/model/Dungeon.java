@@ -42,16 +42,6 @@ public final class Dungeon {
      */
     private final int myEntranceCol;
 
-    /**
-     * A reference to the active player.
-     */
-    //private Hero myHero;
-
-    /**
-     * Room that is currently active for the player.
-     */
-    //private Room myActiveRoom;
-
 
     public Dungeon(final int theRowSize, final int theColSize) {
         super(); // explicit call to super
@@ -271,23 +261,4 @@ public final class Dungeon {
         return myColSize;
     }
 
-    /**
-     * Set's the instance of the active hero.
-     * //@param theHero A Hero instance to set
-     */
-/*
-    public void setHero(final Hero theHero) {
-        myHero = theHero;
-        myActiveRoom = getRoom(myEntranceRow, myEntranceCol);
-    }
-
-    public void updateHeroPosition(final int theRow, final int theCol) {
-        if (theRow < 0 || theRow >= myRowSize || theCol < 0 || theCol >= myColSize) {
-            throw new IllegalArgumentException("Row and/or column coordinates are invalid");
-        }
-
-        myActiveRoom = getRoom(theRow, theCol);
-
-    }
-*/
 }

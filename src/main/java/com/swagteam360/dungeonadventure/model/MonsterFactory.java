@@ -24,7 +24,7 @@ public class MonsterFactory {
      * @return a Monster object corresponding to the specified name, or null if the
      *         name does not match any predefined monster type.
      */
-    public static Monster createMonster(String theMonsterName) {
+    public static Monster createMonster(final String theMonsterName) {
 
         Monster theMonster = null;
 

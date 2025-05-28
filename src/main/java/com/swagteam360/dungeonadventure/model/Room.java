@@ -242,7 +242,8 @@ public class Room implements Cell, IRoom {
     @Override
     public void addMonster() {
 
-        // Three random choices. We need to randomly call this method
+        // Three random choices. We need to randomly call this method else where since this method guarantees the
+        // creation of a monster.
 
         double choice = Math.random();
         if (choice < 0.25) {
@@ -330,6 +331,15 @@ public class Room implements Cell, IRoom {
      */
     boolean hasPillar() {
         return myPillar != null;
+    }
+
+    /**
+     * Determines whether the room contains a pit.
+     *
+     * @return True if the room has a pit, false otherwise.
+     */
+    public boolean hasPit() {
+        return myPit;
     }
 
     // Private helpers

@@ -51,5 +51,9 @@ public abstract class Hero extends DungeonCharacter {
         return new ArrayList<>(myInventory); // create a copy of the list to return
     }
 
+    public int getPillarCount() {
+        return (int) myInventory.stream().filter(item -> item instanceof Pillar).count();
+    }
+
     //incorporate a block() method? I'm not sure how that would work.
 }

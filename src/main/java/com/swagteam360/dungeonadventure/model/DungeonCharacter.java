@@ -25,6 +25,8 @@ public abstract class DungeonCharacter implements Serializable {
     /** Field myHP represents Health Points given to a character. */
     private int myHP;
 
+    private final int myMaxHP;
+
     /** Field myDamageRangeMin represents the minimum damage a character can inflict. */
     private int myDamageRangeMin;
 
@@ -62,6 +64,7 @@ public abstract class DungeonCharacter implements Serializable {
         myName = theName;
         myAttackDamage = theAttackDamage;
         myHP = theHP;
+        myMaxHP = theHP;
         myAttackSpeed = theAttackSpeed;
         myDamageRangeMin = theDamageRangeMin;
         myDamageRangeMax = theDamageRangeMax;
@@ -131,6 +134,8 @@ public abstract class DungeonCharacter implements Serializable {
      * @return int character HP.
      */
     public int getHP() {return myHP;}
+
+    public int getMaxHP() {return myMaxHP;}
 
     /**
      * Setter method to change characters health points.
