@@ -167,10 +167,10 @@ System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentR
 
         }
 
+        // Hero collect items
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
-            //myInventoryList.addAll(roomItems);
-            System.out.println("Collected " + roomItems.size() + " items!");
+            myHero.addToInventory(roomItems);
         }
 
 
