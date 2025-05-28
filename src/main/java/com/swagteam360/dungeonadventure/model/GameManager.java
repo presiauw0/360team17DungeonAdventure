@@ -196,7 +196,7 @@ public class GameManager {
         }
 
         // Check if we are at the exit room of the dungeon
-        if (myCurrentRoom.getCenterSymbol() == 'O') {
+        if (myCurrentRoom.isExit()) {
 
             if (myHero.getPillarCount() == 4) {
                 // gameComplete();
