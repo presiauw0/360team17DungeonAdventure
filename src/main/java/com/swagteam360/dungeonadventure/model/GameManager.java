@@ -1,7 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * The GameManager class serves as a singleton responsible for managing the game's lifecycle.
@@ -53,7 +53,7 @@ public class GameManager {
      */
     private Room myCurrentRoom;
 
-    private final List<DungeonObserver> myObservers = new ArrayList<>();
+    private final PropertyChangeSupport myPCS = new PropertyChangeSupport(this);
 
     /**
      * Constructs a new instance of the GameManager class.
@@ -100,8 +100,6 @@ public class GameManager {
         System.out.println();
         System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
 
-        // notifyObservers();
-
     }
 
     /**
@@ -131,8 +129,6 @@ public class GameManager {
         myCurrentRoom = newRoom; // moves the character by updating the room
 
         debugPrintDungeon(row, col);
-
-        notifyObservers();
 
         handleEvents();
 
@@ -251,27 +247,17 @@ public class GameManager {
 
     private void handleEvents() {
 
-        // To clear the label if present. If there is an event, a message will appear anyway
-        // from the following if conditions.
-        for (final DungeonObserver observer : myObservers) {
-            observer.onRoomEntered(myCurrentRoom, myHero);
-        }
+        myPCS.firePropertyChange("Clear Label", null, null);
 
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
-            for (final DungeonObserver observer : myObservers) {
-                // GameViewController will be notified and update the UI accordingly.
-                // This means movement buttons are disabled and battle buttons are enabled.
-                observer.onBattleStart(myCurrentRoom, myHero, monster);
-            }
+            myPCS.firePropertyChange("Fight", null, monster);
             return;
         }
 
         if (myCurrentRoom.hasPit()) {
             myHero.takeDamage(PIT_DAMAGE); // Take damage from the pit and update the UI.
-            for (final DungeonObserver observer : myObservers) {
-                observer.onPitDamageTaken(myCurrentRoom, myHero, PIT_DAMAGE);
-            }
+            myPCS.firePropertyChange("Pit", null, PIT_DAMAGE);
         }
 
         if (myCurrentRoom.hasItems()) {
@@ -280,13 +266,8 @@ public class GameManager {
 
         // Check if we are at the exit room of the dungeon
         if (myCurrentRoom.isExit()) {
-
-            for (final DungeonObserver observer : myObservers) {
-                observer.onExitRoomEntered(myCurrentRoom, myHero);
-            }
-
+            myPCS.firePropertyChange("Exit", null, myCurrentRoom);
         }
-
     }
 
     /**
@@ -305,40 +286,11 @@ public class GameManager {
 
     public Hero getHero() {return myHero;}
 
-    /**
-     * Adds a DungeonObserver to the list of observers.
-     * The added observer will be notified of changes in the dungeon state,
-     * such as updates to the current room, hero, or inventory.
-     *
-     * @param theObserver the DungeonObserver to be added to the list of observers
-     */
-    public void addObserver(final DungeonObserver theObserver) {myObservers.add(theObserver);}
-
-    /**
-     * Removes a specified DungeonObserver from the list of observers.
-     * The removed observer will no longer be notified of changes in the dungeon state.
-     *
-     * @param theObserver the DungeonObserver to be removed from the list of observers
-     */
-    public void removeObserver(final DungeonObserver theObserver) {myObservers.remove(theObserver);}
-
-    /**
-     * Notifies all registered observers of changes in the current game state.
-     * This method retrieves the current room from the dungeon based on the
-     * player's current position and is intended to be called whenever a significant
-     * update occurs that observers need to be informed about.
-     */
-    private void notifyObservers() {
-        final Room currentRoom = getCurrentRoom();
-        for (DungeonObserver observer : myObservers) {
-            observer.update(currentRoom, myHero, myHero.getInventory());
-        }
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        myPCS.addPropertyChangeListener(l);
     }
-
-    public void notifyBattleEnd(final boolean theHeroWon) {
-        for (DungeonObserver observer : myObservers) {
-            observer.onBattleEnd(myCurrentRoom, myHero, theHeroWon);
-        }
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        myPCS.removePropertyChangeListener(l);
     }
 
 }
