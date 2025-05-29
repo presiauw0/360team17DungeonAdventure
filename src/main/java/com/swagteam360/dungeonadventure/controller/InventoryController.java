@@ -1,8 +1,5 @@
 package com.swagteam360.dungeonadventure.controller;
 
-import static com.swagteam360.dungeonadventure.model.DungeonPCL.PROPERTY_INVENTORY_CHANGE;
-
-import com.swagteam360.dungeonadventure.model.GameManager;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
