@@ -279,7 +279,7 @@ public class GameManager {
         }
 
         // Check if we are at the exit room of the dungeon
-        if (myCurrentRoom.getCenterSymbol() == 'O') {
+        if (myCurrentRoom.isExit()) {
 
             for (final DungeonObserver observer : myObservers) {
                 observer.onExitRoomEntered(myCurrentRoom, myHero);

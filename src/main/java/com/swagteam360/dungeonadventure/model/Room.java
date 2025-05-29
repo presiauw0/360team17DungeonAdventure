@@ -314,6 +314,11 @@ public class Room implements Cell, IRoom {
         myMonster = null;
     }
 
+    @Override
+    public boolean isExit() {
+        return IRoom.PROPERTY_EXIT.equals(myEntranceExit);
+    }
+
     // Package helpers
 
     /**

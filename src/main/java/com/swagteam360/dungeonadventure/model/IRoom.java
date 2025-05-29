@@ -96,4 +96,10 @@ public interface IRoom {
      * Remove the monster from the room.
      */
     void removeMonster();
+
+    /**
+     * Detects whether the room contains an exit.
+     * @return Boolean indicator of whether the room is an exit
+     */
+    boolean isExit();
 }
