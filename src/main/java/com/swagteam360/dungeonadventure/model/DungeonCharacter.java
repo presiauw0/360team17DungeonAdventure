@@ -19,9 +19,6 @@ public abstract class DungeonCharacter implements Serializable {
     /** Field myName represents name given to a character. */
     private String myName;
 
-    /** Field myAttackDamage represents how much damage a character does in an attack. */
-    private int myAttackDamage;
-
     /** Field myHP represents Health Points given to a character. */
     private int myHP;
 
@@ -42,25 +39,20 @@ public abstract class DungeonCharacter implements Serializable {
     private final int myHitChance;
 
 
-
-    //constructor
-
     /**
      * Parametered constructor defining what a "DungeonCharacter" is and the attributes
      * that go along with them.
      * @param theName represents character name.
-     * @param theAttackDamage represents damage done per attack.
      * @param theHP represents character health points.
      * @param theAttackSpeed represents character attack speed.
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance represents character hit chance.
      */
-    public DungeonCharacter(final String theName, final int theAttackDamage, final int theHP,
+    public DungeonCharacter(final String theName, final int theHP,
                             final int theAttackSpeed, final int theDamageRangeMin, final int theDamageRangeMax,
                             final int theHitChance) {
         myName = theName;
-        myAttackDamage = theAttackDamage;
         myHP = theHP;
         myAttackSpeed = theAttackSpeed;
         myDamageRangeMin = theDamageRangeMin;
@@ -96,8 +88,6 @@ public abstract class DungeonCharacter implements Serializable {
                 dmg = theDamageRangeMin;
             }
 
-            //apply base attack damage
-            dmg += myAttackDamage;
             returned = dmg;
         } else {
             returned = 0;
@@ -168,19 +158,7 @@ public abstract class DungeonCharacter implements Serializable {
         myDamageRangeMax = theDamageRangeMax;
     }
 
-    /**
-     * Getter to fetch attack damage.
-     * @return int representing attack damage.
-     */
-    public int getAttackDamage() {return myAttackDamage;}
 
-    /**
-     * Setter to set attack damage.
-     * @param theAttackDamage represents new attack damage.
-     */
-    public void setAttackDamage(final int theAttackDamage) {
-        myAttackDamage = theAttackDamage;
-    }
     /**
      * Getter method to fetch character attack speed.
      * @return int character attack speed.

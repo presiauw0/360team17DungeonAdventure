@@ -203,14 +203,14 @@ System.out.println();
         return switch (theGameSettings.getHero().toLowerCase()) {
             case "warrior" -> new Warrior(
                         theGameSettings.getName(), 50,
-                        125, 4, 35,
+                         4, 35,
                         60, 80, 20);
             case "priestess" -> new Priestess(
-                        theGameSettings.getName(), 35, 75,
+                        theGameSettings.getName(), 35,
                         5, 25, 45,
                         70, 30);
             case "thief" -> new Thief(
-                        theGameSettings.getName(), 30, 75,
+                        theGameSettings.getName(), 30,
                         6, 20, 40,
                         80, 40);
             default -> throw new IllegalArgumentException("Unknown/Invalid Hero type.");

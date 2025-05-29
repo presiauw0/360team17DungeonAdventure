@@ -6,16 +6,21 @@ public class Witch extends Monster {
      * that go along with them.
      *
      * @param theName           represents character name.
-     * @param theAttackDamage   represents damage done per attack.
      * @param theHP             represents character health points.
      * @param theAttackSpeed    represents character attack speed.
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance      represents character hit chance.
      * @param theHealChance     represents percent chance to heal in combat.
+     * @param theMinHealPoints  represents mininum amount of health that can be gained.
+     * @param theMaxHealPoints  represents maximum amount of health that can be gained
      */
-    public Witch(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theHealChance) {
-        super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theHealChance);
+    public Witch(String theName, int theHP, int theAttackSpeed,
+                 int theDamageRangeMin, int theDamageRangeMax, int theHitChance,
+                 double theHealChance, int theMinHealPoints, int theMaxHealPoints) {
+        super(theName, theHP, theAttackSpeed, theDamageRangeMin,
+                theDamageRangeMax, theHitChance, theHealChance, theMinHealPoints,
+                theMaxHealPoints);
     }
 
 }

@@ -15,25 +15,33 @@ import java.util.Random;
 public abstract class Monster extends DungeonCharacter {
 
     /** Field myHealChance represents the % chance for a monster to heal in combat. */
-    private int myHealChance;
+    private double myHealChance;
+
+    private int myMinHealPoints;
+
+    private int myMaxHealPoints;
 
     /**
      * Parametered constructor defining what a "Monster" is and the attributes
      * that go along with them.
      *
      * @param theName           represents character name.
-     * @param theAttackDamage   represents damage done per attack.
      * @param theHP             represents character health points.
      * @param theAttackSpeed    represents character attack speed.
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance      represents character hit chance.
      * @param theHealChance     represents percent chance to heal in combat.
+     * @param theMinHealPoints  represents mininum amount of health that can be gained.
+     * @param theMaxHealPoints  represents maximum amount of health that can be gained
      */
-    public Monster(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin,
-                   int theDamageRangeMax, int theHitChance, int theHealChance) {
-        super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance);
+    public Monster(String theName, int theHP, int theAttackSpeed, int theDamageRangeMin,
+                   int theDamageRangeMax, int theHitChance, double theHealChance, int theMinHealPoints,
+                   int theMaxHealPoints) {
+        super(theName, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance);
         myHealChance = theHealChance;
+        myMinHealPoints = theMinHealPoints;
+        myMaxHealPoints = theMaxHealPoints;
     }
 
     /**
