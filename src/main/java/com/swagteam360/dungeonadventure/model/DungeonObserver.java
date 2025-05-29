@@ -4,9 +4,16 @@ import java.util.List;
 
 public interface DungeonObserver {
 
-    void update(Room theRoom, Hero theHero, List<Item> theInventory);
-    void onBattleStart(Room theRoom, Hero theHero, Monster theMonster);
+    void update(final Room theRoom, final Hero theHero, final List<Item> theInventory);
 
-    void onBattleEnd(Room theRoom, Hero theHero, boolean theHeroWon);
+    void onBattleStart(final Room theRoom, final Hero theHero, final Monster theMonster);
+
+    void onBattleEnd(final Room theRoom, final Hero theHero, final boolean theHeroWon);
+
+    void onRoomEntered(final Room theRoom, final Hero theHero);
+
+    void onExitRoomEntered(final Room theRoom, final Hero theHero);
+
+    void onPitDamageTaken(final Room theRoom, final Hero theHero, final int theDamage);
 
 }

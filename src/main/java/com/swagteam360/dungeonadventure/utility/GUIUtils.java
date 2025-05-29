@@ -103,6 +103,18 @@ public final class GUIUtils {
 
     }
 
+    public static void switchScene(final Stage theStage, final FXMLLoader theLoader) {
+        try {
+            final Parent root = theLoader.load();
+            final Scene scene = new Scene(root, WIDTH, HEIGHT);
+            scene.getStylesheets().add(Objects.requireNonNull
+                    (GUIUtils.class.getResource(getCurrentTheme())).toExternalForm());
+            theStage.setScene(scene);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Retrieves the path to the current theme used in the application.
      * This method determines the theme based on the application's dark mode setting.
