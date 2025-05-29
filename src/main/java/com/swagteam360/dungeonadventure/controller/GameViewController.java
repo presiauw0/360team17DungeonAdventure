@@ -7,13 +7,12 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -29,6 +28,9 @@ import java.util.*;
  * @version 1.0 (May 11, 2025)
  */
 public class GameViewController implements DungeonObserver {
+
+    @FXML
+    private BorderPane myRootPane;
 
     /**
      * A ToggleButton in the user interface for enabling or disabling dark mode.
@@ -598,22 +600,71 @@ public class GameViewController implements DungeonObserver {
         myCurrentBattle = new BattleSystem(theHero, theMonster);
         showBattleControls(true);
         hideMovementButtons();
-        updateBattleStatus("A fight has begun!");
+        updateBattleStatus("A fight has begun with a " + theMonster.getName());
 
     }
 
     @Override
     public void onBattleEnd(final Room theRoom, final Hero theHero, final boolean theHeroWon) {
+
         if (theHeroWon) {
+            // If the Hero won, hide battle controls and update movement buttons
             updateBattleStatus("You won!");
+            showBattleControls(false);
+            myCurrentBattle = null;
+            updateMovementButtons(theRoom.getAvailableDirections());
         } else {
             updateBattleStatus("You lost!");
+            showBattleControls(false);
+
+            // ChatGPT gave the following
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Game Over");
+                alert.setHeaderText("You lost the game!");
+                alert.setContentText("Would you like to start a new game or quit?");
+
+                ButtonType newGameButton = new ButtonType("New Game");
+                ButtonType quitButton = new ButtonType("Quit");
+
+                alert.getButtonTypes().setAll(newGameButton, quitButton);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent()) {
+
+                    if (result.get() == newGameButton) {
+
+                        GameManager.getInstance().removeObserver(this);
+
+                        final FXMLLoader loader = new FXMLLoader(getClass()
+                                .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
+                        final Stage stage = (Stage) myRootPane.getScene().getWindow();
+                        GUIUtils.switchScene(stage, loader);
+                    } else if (result.get() == quitButton) {
+                        Platform.exit();
+                    }
+                }
+            });
         }
+    }
 
-        showBattleControls(false);
-        myCurrentBattle = null;
-        updateMovementButtons(theRoom.getAvailableDirections());
+    @Override
+    public void onExitRoomEntered(final Room theRoom, final Hero theHero) {
+        if (theHero.getPillarCount() == 4) {
+            // handleGameCompletion();
+        } else {
+            myBattleStatusLabel.setText("You've reached the exit room! Return with all four pillars to exit.");
+        }
+    }
 
+    @Override
+    public void onPitDamageTaken(final Room theRoom, final Hero theHero, final int theDamage) {
+        updateHealthBar(theHero);
+        updateBattleStatus("You've taken " + theDamage + " damage from the pit!");
+    }
+
+    @Override
+    public void onRoomEntered(final Room theRoom, final Hero theHero) {
+        updateBattleStatus("");
     }
 
 }

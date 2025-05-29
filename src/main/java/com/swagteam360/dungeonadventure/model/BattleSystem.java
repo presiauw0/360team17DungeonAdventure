@@ -87,9 +87,9 @@ public class BattleSystem {
         }
 
         if (damage > 0) {
-            return "The monster deals " + damage + " damage";
+            return "The " + myMonster.getName() + " deals " + damage + " damage";
         } else {
-            return "The monster missed!";
+            return "The " + myMonster.getName() + " missed!";
         }
 
     }
