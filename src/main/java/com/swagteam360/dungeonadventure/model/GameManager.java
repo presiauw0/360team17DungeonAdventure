@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.List;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
