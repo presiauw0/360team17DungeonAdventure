@@ -1,18 +1,24 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * The MonsterFactory class is responsible for creating instances of the
  * Monster type. Based on the provided monster name, this factory determines
  * which subclass of Monster to instantiate and returns the corresponding object.
  *
  * @author Jonathan Hernandez
- * @version 1.0 22 May 2025
+ * @author Luke Willis
+ * @version 2.0 25 May 2025
  */
 public class MonsterFactory {
 
     private MonsterFactory() {
         super();
     }
+
+
 
     /**
      * Creates and returns a specific Monster object based on the provided monster name.
@@ -28,19 +34,36 @@ public class MonsterFactory {
 
         Monster theMonster = null;
 
-        // TheAttackDamage is a loose average of min/max damage.
-        // We might just need to remove it altogether tbh.
-        // We also need to get data through SQL queries. - Jonathan
+        Map<String, Object> data = Database.getInstance().getMonsterByName(theMonsterName);
 
-        if (theMonsterName.equalsIgnoreCase("witch")) {
-            theMonster = new Witch("Witch", 40, 100, 3,
-                    15, 30, 80, 40);
-        } else if (theMonsterName.equalsIgnoreCase("gremlin")) {
-            theMonster = new Gremlin("Gremlin", 23, 70, 5,
-                    15, 30, 80, 40);
-        } else if (theMonsterName.equalsIgnoreCase("ogre")) {
-            theMonster = new Ogre("Ogre", 45, 200, 2,
-                    30, 60, 60, 10);
+        //checking for underflow
+        if (data == null) {
+            System.err.println("Monster not found: " + theMonsterName);
+            return theMonster;
+        }
+
+        //write check for if theMonsterName == name from map
+        String name = (String) data.get("Name");
+        int healthPoints = (int) data.get("HealthPoints");
+        int damageRangeMin = (int) data.get("DamageRangeMin");
+        int damageRangeMax = (int) data.get("DamageRangeMax");
+        int attackSpeed = (int) data.get("AttackSpeed");
+        int hitChance = (int) data.get("HitChance");
+        double healChance = (double) data.get("HealChance");
+        int minHealPoints = (int) data.get("MinHealPoints");
+        int maxHealPoints = (int) data.get("MaxHealPoints");
+
+
+
+        if (name.equalsIgnoreCase("witch")) {
+            theMonster = new Witch("Witch", healthPoints, attackSpeed, damageRangeMin, damageRangeMax,
+                    hitChance, healChance, minHealPoints, maxHealPoints);
+        } else if (name.equalsIgnoreCase("gremlin")) {
+            theMonster = new Gremlin("Gremlin", healthPoints, attackSpeed, damageRangeMin, damageRangeMax,
+                    hitChance, healChance, minHealPoints, maxHealPoints);
+        } else if (name.equalsIgnoreCase("ogre")) {
+            theMonster = new Ogre("Ogre", healthPoints, attackSpeed, damageRangeMin, damageRangeMax,
+                    hitChance, healChance, minHealPoints, maxHealPoints);
         }
 
         return theMonster;

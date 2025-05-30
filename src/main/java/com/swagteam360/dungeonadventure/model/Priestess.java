@@ -20,7 +20,6 @@ public class Priestess extends Hero{
      * Parametered constructor, calls upon the super constructor to help establish the object.
      *
      * @param theName           represents the name of the hero.
-     * @param theAttackDamage   represents damage done per attack.
      * @param theHP             represents the health points of the hero.
      * @param theAttackSpeed    represent the attack speed of the hero.
      * @param theDamageRangeMin represents minimum damage range.
@@ -28,8 +27,8 @@ public class Priestess extends Hero{
      * @param theHitChance      represents the hit chance of the hero.
      * @param theBlockChance    represents the block chance of the hero.
      */
-    public Priestess(String theName, int theAttackDamage, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theBlockChance) {
-        super(theName, theAttackDamage, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theBlockChance);
+    public Priestess(String theName, int theHP, int theAttackSpeed, int theDamageRangeMin, int theDamageRangeMax, int theHitChance, int theBlockChance) {
+        super(theName, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance, theBlockChance);
         maximumHP = theHP;
     }
 

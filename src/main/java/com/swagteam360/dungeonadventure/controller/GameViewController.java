@@ -7,15 +7,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
 
@@ -28,7 +29,10 @@ import java.util.*;
  * @author Jonathan Hernandez
  * @version 1.0 (May 11, 2025)
  */
-public class GameViewController implements DungeonObserver {
+public class GameViewController implements PropertyChangeListener {
+
+    @FXML
+    private BorderPane myRootPane;
 
     /**
      * A ToggleButton in the user interface for enabling or disabling dark mode.
@@ -207,7 +211,8 @@ public class GameViewController implements DungeonObserver {
             myHeroDialogueLabel = new Label();
         }
 
-        gameManager.addObserver(this); // Add the controller as an observer of GameManager
+        // gameManager.addObserver(this); // Add the controller as an observer of GameManager
+        gameManager.addPropertyChangeListener(this);
 
         GUIUtils.initializeDarkModeToggle(myDarkModeToggle); // Initialize dark mode toggle button
         final String heroType = gameManager.getGameSettings().getHero();
@@ -551,14 +556,15 @@ public class GameViewController implements DungeonObserver {
                         updateHealthBar(GameManager.getInstance().getHero());
 
                         if (myCurrentBattle.isBattleOver()) {
-                            GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
+                            // GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
+                            onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
                         }
 
                     }
                 }));
                 timeline.play();
             } else {
-                GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
+                onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
             }
         }
 
@@ -581,39 +587,79 @@ public class GameViewController implements DungeonObserver {
         showBattleControls(true);
 
     }
-
-    @Override
-    public void update(final Room theRoom, final Hero theHero, final List<Item> theInventory) {
-
-        if (myCurrentBattle == null) {
-            showBattleControls(false);
-            updateMovementButtons(theRoom.getAvailableDirections());
-        }
-
-    }
-
-    @Override
-    public void onBattleStart(final Room theRoom, final Hero theHero, final Monster theMonster) {
+    private void onBattleStart(final Hero theHero, final Monster theMonster) {
 
         myCurrentBattle = new BattleSystem(theHero, theMonster);
         showBattleControls(true);
         hideMovementButtons();
-        updateBattleStatus("A fight has begun!");
+        updateBattleStatus("A fight has begun with a " + theMonster.getName());
 
+    }
+    public void onBattleEnd(final Room theRoom, final boolean theHeroWon) {
+
+        if (theHeroWon) {
+            // If the Hero won, hide battle controls and update movement buttons
+            updateBattleStatus("You won!");
+            showBattleControls(false);
+            myCurrentBattle = null;
+            updateMovementButtons(theRoom.getAvailableDirections());
+        } else {
+            updateBattleStatus("You lost!");
+            showBattleControls(false);
+
+            // ChatGPT gave the following
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Game Over");
+                alert.setHeaderText("You lost the game!");
+                alert.setContentText("Would you like to start a new game or quit?");
+
+                ButtonType newGameButton = new ButtonType("New Game");
+                ButtonType quitButton = new ButtonType("Quit");
+
+                alert.getButtonTypes().setAll(newGameButton, quitButton);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent()) {
+
+                    if (result.get() == newGameButton) {
+
+                        GameManager.getInstance().removePropertyChangeListener(this);
+
+                        final FXMLLoader loader = new FXMLLoader(getClass()
+                                .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
+                        final Stage stage = (Stage) myRootPane.getScene().getWindow();
+                        GUIUtils.switchScene(stage, loader);
+                    } else if (result.get() == quitButton) {
+                        Platform.exit();
+                    }
+                }
+            });
+        }
+    }
+
+    private void onExitRoomEntered(final Room theRoom, final Hero theHero) {
+        if (theHero.getPillarCount() == 4) {
+            // handleGameCompletion();
+        } else {
+            myBattleStatusLabel.setText("You've reached the exit room! Return with all four pillars to exit.");
+        }
+    }
+
+    private void onPitDamageTaken(final Hero theHero, final int theDamage) {
+        updateHealthBar(theHero);
+        updateBattleStatus("You've taken " + theDamage + " damage from the pit!");
     }
 
     @Override
-    public void onBattleEnd(final Room theRoom, final Hero theHero, final boolean theHeroWon) {
-        if (theHeroWon) {
-            updateBattleStatus("You won!");
-        } else {
-            updateBattleStatus("You lost!");
+    public void propertyChange(final PropertyChangeEvent theEvent) {
+        if (theEvent.getPropertyName().equals("Clear Label")) {
+            myBattleStatusLabel.setText("");
+        } else if (theEvent.getPropertyName().equals("Fight")) {
+            onBattleStart(GameManager.getInstance().getHero(), (Monster) theEvent.getNewValue());
+        } else if (theEvent.getPropertyName().equals("Pit")) {
+            onPitDamageTaken(GameManager.getInstance().getHero(), (int) theEvent.getNewValue());
+        } else if (theEvent.getPropertyName().equals("Exit")) {
+            onExitRoomEntered((Room) theEvent.getNewValue(), GameManager.getInstance().getHero());
         }
-
-        showBattleControls(false);
-        myCurrentBattle = null;
-        updateMovementButtons(theRoom.getAvailableDirections());
-
     }
-
 }
