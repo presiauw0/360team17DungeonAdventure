@@ -6,6 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Database class handles everything related to Database connection and
+ * accessing. Utilizes methods to retrieve data to be used in other classes
+ * for (mainly) monster use.
+ *
+ * @author Luke Willis
+ * @version 28 May 2025
+ */
+
+
 public class Database {
 
     private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game.db";
@@ -15,7 +25,7 @@ public class Database {
     /**
      * Establishing this class as a singleton
      */
-    private static final Database mySingleton = new Database();
+    private static Database mySingleton = new Database();
 
 
     private Database() {
@@ -28,12 +38,47 @@ public class Database {
     }
 
     /**
-     * Ensuring a singleton design pattern
-     * @return
+     * Ensuring a singleton design pattern, in which there is only one object
+     * that accesses the database.
+     * @return Database object which is used to access the SQLite DB.
      */
     public static Database getInstance() {
+        if (mySingleton == null) {
+            mySingleton = new Database();
+        }
         return mySingleton;
     }
+
+
+    protected Map<String, Object> getMonsterByName(String name) {
+        String query = "SELECT * FROM Monster WHERE Name = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, name);
+
+            try(ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("Name", rs.getString("Name"));
+                    data.put("HealthPoints", rs.getInt("HealthPoints"));
+                    data.put("DamageRangeMin", rs.getInt("DamageRangeMin"));
+                    data.put("DamageRangeMax", rs.getInt("DamageRangeMax"));
+                    data.put("AttackSpeed", rs.getInt("AttackSpeed"));
+                    data.put("HitChance", rs.getInt("HitChance"));
+                    data.put("HealChance", rs.getDouble("HealChance"));
+                    data.put("MinHealPoints", rs.getInt("MinHealPoints"));
+                    data.put("MaxHealPoints", rs.getInt("MaxHealPoints"));
+
+                    return data;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting monsta: " + name + e.getMessage());
+        }
+        return null;
+    }
+
 
 
     /*
@@ -66,37 +111,6 @@ public class Database {
     }
 
      */
-
-    protected Map<String, Object> getMonsterByName(String name) {
-        String query = "SELECT * FROM Monster WHERE Name = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement stmt = conn.prepareStatement(query)
-            ) {
-
-            stmt.setString(1, name);
-
-            try(ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("Name", rs.getString("Name"));
-                    data.put("HealthPoints", rs.getString("HealthPoints"));
-                    data.put("DamageRangeMin", rs.getString("DamageRangeMin"));
-                    data.put("DamageRangeMax", rs.getString("DamageRangeMax"));
-                    data.put("AttackSpeed", rs.getString("AttackSpeed"));
-                    data.put("HitChance", rs.getString("HitChance"));
-                    data.put("HealChance", rs.getString("HealChance"));
-                    data.put("MinHealPoints", rs.getString("MinHealPoints"));
-                    data.put("MaxHealPoints", rs.getString("MaxHealPoints"));
-
-                    return data;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error getting monsta: " + name + e.getMessage());
-        }
-        return null;
-    }
-
 
     /*
     //try with resources
