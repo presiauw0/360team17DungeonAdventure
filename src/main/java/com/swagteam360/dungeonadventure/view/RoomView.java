@@ -1,12 +1,5 @@
 package com.swagteam360.dungeonadventure.view;
 
-import com.swagteam360.dungeonadventure.model.DungeonObserver;
-import com.swagteam360.dungeonadventure.model.Hero;
-import com.swagteam360.dungeonadventure.model.Item;
-import com.swagteam360.dungeonadventure.model.Room;
-
-import java.util.List;
-
 public class RoomView {
 
 //    @Override
