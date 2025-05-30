@@ -128,6 +128,7 @@ public class GameManager {
 
         myCurrentRoom = newRoom; // moves the character by updating the room
 
+
         debugPrintDungeon(row, col);
 
         handleEvents();
@@ -261,7 +262,8 @@ public class GameManager {
         }
 
         if (myCurrentRoom.hasItems()) {
-            // Preston will handle this
+            List<Item> roomItems = myCurrentRoom.collectAllItems();
+            myHero.addToInventory(roomItems);
         }
 
         // Check if we are at the exit room of the dungeon
