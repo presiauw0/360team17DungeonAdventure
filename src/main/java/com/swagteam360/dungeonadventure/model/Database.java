@@ -18,9 +18,9 @@ import java.util.Map;
 
 public class Database {
 
+    /** String which represents the path to the Database */
     private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game.db";
 
-    //private Connection conn;
 
     /**
      * Establishing this class as a singleton
@@ -28,6 +28,9 @@ public class Database {
     private static Database mySingleton = new Database();
 
 
+    /**
+     * Private constructor tests the connection to the database.
+     */
     private Database() {
         try(Connection conn = DriverManager.getConnection(DB_URL)) {
             //Statement stmt = conn.createStatement();
@@ -50,6 +53,13 @@ public class Database {
     }
 
 
+    /**
+     * getMonsterByName method takes in a String as an argument and queries
+     * the SQLite databse for all the stats of the monster that was requested.
+     * Returns a map which has all the information required from the SQLite Database.
+     * @param name represents queried monster name.
+     * @return Map<String, Object> which holds all requested monster data.
+     */
     protected Map<String, Object> getMonsterByName(String name) {
         String query = "SELECT * FROM Monster WHERE Name = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -76,59 +86,10 @@ public class Database {
         } catch (SQLException e) {
             System.err.println("Error getting monsta: " + name + e.getMessage());
         }
+
+        //if monster isnt found
         return null;
     }
 
 
-
-    /*
-    public static List<Map<String, Object>> getMonsters() {
-        List<Map<String, Object>> monsterData = new ArrayList<>();
-
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM MonsterStats")) {
-
-
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<>();
-                row.put("Name", rs.getString("Name"));
-                row.put("HealthPoints", rs.getInt("HealthPoints"));
-                row.put("DamageRangeMin", rs.getInt("DamageRangeMin"));
-                row.put("DamageRangeMax", rs.getInt("DamageRangeMax"));
-                row.put("AttackSpeed", rs.getDouble("AttackSpeed"));
-                row.put("HitChance", rs.getInt("HitChance"));
-                row.put("HealChance", rs.getDouble("HealChance"));
-                row.put("MinHealPoints", rs.getString("MinHealPoints"));
-                row.put("MaxHealPoints", rs.getString("MaxHealPoints"));
-                monsterData.add(row);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error getting monstas: " + e.getMessage());
-        }
-        return monsterData;
-    }
-
-     */
-
-    /*
-    //try with resources
-    public static void main(String[] theArgs) {
-
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM MonsterStats");
-
-            while (rs.next()) {
-                System.out.println(rs.getString("Name") + " " + rs.getInt("HealthPoints"));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-     */
 }

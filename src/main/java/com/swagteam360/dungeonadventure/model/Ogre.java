@@ -23,9 +23,9 @@ public class Ogre extends Monster {
      * @param theMinHealPoints  represents mininum amount of health that can be gained.
      * @param theMaxHealPoints  represents maximum amount of health that can be gained
      */
-    public Ogre(String theName, int theHP, int theAttackSpeed,
-                 int theDamageRangeMin, int theDamageRangeMax, int theHitChance,
-                 double theHealChance, int theMinHealPoints, int theMaxHealPoints) {
+    public Ogre(final String theName, final int theHP, final int theAttackSpeed,
+                 final int theDamageRangeMin, final int theDamageRangeMax, final int theHitChance,
+                 final double theHealChance, final int theMinHealPoints, final int theMaxHealPoints) {
         super(theName, theHP, theAttackSpeed, theDamageRangeMin,
                 theDamageRangeMax, theHitChance, theHealChance, theMinHealPoints,
                 theMaxHealPoints);

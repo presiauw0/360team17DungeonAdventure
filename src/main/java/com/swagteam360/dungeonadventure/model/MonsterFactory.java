@@ -34,6 +34,7 @@ public class MonsterFactory {
 
         Monster theMonster = null;
 
+        //utilizes singleton design pattern to only call upon one instance of Database class.
         Map<String, Object> data = Database.getInstance().getMonsterByName(theMonsterName);
 
         //checking for underflow
@@ -54,7 +55,7 @@ public class MonsterFactory {
         int maxHealPoints = (int) data.get("MaxHealPoints");
 
 
-
+        //creating monster
         if (name.equalsIgnoreCase("witch")) {
             theMonster = new Witch("Witch", healthPoints, attackSpeed, damageRangeMin, damageRangeMax,
                     hitChance, healChance, minHealPoints, maxHealPoints);

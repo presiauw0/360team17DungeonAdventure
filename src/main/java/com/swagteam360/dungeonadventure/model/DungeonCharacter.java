@@ -78,7 +78,7 @@ public abstract class DungeonCharacter implements Serializable {
         // check if attack hits based on hitchance
         int hitRoll = random.nextInt(100) + 1; //roll 1-100
 
-        if (hitRoll <= theHitChance) {
+        if (hitRoll >= theHitChance) {
 
             //attack hits
             int dmg = 0;
