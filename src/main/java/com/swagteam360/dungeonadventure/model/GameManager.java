@@ -265,6 +265,7 @@ public class GameManager {
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             myHero.addToInventory(roomItems);
+            myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
         }
 
         // Check if we are at the exit room of the dungeon

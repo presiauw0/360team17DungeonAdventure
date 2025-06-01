@@ -1,6 +1,8 @@
 package com.swagteam360.dungeonadventure.controller;
 
+import com.swagteam360.dungeonadventure.model.Item;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,13 +28,14 @@ public class InventoryController {
     public ListView<String> inventoryList; //FIXME use special ItemView class?
 
     @FXML
-    public void initialize() {
-        // Register observer with the GameManager
-        //GameManager.getInstance().addPCL(this);
-        System.out.println("TEST");
+    public Button btnBuff;
 
-        String[] test = {"item1", "item2"};
-        inventoryList.getItems().addAll(test);
+
+    @FXML
+    public void initialize() {
+        // disable the button if nothing is selected.
+        btnBuff.disableProperty()
+                .bind(inventoryList.getSelectionModel().selectedItemProperty().isNull());
     }
 
     /**
@@ -48,5 +51,11 @@ public class InventoryController {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
         GUIUtils.switchScene(theActionEvent, loader);
+    }
+
+    void setInventoryList(final List<Item> theList) {
+        for (Item x : theList) {
+            inventoryList.getItems().add(x.getName());
+        }
     }
 }
