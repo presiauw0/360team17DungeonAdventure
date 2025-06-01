@@ -201,18 +201,9 @@ System.out.println();
      */
     private Hero createHero(final GameSettings theGameSettings) {
         return switch (theGameSettings.getHero().toLowerCase()) {
-            case "warrior" -> new Warrior(
-                        theGameSettings.getName(), 50,
-                         4, 35,
-                        60, 80, 20);
-            case "priestess" -> new Priestess(
-                        theGameSettings.getName(), 35,
-                        5, 25, 45,
-                        70, 30);
-            case "thief" -> new Thief(
-                        theGameSettings.getName(), 30,
-                        6, 20, 40,
-                        80, 40);
+            case "warrior" -> HeroFactory.createHero("Warrior");
+            case "priestess" -> HeroFactory.createHero("Priestess");
+            case "thief" -> HeroFactory.createHero("Thief");
             default -> throw new IllegalArgumentException("Unknown/Invalid Hero type.");
         };
     }

@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * The Database class handles everything related to Database connection and
  * accessing. Utilizes methods to retrieve data to be used in other classes
- * for (mainly) monster use.
+ * for character use.
  *
  * @author Luke Willis
  * @version 28 May 2025
@@ -61,7 +61,7 @@ public class Database {
      * @return Map<String, Object> which holds all requested monster data.
      */
     protected Map<String, Object> getMonsterByName(String name) {
-        String query = "SELECT * FROM Monster WHERE Name = ?";
+        String query = "SELECT * FROM MonsterStats WHERE Name = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -88,6 +88,42 @@ public class Database {
         }
 
         //if monster isnt found
+        return null;
+    }
+
+    /**
+     * getMonsterByName method takes in a String as an argument and queries
+     * the SQLite databse for all the stats of the hero that was requested.
+     * Returns a map which has all the information required from the SQLite Database.
+     * @param name represents queried hero name.
+     * @return Map<String, Object> which holds all requested monster data.
+     */
+    protected Map<String, Object> getHeroByName(String name) {
+        String query = "SELECT * FROM HeroStats WHERE Name = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, name);
+
+            try(ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("Name", rs.getString("Name"));
+                    data.put("HealthPoints", rs.getInt("HealthPoints"));
+                    data.put("AttackSpeed", rs.getInt("AttackSpeed"));
+                    data.put("DamageRangeMin", rs.getInt("DamageRangeMin"));
+                    data.put("DamageRangeMax", rs.getInt("DamageRangeMax"));
+                    data.put("HitChance", rs.getInt("HitChance"));
+                    data.put("BlockChance", rs.getInt("BlockChance"));
+
+                    return data;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting hero: " + name + e.getMessage());
+        }
+
+        //if hero isnt found
         return null;
     }
 
