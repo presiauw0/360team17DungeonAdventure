@@ -20,6 +20,8 @@
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="myBattleStatusLabel" alignment="CENTER" layoutY="268.0" prefHeight="17.0" prefWidth="491.0" />
+            <ProgressBar fx:id="myMonsterHealthBar" layoutX="145.0" layoutY="248.0" prefWidth="200.0" progress="0.0" />
+            <Label fx:id="myMonsterNameLabel" layoutX="205.0" layoutY="231.0" text="Monster Name" />
          </children></Pane>
    </center>
    <right>

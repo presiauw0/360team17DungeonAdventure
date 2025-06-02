@@ -25,14 +25,6 @@ public class BattleSystem {
      */
     private final Monster myMonster;
 
-    /**
-     * Indicates whether the current battle in the BattleSystem is over.
-     * This variable is set to true when one of the combatants (Hero or Monster)
-     * is defeated, or under certain conditions that signify the end of the battle.
-     * It determines the continuation or termination of the battle loop.
-     */
-    private boolean myBattleOver;
-
     private boolean myTurn;
 
     /**
@@ -45,7 +37,6 @@ public class BattleSystem {
     public BattleSystem(final Hero theHero, final Monster theMonster) {
         myHero = theHero;
         myMonster = theMonster;
-        myBattleOver = false;
         myTurn = true; // Player will attack first
     }
 

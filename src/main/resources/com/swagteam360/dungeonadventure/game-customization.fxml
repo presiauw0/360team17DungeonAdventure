@@ -25,7 +25,7 @@
       </MenuButton>
       <VBox alignment="CENTER" layoutX="65.0" prefHeight="402.0" prefWidth="470.0" spacing="10.0">
          <children>
-            <Label prefHeight="23.0" prefWidth="172.0" text="Enter Your Hero Name">
+            <Label alignment="CENTER" prefHeight="23.0" prefWidth="172.0" text="Enter Hero Name" textAlignment="CENTER">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

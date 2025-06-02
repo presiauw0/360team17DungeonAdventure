@@ -319,6 +319,10 @@ public class Room implements Cell, IRoom {
         return IRoom.PROPERTY_EXIT.equals(myEntranceExit);
     }
 
+    public boolean isEntrance() {
+        return IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit);
+    }
+
     // Package helpers
 
     /**
@@ -334,7 +338,7 @@ public class Room implements Cell, IRoom {
      * Reports whether the room has a pillar or not
      * @return Boolean value indicating whether a pillar is present
      */
-    boolean hasPillar() {
+    public boolean hasPillar() {
         return myPillar != null;
     }
 

@@ -159,6 +159,12 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private Button myInventoryButton;
 
+    @FXML
+    private ProgressBar myMonsterHealthBar;
+
+    @FXML
+    private Label myMonsterNameLabel;
+
     /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
@@ -226,6 +232,13 @@ public class GameViewController implements PropertyChangeListener {
         if (myHeroNameLabel == null) {
             myHeroNameLabel = new Label();
             myHeroNameLabel.setText(gameManager.getGameSettings().getName()); // Set the name label
+        }
+
+        if (myMonsterNameLabel != null) {
+            myMonsterNameLabel.setVisible(false);
+        }
+        if (myMonsterHealthBar != null) {
+            myMonsterHealthBar.setVisible(false);
         }
 
         // Set the name label, update movement buttons, hide battle controls, set health bar, and start hero dialogue
@@ -484,6 +497,22 @@ public class GameViewController implements PropertyChangeListener {
 
     }
 
+    private void showMonsterNameAndHealthBar(final Monster theMonster) {
+
+        if (theMonster == null) {
+            myMonsterNameLabel.setVisible(false);
+            myMonsterHealthBar.setVisible(false);
+            return;
+        }
+
+        if (myMonsterNameLabel != null) {
+            myMonsterNameLabel.setText(theMonster.getName());
+        }
+        if (myMonsterHealthBar != null) {
+            updateHealthBar(theMonster);
+        }
+    }
+
     private void hideMovementButtons() {
         if (myNorthButton != null) {
             myNorthButton.setVisible(false);
@@ -509,22 +538,30 @@ public class GameViewController implements PropertyChangeListener {
         }
     }
 
-    private void updateHealthBar(final Hero theHero) {
+    private void updateHealthBar(final DungeonCharacter theCharacter) {
 
-        if (theHero == null || myHealthBar == null) {
+        ProgressBar pb = new ProgressBar();
+
+        if (theCharacter instanceof Hero) {
+            pb = myHealthBar;
+        } else if (theCharacter instanceof Monster) {
+            pb = myMonsterHealthBar;
+        }
+
+        if (theCharacter == null || pb == null) {
             return;
         }
 
-        int currentHP = theHero.getHP();
-        int maxHP = theHero.getMaxHP();
+        int currentHP = theCharacter.getHP();
+        int maxHP = theCharacter.getMaxHP();
 
         if (maxHP == 0) {
-            myHealthBar.setProgress(0);
+            pb.setProgress(0);
             return;
         }
 
         double percentage = (double) currentHP / maxHP;
-        myHealthBar.setProgress(percentage);
+        pb.setProgress(percentage);
     }
 
     @FXML
@@ -582,6 +619,7 @@ public class GameViewController implements PropertyChangeListener {
 
         myCurrentBattle = new BattleSystem(theHero, theMonster);
         showBattleControls(true);
+        showMonsterNameAndHealthBar(theMonster);
         hideMovementButtons();
         updateBattleStatus("A fight has begun with a " + theMonster.getName());
 
@@ -592,6 +630,7 @@ public class GameViewController implements PropertyChangeListener {
             // If the Hero won, hide battle controls and update movement buttons
             updateBattleStatus("You won!");
             showBattleControls(false);
+            showMonsterNameAndHealthBar(null);
             myCurrentBattle = null;
             updateMovementButtons(theRoom.getAvailableDirections());
         } else {
@@ -631,9 +670,32 @@ public class GameViewController implements PropertyChangeListener {
         });
     }
 
-    private void onExitRoomEntered(final Room theRoom, final Hero theHero) {
+    private void handleGameCompletion() {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Completion");
+        alert.setHeaderText("You have all four Pillars!");
+        alert.setContentText("Would you like to exit the dungeon or continue exploring?");
+
+        ButtonType finishButton = new ButtonType("Finish Game");
+        ButtonType continueButton = new ButtonType("Keep exploring", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(finishButton, continueButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == finishButton) {
+            GameManager.getInstance().removePropertyChangeListener(this);
+            final FXMLLoader loader = new FXMLLoader(getClass()
+                    .getResource("/com/swagteam360/dungeonadventure/game-completion.fxml"));
+            final Stage stage = (Stage) myRootPane.getScene().getWindow();
+            GUIUtils.switchScene(stage, loader);
+        }
+
+    }
+
+    private void onExitRoomEntered(final Hero theHero) {
         if (theHero.getPillarCount() == 4) {
-            // handleGameCompletion();
+            handleGameCompletion();
         } else {
 
             if (myBattleStatusLabel != null) {
@@ -659,7 +721,7 @@ public class GameViewController implements PropertyChangeListener {
             case "Fight" -> onBattleStart(GameManager.getInstance().getHero(), (Monster) theEvent.getNewValue());
             case "Pit" -> onPitDamageTaken(GameManager.getInstance().getHero(), (int) theEvent.getNewValue());
             case "Dead" -> handleGameOver();
-            case "Exit" -> onExitRoomEntered((Room) theEvent.getNewValue(), GameManager.getInstance().getHero());
+            case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
         }
     }
 }
