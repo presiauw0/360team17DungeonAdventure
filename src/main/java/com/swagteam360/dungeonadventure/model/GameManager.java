@@ -129,7 +129,6 @@ public class GameManager {
 
         myCurrentRoom = newRoom; // moves the character by updating the room
 
-
         debugPrintDungeon(row, col);
 
         handleEvents();
@@ -219,7 +218,7 @@ public class GameManager {
     private void chanceToSpawnMonster(final Room theRoom) {
 
         if (theRoom.isEntranceOrExit()) {
-            return;
+            return; // TODO: Would we like to add a monster at the exit?
         }
 
         double monsterSpawnChance = Math.random();
@@ -262,6 +261,11 @@ public class GameManager {
             myPCS.firePropertyChange("Pit", null, PIT_DAMAGE);
         }
 
+        // In case we die from the pit
+        if (myHero.getHP() <= 0) {
+            myPCS.firePropertyChange("Dead", null, myHero);
+        }
+
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             myHero.addToInventory(roomItems);
@@ -289,11 +293,11 @@ public class GameManager {
 
     public Hero getHero() {return myHero;}
 
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        myPCS.addPropertyChangeListener(l);
+    public void addPropertyChangeListener(final PropertyChangeListener theListener) {
+        myPCS.addPropertyChangeListener(theListener);
     }
-    public void removePropertyChangeListener(PropertyChangeListener l) {
-        myPCS.removePropertyChangeListener(l);
+    public void removePropertyChangeListener(final PropertyChangeListener theListener) {
+        myPCS.removePropertyChangeListener(theListener);
     }
 
 }

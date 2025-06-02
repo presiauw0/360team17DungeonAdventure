@@ -156,6 +156,9 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private ProgressBar myHealthBar;
 
+    @FXML
+    private Button myInventoryButton;
+
     /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
@@ -211,7 +214,7 @@ public class GameViewController implements PropertyChangeListener {
             myHeroDialogueLabel = new Label();
         }
 
-        // gameManager.addObserver(this); // Add the controller as an observer of GameManager
+        gameManager.removePropertyChangeListener(this);
         gameManager.addPropertyChangeListener(this);
 
         GUIUtils.initializeDarkModeToggle(myDarkModeToggle); // Initialize dark mode toggle button
@@ -357,21 +360,6 @@ public class GameViewController implements PropertyChangeListener {
     }
 
     /**
-     * Navigates back to the Game View of the application.
-     * This method loads the "game-view.fxml" file and switches the scene
-     * to display the Game View.
-     *
-     * @param theActionEvent the ActionEvent instance triggered by the user interaction
-     *                       that initiates the navigation back to the Game View.
-     */
-    @FXML
-    private void goBackToGameView(final ActionEvent theActionEvent) {
-        final FXMLLoader loader = new FXMLLoader(getClass()
-                .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
-        GUIUtils.switchScene(theActionEvent, loader);
-    }
-
-    /**
      * Handles the room movement buttons in the game interface.
      * This method updates the player's position in the game by determining the direction
      * based on the button clicked and calling the movePlayer method with new coordinates.
@@ -490,6 +478,7 @@ public class GameViewController implements PropertyChangeListener {
         if (!theShow) {
             if (GameManager.getInstance().getCurrentRoom() != null) {
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
+                myInventoryButton.setVisible(true);
             }
         }
 
@@ -507,6 +496,9 @@ public class GameViewController implements PropertyChangeListener {
         }
         if (myWestButton != null) {
             myWestButton.setVisible(false);
+        }
+        if (myInventoryButton != null) {
+            myInventoryButton.setVisible(false);
         }
     }
 
@@ -556,7 +548,6 @@ public class GameViewController implements PropertyChangeListener {
                         updateHealthBar(GameManager.getInstance().getHero());
 
                         if (myCurrentBattle.isBattleOver()) {
-                            // GameManager.getInstance().notifyBattleEnd(myCurrentBattle.didHeroWin());
                             onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
                         }
 
@@ -595,7 +586,7 @@ public class GameViewController implements PropertyChangeListener {
         updateBattleStatus("A fight has begun with a " + theMonster.getName());
 
     }
-    public void onBattleEnd(final Room theRoom, final boolean theHeroWon) {
+    private void onBattleEnd(final Room theRoom, final boolean theHeroWon) {
 
         if (theHeroWon) {
             // If the Hero won, hide battle controls and update movement buttons
@@ -606,42 +597,49 @@ public class GameViewController implements PropertyChangeListener {
         } else {
             updateBattleStatus("You lost!");
             showBattleControls(false);
-
-            // ChatGPT gave the following
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Game Over");
-                alert.setHeaderText("You lost the game!");
-                alert.setContentText("Would you like to start a new game or quit?");
-
-                ButtonType newGameButton = new ButtonType("New Game");
-                ButtonType quitButton = new ButtonType("Quit");
-
-                alert.getButtonTypes().setAll(newGameButton, quitButton);
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent()) {
-
-                    if (result.get() == newGameButton) {
-
-                        GameManager.getInstance().removePropertyChangeListener(this);
-
-                        final FXMLLoader loader = new FXMLLoader(getClass()
-                                .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
-                        final Stage stage = (Stage) myRootPane.getScene().getWindow();
-                        GUIUtils.switchScene(stage, loader);
-                    } else if (result.get() == quitButton) {
-                        Platform.exit();
-                    }
-                }
-            });
+            handleGameOver();
         }
+    }
+
+    private void handleGameOver() {
+        // ChatGPT gave the following
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText("You lost the game!");
+            alert.setContentText("Would you like to start a new game or quit?");
+
+            ButtonType newGameButton = new ButtonType("New Game");
+            ButtonType quitButton = new ButtonType("Quit");
+
+            alert.getButtonTypes().setAll(newGameButton, quitButton);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+
+                if (result.get() == newGameButton) {
+
+                    GameManager.getInstance().removePropertyChangeListener(this);
+
+                    final FXMLLoader loader = new FXMLLoader(getClass()
+                            .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
+                    final Stage stage = (Stage) myRootPane.getScene().getWindow();
+                    GUIUtils.switchScene(stage, loader);
+                } else if (result.get() == quitButton) {
+                    Platform.exit();
+                }
+            }
+        });
     }
 
     private void onExitRoomEntered(final Room theRoom, final Hero theHero) {
         if (theHero.getPillarCount() == 4) {
             // handleGameCompletion();
         } else {
-            myBattleStatusLabel.setText("You've reached the exit room! Return with all four pillars to exit.");
+
+            if (myBattleStatusLabel != null) {
+                myBattleStatusLabel.setText("You've reached the exit room! Return with all four pillars to exit.");
+            }
+
         }
     }
 
@@ -652,14 +650,16 @@ public class GameViewController implements PropertyChangeListener {
 
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
-        if (theEvent.getPropertyName().equals("Clear Label")) {
-            myBattleStatusLabel.setText("");
-        } else if (theEvent.getPropertyName().equals("Fight")) {
-            onBattleStart(GameManager.getInstance().getHero(), (Monster) theEvent.getNewValue());
-        } else if (theEvent.getPropertyName().equals("Pit")) {
-            onPitDamageTaken(GameManager.getInstance().getHero(), (int) theEvent.getNewValue());
-        } else if (theEvent.getPropertyName().equals("Exit")) {
-            onExitRoomEntered((Room) theEvent.getNewValue(), GameManager.getInstance().getHero());
+        switch (theEvent.getPropertyName()) {
+            case "Clear Label" -> {
+                if (myBattleStatusLabel != null) {
+                    myBattleStatusLabel.setText("");
+                }
+            }
+            case "Fight" -> onBattleStart(GameManager.getInstance().getHero(), (Monster) theEvent.getNewValue());
+            case "Pit" -> onPitDamageTaken(GameManager.getInstance().getHero(), (int) theEvent.getNewValue());
+            case "Dead" -> handleGameOver();
+            case "Exit" -> onExitRoomEntered((Room) theEvent.getNewValue(), GameManager.getInstance().getHero());
         }
     }
 }
