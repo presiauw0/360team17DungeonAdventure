@@ -70,6 +70,16 @@ public class InventoryController {
         GUIUtils.switchScene(theActionEvent, loader);
     }
 
+    @FXML
+    private void onBuffClick() {
+        final Item selected = inventoryList.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            System.out.println(selected.buff());
+        } else {
+            btnBuff.disableProperty().setValue(true);
+        }
+    }
+
     void setInventoryList(final List<Item> theList) {
         myObservableItems.addAll(theList);
     }
