@@ -23,4 +23,10 @@ public interface Item {
      */
     String buff();
 
+    /**
+     * Get the name of the potion.
+     * @return String name of the potion
+     */
+    String getName();
+
 }

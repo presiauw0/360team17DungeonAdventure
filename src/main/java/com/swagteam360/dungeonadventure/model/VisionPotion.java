@@ -14,6 +14,8 @@ package com.swagteam360.dungeonadventure.model;
  */
 public class VisionPotion implements Item {
 
+    private static final String NAME = "Vision Potion";
+
     // This class will eventually tie into the game logic to provide
     // enhanced vision of the surrounding area. Come back later.
 
@@ -33,6 +35,11 @@ public class VisionPotion implements Item {
     @Override
     public String buff() {
         return "You gain vision of the surrounding area!";
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
 }

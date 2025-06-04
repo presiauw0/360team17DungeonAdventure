@@ -13,6 +13,8 @@ package com.swagteam360.dungeonadventure.model;
  */
 public class HealthPotion implements Item {
 
+    private static final String NAME = "Health Potion";
+
     /**
      * Represents the number of health points (HP) that this health potion can restore.
      * This value is immutable and is assigned during the instantiation of the HealthPotion object.
@@ -37,6 +39,11 @@ public class HealthPotion implements Item {
     @Override
     public String buff() {
         return "You gain " + myHealAmount + " HP!";
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     /**
