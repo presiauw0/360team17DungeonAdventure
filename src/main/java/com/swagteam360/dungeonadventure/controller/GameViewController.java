@@ -22,15 +22,17 @@ import java.util.*;
 
 /**
  * The GameViewController class handles the user interaction and event logic for the game view.
- * It provides functionality to respond to user interface events such as saving progress and quitting the application.
- * [ADD MORE HERE]
- * <p>
+ * It provides functionality to respond to user interface events. Events include moving between rooms, attacking,
+ * checking inventory, toggling light/dark mode, and displaying informational dialogs.
  *
  * @author Jonathan Hernandez
- * @version 1.0 (May 11, 2025)
+ * @version 1.1 (June 4, 2025)
  */
 public class GameViewController implements PropertyChangeListener {
 
+    /**
+     * A reference to the root pane of the scene.
+     */
     @FXML
     private BorderPane myRootPane;
 
@@ -75,6 +77,9 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private Label myHeroDialogueLabel;
 
+    /**
+     * A label element in the FXML file, used to mainly display events that occur during battle.
+     */
     @FXML
     private Label myBattleStatusLabel;
 
@@ -93,7 +98,7 @@ public class GameViewController implements PropertyChangeListener {
     /**
      * Represents a Timeline object used for managing and animating hero dialogue sequences
      * within the game interface.
-     * This variable likely governs the timing and transitions of dialogue displayed for the hero.
+     * This variable governs the timing and transitions of dialogue displayed for the hero.
      */
     private Timeline myHeroDialogueTimeline;
 
@@ -128,8 +133,9 @@ public class GameViewController implements PropertyChangeListener {
      * Represents the button in the user interface associated with the Eastward movement in the game.
      * This button enables the player to navigate their character to the East direction within the game world.
      * <p>
-     * The button is linked to the event handling logic that processes movement actions, allowing for seamless interaction.
-     * It is configured and managed via FXML and integrates with the game's movement controls.
+     * The button is linked to the event handling logic that processes movement actions,
+     * allowing for seamless interaction. It is configured and managed via FXML and integrates
+     * with the game's movement controls.
      */
     @FXML
     private Button myEastButton;
@@ -144,24 +150,50 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private Button myWestButton;
 
+    /**
+     * Represents the button in the user interface used for attacking.
+     * It is initially hidden until the player encounters a monster.
+     */
     @FXML
     private Button myAttackButton;
 
+    /**
+     * Represents the button in the user interface used for performing a special move which varies among the Heroes.
+     * It is initially hidden until the player encounters a monster.
+     */
     @FXML
     private Button mySpecialMoveButton;
 
+    /**
+     * Represents the button that allows quick healing in battles without needed to switch to InventoryView.
+     * This button is enabled when the Hero has potions and is in battle. Otherwise, it is hidden.
+     */
     @FXML
     private Button myUseHealthPotionButton;
 
+    /**
+     * Represents the Hero's health bar throughout the game. It is updated when damage is inflicted (by monsters or
+     * pits) or when the Hero heals themselves.
+     */
     @FXML
     private ProgressBar myHealthBar;
 
+    /**
+     * Represents the button that allows the player to view their inventory. This button is disabled during battle
+     * as only health potions from the inventory are to be used (by myUseHealthPotion button).
+     */
     @FXML
     private Button myInventoryButton;
 
+    /**
+     * Represents the monster's health bar in battle.
+     */
     @FXML
     private ProgressBar myMonsterHealthBar;
 
+    /**
+     * Represents the monster's name to be shown in battle.
+     */
     @FXML
     private Label myMonsterNameLabel;
 
@@ -172,6 +204,9 @@ public class GameViewController implements PropertyChangeListener {
      */
     private final Random myRandom = new Random();
 
+    /**
+     * A list of dialogues that the hero may say throughout the DungeonAdventure game.
+     */
     private final List<String> myHeroDialogues = List.of(
             "Why is it so quiet down here?",
             "I hope there's treasure ahead.",
@@ -181,6 +216,10 @@ public class GameViewController implements PropertyChangeListener {
             "I have a bad feeling about this place."
     );
 
+    /**
+     * Represents a reference to BattleSystem. The player (through the GUI) will call some methods in this class
+     * through two main controls; either the attack button or the special move button.
+     */
     private BattleSystem myCurrentBattle;
 
     /**
@@ -395,7 +434,7 @@ public class GameViewController implements PropertyChangeListener {
             return;
         }
 
-        Direction targetDirection = null;
+        Direction targetDirection;
         if (clickedButton.getId() == null) {
             System.out.println("Button ID is null");
             return;
@@ -411,7 +450,6 @@ public class GameViewController implements PropertyChangeListener {
                 return;
             }
         }
-
 
         // TELL the player to move. If it's illegal, handle the exception and print a notice.
         try {
@@ -497,6 +535,12 @@ public class GameViewController implements PropertyChangeListener {
 
     }
 
+    /**
+     * Shows the Monster's name and health when a battle occurs. Null checks are performed in case this method
+     * is accidentally called.
+     *
+     * @param theMonster The monster whose info is displayed in the GUI.
+     */
     private void showMonsterNameAndHealthBar(final Monster theMonster) {
 
         if (theMonster == null) {
@@ -513,6 +557,9 @@ public class GameViewController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Hides the movement buttons if needed. This occurs when a monster is encountered.
+     */
     private void hideMovementButtons() {
         if (myNorthButton != null) {
             myNorthButton.setVisible(false);
@@ -527,10 +574,16 @@ public class GameViewController implements PropertyChangeListener {
             myWestButton.setVisible(false);
         }
         if (myInventoryButton != null) {
-            myInventoryButton.setVisible(false);
+            myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
+                                                 // accidentally.
         }
     }
 
+    /**
+     * Updates a label that represents events that occur in battle. It is also used to notify if a player takes
+     * damage from a pit or has reached the exit door (without all four pillars).
+     * @param theMessage The message to be displayed for events, primarily for battle.
+     */
     private void updateBattleStatus(final String theMessage) {
 
         if (myBattleStatusLabel != null) {
@@ -538,6 +591,11 @@ public class GameViewController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * General method that updates the health bar of a dungeon character (either a Hero or Monster).
+     *
+     * @param theCharacter The DungeonCharacter in which it's health progress bar needs to be updated.
+     */
     private void updateHealthBar(final DungeonCharacter theCharacter) {
 
         ProgressBar pb = new ProgressBar();
@@ -564,40 +622,76 @@ public class GameViewController implements PropertyChangeListener {
         pb.setProgress(percentage);
     }
 
+    /**
+     * Handles the event where the player attacks the monster. A call is made in BattleSystem through myCurrentBattle
+     * to process and receive the result from the attack.
+     */
     @FXML
     private void handleAttackButton() {
 
         if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
-            final String result = myCurrentBattle.processPlayerAttack(); // Get the result from player's attack
-            updateBattleStatus(result); // Update the label
-
-            final boolean battleOverAfterPlayer = myCurrentBattle.isBattleOver(); // Double-check if we won
-
-            // If not (aka battle is going)
-            if (!battleOverAfterPlayer) {
-                // Start a timeline
-                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-
-                    // Check if a battle remains and is ongoing, this means it is the monster's turn
-                    if (myCurrentBattle != null && !myCurrentBattle.isBattleOver()) {
-                        final String monsterResult = myCurrentBattle.processMonsterTurn(); // Get the result from monster
-                        updateBattleStatus(monsterResult); // Update the label
-                        updateHealthBar(GameManager.getInstance().getHero());
-
-                        if (myCurrentBattle.isBattleOver()) {
-                            onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
-                        }
-
-                    }
-                }));
-                timeline.play();
-            } else {
-                onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
-            }
+            final String result = myCurrentBattle.processPlayerAttacks(); // Get the result from the player's attack
+            continueBattleAfterPlayerMove(result);
         }
 
     }
 
+    /**
+     * Handles the event where the player decides to use their special move in battle. A call is made in BattleSystem
+     * through myCurrentBattle to process and receive the result from this action.
+     */
+    @FXML
+    private void handleSpecialMoveButton() {
+
+        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
+            String result = myCurrentBattle.processPlayerSpecialMove();
+            continueBattleAfterPlayerMove(result);
+        }
+
+    }
+
+    /**
+     * Helper method that updates the status label given the result of the user's attack/special move. A timeline is
+     * then started for a minor delay for the monster's upcoming attack and possible heal.
+     *
+     * @param theResult The result given by processing the player's attack, which updates the battle status.
+     */
+    private void continueBattleAfterPlayerMove(final String theResult) {
+        updateBattleStatus(theResult);
+
+        final boolean battleOverAfterPlayer = myCurrentBattle.isBattleOver();
+
+        if (!battleOverAfterPlayer) {
+            final Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.seconds(1), event -> {
+                        if (myCurrentBattle != null && !myCurrentBattle.isBattleOver()) {
+                            final String monsterResult = myCurrentBattle.processMonsterAttacks();
+                            updateBattleStatus(monsterResult); // Show monster attack results
+                            updateHealthBar(GameManager.getInstance().getHero()); // Update Hero health
+                        }
+                    }),
+                    new KeyFrame(Duration.seconds(1.5), event -> {
+                        if (myCurrentBattle != null && !myCurrentBattle.isBattleOver()) {
+                            final String heal = myCurrentBattle.processMonsterHeal();
+                            updateBattleStatus(heal); // After a delay, show if the monster healed
+                            updateHealthBar(GameManager.getInstance().getCurrentRoom().getMonster()); // Update Monster
+                                                                                                      // health
+
+                            if (myCurrentBattle.isBattleOver()) {
+                                onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
+                            }
+                        }
+                    })
+            );
+            timeline.play();
+        } else {
+            onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
+        }
+    }
+
+    /**
+     * Handles the event in which the player chooses to heal themselves with a health potion.
+     */
     @FXML
     private void handleHealthPotionButton() {
 
@@ -609,12 +703,22 @@ public class GameViewController implements PropertyChangeListener {
             HealthPotion hp = (HealthPotion) healthPotion.get();
             GameManager.getInstance().getHero().heal(hp.getHealAmount());
             inventory.remove(hp);
-            updateBattleStatus("You have been healed!");
+            updateHealthBar(GameManager.getInstance().getHero()); // Update the GUI
+            updateBattleStatus("You used a health potion! Gained " + hp.getHealAmount() + " health.");
         }
 
-        showBattleControls(true);
+        showBattleControls(true); // Inventory may not have anymore health potions, so update it here.
 
     }
+
+    /**
+     * Handles the property change event that occurs when a monster is present in the room. myCurrentBattle is
+     * instantiated given the Hero and Monster, battle controls are enabled, monster info is visible, movement buttons
+     * are disabled, and the battle status label is updated.
+     *
+     * @param theHero The Hero involved in the battle.
+     * @param theMonster The monster involved in the battle.
+     */
     private void onBattleStart(final Hero theHero, final Monster theMonster) {
 
         myCurrentBattle = new BattleSystem(theHero, theMonster);
@@ -624,6 +728,16 @@ public class GameViewController implements PropertyChangeListener {
         updateBattleStatus("A fight has begun with a " + theMonster.getName());
 
     }
+
+    /**
+     * Handles the event where a battle ends. Checks whether the Hero was victorious, which updates events accordingly
+     * (battle status label is updated, battle controls are disabled, monster info is set invisible, and movement
+     * buttons are enabled again). Otherwise, if the Hero was defeated, it delegates to another method that handles
+     * game-over events.
+     *
+     * @param theRoom The current room to be examined, which updates the enabled movement buttons.
+     * @param theHeroWon Boolean that determines the outcomes of battle.
+     */
     private void onBattleEnd(final Room theRoom, final boolean theHeroWon) {
 
         if (theHeroWon) {
@@ -640,9 +754,14 @@ public class GameViewController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Handles the event if the Hero's health falls to 0. An alert is given to the user if they want to start a new game
+     * or quit the application.
+     */
     private void handleGameOver() {
         // ChatGPT gave the following
         Platform.runLater(() -> {
+            GameManager.getInstance().removePropertyChangeListener(this);
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Game Over");
             alert.setHeaderText("You lost the game!");
@@ -654,11 +773,7 @@ public class GameViewController implements PropertyChangeListener {
             alert.getButtonTypes().setAll(newGameButton, quitButton);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent()) {
-
                 if (result.get() == newGameButton) {
-
-                    GameManager.getInstance().removePropertyChangeListener(this);
-
                     final FXMLLoader loader = new FXMLLoader(getClass()
                             .getResource("/com/swagteam360/dungeonadventure/game-customization.fxml"));
                     final Stage stage = (Stage) myRootPane.getScene().getWindow();
@@ -670,6 +785,10 @@ public class GameViewController implements PropertyChangeListener {
         });
     }
 
+    /**
+     * Handles the event where the player successfully reaches the exit room of the dungeon with all four pillars. The
+     * player may choose to continue exploring or exit the dungeon, which ends the game.
+     */
     private void handleGameCompletion() {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -693,6 +812,12 @@ public class GameViewController implements PropertyChangeListener {
 
     }
 
+    /**
+     * Handles the event which occurs when the user reaches the exit room. If the pillar count is four, the user is
+     * then prompted to end the game; otherwise the battle status label is updated to notify the player to come back
+     * with all four pillars.
+     * @param theHero The hero whose inventory is to be examined.
+     */
     private void onExitRoomEntered(final Hero theHero) {
         if (theHero.getPillarCount() == 4) {
             handleGameCompletion();
@@ -705,11 +830,21 @@ public class GameViewController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Handles the event if the room was a pit. Damage is applied to the hero, and the battle status label is updated.
+     * @param theHero The hero to be examined
+     * @param theDamage The damage inflicted to the Hero from the pit.
+     */
     private void onPitDamageTaken(final Hero theHero, final int theDamage) {
         updateHealthBar(theHero);
         updateBattleStatus("You've taken " + theDamage + " damage from the pit!");
     }
 
+    /**
+     * Handles property changes that come from GameManager.
+     * @param theEvent A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     */
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
         switch (theEvent.getPropertyName()) {

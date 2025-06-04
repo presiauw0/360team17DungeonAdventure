@@ -68,7 +68,7 @@ public class Database {
      */
 
     protected Map<String, Object> getMonsterByName(String name) {
-        String query = "SELECT * FROM Monster WHERE Name = ?";
+        String query = "SELECT * FROM MonsterStats WHERE Name = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement stmt = conn.prepareStatement(query)
             ) {

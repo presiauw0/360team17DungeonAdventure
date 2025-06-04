@@ -1,12 +1,14 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Random;
+
 /**
  * The Warrior class is a specific type of Hero, one of the 3 player
  * characters. A warrior has the special ability "Bash" which deals more damage
  * with a smaller hit chance.
  *
- * @author Luke Willis
- * @version 3 May 2025
+ * @author Luke Willis, Jonathan Hernandez
+ * @version 4 June 2025
  */
 public class Warrior extends Hero {
 
@@ -33,15 +35,30 @@ public class Warrior extends Hero {
      * has a 30% chance of hitting but does double the damage a normal warrior
      * attack does.
      *
-     * @return int representing amount of damage dealt
+     * @return String representing the outcome of this special move.
      */
-    private int bash() {
+    @Override
+    public String specialMove(final Monster theMonster) {
         //multiplier for bash damage, 30% chance to hit, multiplied by 2 for ability effect.
         /*
          * method returns the attack function, with the warriors default damage min and max,
          * and with a set 30% hit chance. Then, multiplies output by 2 to result in the doubled
          * damage.
          */
-        return attack(getDamageRangeMin(), getDamageRangeMax(), 30) * 2;
+
+        final Random rand = new Random();
+        final int roll = rand.nextInt(100);
+        String result;
+
+        if (roll < 30) {
+            final int damage = 2 * attack(getDamageRangeMin(), getDamageRangeMax(), 30);
+            theMonster.takeDamage(damage);
+            result = "Bash successful! You dealt " + damage + " damage.";
+        } else {
+            result = "Bash failed! You missed!";
+        }
+
+        return result;
+
     }
 }

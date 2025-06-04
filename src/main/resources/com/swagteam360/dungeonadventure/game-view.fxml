@@ -100,7 +100,7 @@
                                     <Font size="10.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="mySpecialMoveButton" mnemonicParsing="false" text="Special" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <Button fx:id="mySpecialMoveButton" mnemonicParsing="false" onAction="#handleSpecialMoveButton" text="Special" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font>

@@ -1,12 +1,14 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Random;
+
 /**
  *  The Thief class is a specific type of Hero, one of the 3 player
  * characters. A Thief has the special ability "Poison Knife" which allows
  * the player to poison the enemy for 5-15 seconds, dealing 5 damage/second.
  *
- * @author Luke Willis
- * @version 3 May 2025
+ * @author Luke Willis, Jonathan Hernandez
+ * @version 4 June 2025
  */
 public class Thief extends Hero{
     /**
@@ -25,12 +27,48 @@ public class Thief extends Hero{
     }
 
     /**
-     * The special ability of the Thief is poison() in which one of his attacks
-     * will poison the enemy. This ability does 5dmg/second and will last
-     * anywhere from 5 to 15 seconds.
+     * Thief can launch a surprise attack against a monster. A successful surprise attack will deal two attacks worth
+     * of damage to the monster. An unsuccessful surprise attack may only consist of one attack or a missed attack.
+     *
+     * @param theMonster The monster in which the special move may be performed on.
+     * @return A string representation of the outcome of this special move.
      */
-    private void poison() {
-        //this method needs to wait until we can implement a time system
-        // as this would to Damage over time (i.e. 5dmg/second)
+    @Override
+    public String specialMove(final Monster theMonster) {
+
+        Random rand = new Random();
+        final int roll = rand.nextInt(100);
+        String result;
+
+        if (roll < 20) {
+            result = "You've been caught! Attack missed!";
+        } else if (roll < 60) {
+            int damage = attack(getDamageRangeMin(), getDamageRangeMax(), getMyHitChance());
+            if (damage > 0) {
+                theMonster.takeDamage(damage);
+                result = "You performed a normal attack for " + damage + " damage!";
+            } else {
+                result = "You tried a surprise attack but missed!";
+            }
+        } else {
+            int totalDamage = 0;
+            StringBuilder sb = new StringBuilder("Surprise attack successful!");
+            for (int i = 1; i <= 2; i++) {
+                int damage = attack(getDamageRangeMin(), getDamageRangeMax(), getMyHitChance());
+                if (damage > 0) {
+                    theMonster.takeDamage(damage);
+                    totalDamage += damage;
+                    sb.append("Hit ").append(i).append(": ").append(damage).append(" damage!\n");
+                } else {
+                    sb.append("Hit ").append(i).append(": Missed!\n");
+                }
+            }
+
+            sb.append("Total damage: ").append(totalDamage).append("!");
+            result = sb.toString();
+        }
+
+        return result;
+
     }
 }

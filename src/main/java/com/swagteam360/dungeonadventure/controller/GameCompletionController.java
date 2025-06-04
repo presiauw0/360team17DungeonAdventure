@@ -14,11 +14,29 @@ import javafx.scene.layout.StackPane;
 
 import java.util.Set;
 
+/**
+ * GameCompletionController handles the user interaction and event logic for the final scene of the game.
+ * This scene displays the dungeon layout along with a New Game button and a Quit Game button.
+ *
+ * @author Jonathan Hernandez
+ * @version 1.1 (June 4rd, 2025)
+ */
 public class GameCompletionController {
 
+    /**
+     * Cell size for each room of the dungeon. This accommodates up to the size for harder dungeons (9x9).
+     */
+    private final static int CELL_SIZE = 30;
+
+    /**
+     * FXML instance field for the GridPane that displays the dungeon layout.
+     */
     @FXML
     private GridPane myDungeonGrid;
 
+    /**
+     * Initializes the GridPane with the dungeon layout.
+     */
     @FXML
     private void initialize() {
 
@@ -27,32 +45,31 @@ public class GameCompletionController {
         final int rows = dungeon.getRowSize();
         final int cols = dungeon.getColSize();
 
-        final int cellSize = 30;
-
         myDungeonGrid.getColumnConstraints().clear();
         myDungeonGrid.getRowConstraints().clear();
         myDungeonGrid.getChildren().clear();
 
         for (int col = 0; col < cols; col++) {
-            ColumnConstraints cc = new ColumnConstraints(cellSize);
+            final ColumnConstraints cc = new ColumnConstraints(CELL_SIZE);
             myDungeonGrid.getColumnConstraints().add(cc);
         }
 
         for (int row = 0; row < rows; row++) {
-            RowConstraints rc = new RowConstraints(cellSize);
+            final RowConstraints rc = new RowConstraints(CELL_SIZE);
             myDungeonGrid.getRowConstraints().add(rc);
         }
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
 
-                Room room = dungeon.getRoom(row, col);
-                StackPane roomPane = getStackPane(cellSize, room);
+                final Room room = dungeon.getRoom(row, col);
+                final StackPane roomPane = getStackPane(room);
 
                 // Room contents
-                Label label = new Label();
+                final Label label = new Label();
                 label.setStyle("-fx-font-size: 14;");
 
+                // If there are items, we can represent them here
                 if (room.isEntrance()) {
                     label.setText("🟩");
                 } else if (room.hasPillar()) {
@@ -72,26 +89,37 @@ public class GameCompletionController {
 
     }
 
-    private static StackPane getStackPane(final int theCellSize, final Room theRoom) {
-        StackPane roomPane = new StackPane();
-        roomPane.setPrefSize(theCellSize, theCellSize);
+    /**
+     * Returns the StackPane (room/cell) to be added to the GridPane, which represents the dungeon layout.
+     * Borders are determined according to whether the room has a door or not.
+     * @param theRoom The room to be examined, which influences the room's border style.
+     * @return The StackPane (room/cell) to be added to the GridPane.
+     */
+    private static StackPane getStackPane(final Room theRoom) {
+        final StackPane roomPane = new StackPane();
+        roomPane.setPrefSize(CELL_SIZE, CELL_SIZE);
 
         // Use wall info to adjust borders
-        Set<Direction> available = theRoom.getAvailableDirections();
+        final Set<Direction> available = theRoom.getAvailableDirections();
 
-        String top = available.contains(Direction.NORTH) ? "0" : "1";
-        String right = available.contains(Direction.EAST) ? "0" : "1";
-        String bottom = available.contains(Direction.SOUTH) ? "0" : "1";
-        String left = available.contains(Direction.WEST) ? "0" : "1";
+        final String top = available.contains(Direction.NORTH) ? "0" : "1";
+        final String right = available.contains(Direction.EAST) ? "0" : "1";
+        final String bottom = available.contains(Direction.SOUTH) ? "0" : "1";
+        final String left = available.contains(Direction.WEST) ? "0" : "1";
 
-        String borderStyle = String.format(
+        final String borderStyle = String.format(
                 "-fx-border-color: black; -fx-border-width: %s %s %s %s;",
                 top, right, bottom, left
         );
-        roomPane.setStyle(borderStyle);
+        roomPane.setStyle(borderStyle + " -fx-background-color: white;"); // To make cells white
         return roomPane;
     }
 
+    /**
+     * Handles the event where the user starts a new game. They are redirected to the game customization screen.
+     *
+     * @param theActionEvent The event to be examined and handled.
+     */
     @FXML
     private void newGame(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
@@ -99,6 +127,9 @@ public class GameCompletionController {
         GUIUtils.switchScene(theActionEvent, loader);
     }
 
+    /**
+     * Handles the event where the user clicks the Quit Game button. This method promptly exits the application.
+     */
     @FXML
     private void quitGame() {
         Platform.exit();

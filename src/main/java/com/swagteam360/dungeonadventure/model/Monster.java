@@ -3,7 +3,7 @@ package com.swagteam360.dungeonadventure.model;
 import java.util.Random;
 
 /**
- * Abtract Class "Monster" defines what a "Monster" is, primarily
+ * Abstract Class "Monster" defines what a "Monster" is, primarily
  * inheriting characteristics from the super class. A unique quality of "Monster"
  * is the chance to heal during battle. Other than that, "Monster" is quite
  * similar to "DungeonCharacter" and "Hero".
@@ -15,7 +15,7 @@ import java.util.Random;
 public abstract class Monster extends DungeonCharacter {
 
     /** Field myHealChance represents the % chance for a monster to heal in combat. */
-    private double myHealChance;
+    private final double myHealChance;
 
     private int myMinHealPoints;
 
@@ -48,7 +48,7 @@ public abstract class Monster extends DungeonCharacter {
      * 'Heal' method represents Monsters' ability to randomly heal in combat.
      * Utilizes a random object to simulate the "chance" that a monster will heal.
      */
-    private void heal() {
+    public int heal() {
         //establish random object
         Random random = new Random();
 
@@ -58,7 +58,9 @@ public abstract class Monster extends DungeonCharacter {
         //if healchance is greater than or equal to the random rolled, will heal :)
         if (myHealChance >= healRoll) {
             this.setHP(this.getHP() + healRoll); //set new Health Points
+            return healRoll;
         }
+        return 0;
     }
 
 }
