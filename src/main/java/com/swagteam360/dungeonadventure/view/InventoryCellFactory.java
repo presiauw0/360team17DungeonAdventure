@@ -4,7 +4,7 @@ import javafx.scene.control.ListView;
 import javafx.util.Callback;
 import javafx.scene.control.ListCell;
 import com.swagteam360.dungeonadventure.model.Item;
-
+// PROBABLY OLD AND IRRELEVANT
 public class InventoryCellFactory implements Callback<ListView<Item>, ListCell<Item>> {
     @Override
     public ListCell<Item> call(ListView<Item> theListView) {

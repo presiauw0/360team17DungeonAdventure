@@ -2,7 +2,11 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.Item;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import com.swagteam360.dungeonadventure.view.InventoryCellFactory;
 import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,10 +29,18 @@ public class InventoryController {
     public Button btnBackToGameView;
 
     @FXML
-    public ListView<String> inventoryList; //FIXME use special ItemView class?
+    public ListView<Item> inventoryList; //FIXME use special ItemView class?
 
     @FXML
     public Button btnBuff;
+
+    /**
+     * Hold inventory items in s special JavaFX List. The ListView
+     * will observe this list and update the interface.
+     */
+    private final ObservableList<Item> myObservableItems = FXCollections.observableArrayList();
+
+    public InventoryCellFactory myCellFactory = new InventoryCellFactory();
 
 
     @FXML
@@ -36,6 +48,11 @@ public class InventoryController {
         // disable the button if nothing is selected.
         btnBuff.disableProperty()
                 .bind(inventoryList.getSelectionModel().selectedItemProperty().isNull());
+        // Tell the inventory list which list to observe
+        inventoryList.setItems(myObservableItems);
+        // Set the cell factory so that when the list is built, it is displayed
+        // in a certain way as specified in the cell factory.
+        inventoryList.setCellFactory(myCellFactory);
     }
 
     /**
@@ -54,8 +71,6 @@ public class InventoryController {
     }
 
     void setInventoryList(final List<Item> theList) {
-        for (Item x : theList) {
-            inventoryList.getItems().add(x.getName());
-        }
+        myObservableItems.addAll(theList);
     }
 }
