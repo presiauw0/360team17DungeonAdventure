@@ -145,7 +145,7 @@ public class GameManager {
         col = newCoordinates[1];
         Room newRoom = validateAndGetRoom(row, col, maxRow, maxCol);
 
-        chanceToSpawnMonster(newRoom); // May or may not spawn a monster
+//chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
 
@@ -307,6 +307,8 @@ public class GameManager {
 
     public void addPropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.addPropertyChangeListener(theListener);
+        //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
+        myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
     }
     public void removePropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.removePropertyChangeListener(theListener);

@@ -40,7 +40,7 @@ public class InventoryController {
      */
     private final ObservableList<Item> myObservableItems = FXCollections.observableArrayList();
 
-    public InventoryCellFactory myCellFactory = new InventoryCellFactory();
+    private final InventoryCellFactory myCellFactory = new InventoryCellFactory();
 
 
     @FXML
