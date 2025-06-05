@@ -1,10 +1,12 @@
 package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.Item;
+import com.swagteam360.dungeonadventure.model.Pillar;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
 import com.swagteam360.dungeonadventure.view.InventoryCellFactory;
 import java.util.List;
 
+import com.swagteam360.dungeonadventure.view.PillarCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,13 +28,16 @@ import java.beans.PropertyChangeListener;
 public class InventoryController {
 
     @FXML
-    public Button btnBackToGameView;
+    private Button btnBackToGameView;
 
     @FXML
-    public ListView<Item> inventoryList; //FIXME use special ItemView class?
+    private ListView<Item> inventoryList; //FIXME use special ItemView class?
 
     @FXML
-    public Button btnBuff;
+    private ListView<Item> pillarList;
+
+    @FXML
+    private Button btnBuff;
 
     /**
      * Hold inventory items in s special JavaFX List. The ListView
@@ -40,8 +45,18 @@ public class InventoryController {
      */
     private final ObservableList<Item> myObservableItems = FXCollections.observableArrayList();
 
-    private final InventoryCellFactory myCellFactory = new InventoryCellFactory();
+    /**
+     * Hold pillars in a special JavaFX list.
+     */
+    private final ObservableList<Item> myObservablePillars = FXCollections.observableArrayList();
 
+    /**
+     * Helps generate list cells for the inventory list view.
+     * The design of each inventory item is specified in the factory.
+     */
+    private final InventoryCellFactory myInventoryCellFactory = new InventoryCellFactory();
+
+    private final PillarCellFactory myPillarCellFactory = new PillarCellFactory();
 
     @FXML
     public void initialize() {
@@ -52,7 +67,10 @@ public class InventoryController {
         inventoryList.setItems(myObservableItems);
         // Set the cell factory so that when the list is built, it is displayed
         // in a certain way as specified in the cell factory.
-        inventoryList.setCellFactory(myCellFactory);
+        inventoryList.setCellFactory(myInventoryCellFactory);
+
+        pillarList.setItems(myObservablePillars);
+        pillarList.setCellFactory(myPillarCellFactory);
     }
 
     /**
@@ -81,6 +99,13 @@ public class InventoryController {
     }
 
     void setInventoryList(final List<Item> theList) {
-        myObservableItems.addAll(theList);
+        for (Item x : theList) {
+            if (x instanceof Pillar) {      // add pillars to the pillars list
+                myObservablePillars.add(x);
+            } else {
+                myObservableItems.add(x);   // add all other items to the items list
+            }
+        }
+        //myObservableItems.addAll(theList);
     }
 }
