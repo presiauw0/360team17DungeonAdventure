@@ -2,7 +2,7 @@ package com.swagteam360.dungeonadventure.model;
 
 import java.util.Objects;
 
-public class Pillar {
+public class Pillar implements Item {
 
     private final PillarType myPillarType;
 
@@ -22,7 +22,8 @@ public class Pillar {
         return myPillarType;
     }
 
-    public void buff() {
+    public String buff() {
         //TODO implement
+        return null;
     }
 }

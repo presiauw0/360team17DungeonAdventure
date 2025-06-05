@@ -6,7 +6,7 @@ package com.swagteam360.dungeonadventure.model;
  * attacks, handles health updates, and determines the outcome of the battle.
  *
  * @author Jonathan Hernandez
- * @version 1.0 (25 May 2025)
+ * @version 1.1 (4 June 2025)
  */
 public class BattleSystem {
 
@@ -26,13 +26,8 @@ public class BattleSystem {
     private final Monster myMonster;
 
     /**
-     * Indicates whether the current battle in the BattleSystem is over.
-     * This variable is set to true when one of the combatants (Hero or Monster)
-     * is defeated, or under certain conditions that signify the end of the battle.
-     * It determines the continuation or termination of the battle loop.
+     * Represents the Hero's turn if true.
      */
-    private boolean myBattleOver;
-
     private boolean myTurn;
 
     /**
@@ -45,63 +40,166 @@ public class BattleSystem {
     public BattleSystem(final Hero theHero, final Monster theMonster) {
         myHero = theHero;
         myMonster = theMonster;
-        myBattleOver = false;
         myTurn = true; // Player will attack first
     }
 
-    public String processPlayerAttack() {
+    /**
+     * Private helper method that handles attacks from Heroes and Monsters. Multiple attacks may occur when comparing
+     * attack speed from the attacker and defender. If a Hero is defending, they have a chance to block the monster's
+     * attack.
+     *
+     * @param theAttacker The attacker who may inflict damage upon the defender.
+     * @param theDefender The defender who may receive damage from the attacker.
+     * @param theHeroTurn A check to alter the Hero's turn after this method is finished.
+     * @return The results from this interaction, including multiple attacks, blocks, attempts, and damage dealt.
+     */
+    private String processAttacks(final DungeonCharacter theAttacker, final DungeonCharacter theDefender,
+    final boolean theHeroTurn) {
+
+        final int attackSpeed = theAttacker.getMyAttackSpeed();
+        final int defendSpeed = theDefender.getMyAttackSpeed();
+
+        int numAttacks = Math.max(1, attackSpeed / defendSpeed); // There will be at least one attack
+                                                                 // If attack speed is greater, there might be multiple
+
+        int totalDamage = 0;
+        int hits = 0;
+        int blocks = 0;
+        int attempts = 0;
+
+        for (int i = 0; i < numAttacks && !isBattleOver(); i++) {
+            int damage = theAttacker.attack(theAttacker.getDamageRangeMin(),
+                    theAttacker.getDamageRangeMax(),
+                    theAttacker.getMyHitChance());
+            attempts++;
+
+            if (damage > 0) {
+
+                boolean blocked = false;
+
+                if (theDefender instanceof Hero) {
+                    blocked = ((Hero) theDefender).block();
+                }
+
+                if (blocked) {
+                    blocks++;
+                    continue;
+                }
+
+                theDefender.takeDamage(damage);
+                totalDamage += damage;
+                hits++;
+            }
+        }
+
+        myTurn = !theHeroTurn;
+
+        String attackerName = theHeroTurn ? "You" : "The " + theAttacker.getName();
+        if (hits == 0 && blocks == 0) {
+            return attackerName + " attempted " + attempts + (attempts == 1 ? " attack, but missed!"
+                    : " attacks, but all missed!");
+        } else if (hits == 0 && blocks > 0) {
+            return attackerName + " attempted " + attempts + (attempts == 1 ? " attack, but it was blocked!"
+                    : " attacks, but all were blocked!");
+        } else if (hits == attempts) {
+            return attackerName + " landed all " + hits + (hits == 1 ? " attack" : " attacks") +
+                    " for a total of " + totalDamage + " damage!";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(attackerName)
+                    .append(" attempted ").append(attempts).append(attempts == 1 ? " attack" : " attacks")
+                    .append(", ");
+
+            if (blocks > 0) {
+                sb.append(blocks).append(blocks == 1 ? " was blocked, " : " were blocked, ");
+            }
+
+            sb.append("and ").append(hits).append(" landed")
+                    .append(" for a total of ").append(totalDamage).append(" damage!");
+
+            return sb.toString();
+        }
+
+    }
+
+    /**
+     * Processes the player's attacks. Delegates to a private helper method that returns the results from the attack.
+     *
+     * @return The outcome of the player's attack.
+     */
+    public String processPlayerAttacks() {
+        return processAttacks(myHero, myMonster, true);
+    }
+
+    /**
+     * Processes the monster's attack. Delegates to a private helper method that returns the results from the attack.
+     *
+     * @return The outcome of the monster's attack.
+     */
+    public String processMonsterAttacks() {
+        return processAttacks(myMonster, myHero, false);
+    }
+
+    /**
+     * Processes the player's special move.
+     *
+     * @return The outcome of the Hero's special move.
+     */
+    public String processPlayerSpecialMove() {
         if (!myTurn) {
             return "It is not your turn yet!";
         }
 
-        int damage = myHero.attack(myHero.getDamageRangeMin(),
-                myHero.getDamageRangeMax(),
-                myHero.getMyHitChance());
-
+        String result = myHero.specialMove(myMonster);
         myTurn = false;
-
-        if (damage > 0) {
-            myMonster.takeDamage(damage);
-            return "You deal " + damage + " damage";
-        } else {
-            return "You missed!";
-        }
+        return result;
 
     }
 
-    public String processMonsterTurn() {
-        if (myTurn) {
+    /**
+     * Processes the event in which the Monster heals itself. This method is called from the controller, so a check
+     * is made if the health is 0, in which the monster may not revive itself. Furthermore, There is a chance that the
+     * healing may fail, in which this method just returns an empty string. Otherwise, the healing results are given.
+     *
+     * @return The results from the Monster's healing.
+     */
+    public String processMonsterHeal() {
+        if (myMonster.getHP() <= 0) {
             return "";
         }
 
-        int damage = myMonster.attack(myMonster.getDamageRangeMin(),
-                myMonster.getDamageRangeMax(),
-                myMonster.getMyHitChance());
-
-        if (damage > 0) {
-            myHero.takeDamage(damage);
+        int healAmount = myMonster.heal();
+        if (healAmount > 0) {
+            return "The " + myMonster.getName() + " healed itself for " + healAmount + " HP!";
         }
 
-        if (!isBattleOver()) {
-            myTurn = true;
-        }
-
-        if (damage > 0) {
-            return "The " + myMonster.getName() + " deals " + damage + " damage";
-        } else {
-            return "The " + myMonster.getName() + " missed!";
-        }
+        return "";
 
     }
 
+    /**
+     * Checks whether the battle is over or ongoing.
+     *
+     * @return A boolean that represents the status of the battle.
+     */
     public boolean isBattleOver() {
         return myHero.getHP() <= 0 || myMonster.getHP() <= 0;
     }
 
+    /**
+     * Checks whether the Hero won the battle against a monster.
+     *
+     * @return A boolean that represents the outcome of the battle.
+     */
     public boolean didHeroWin() {
         return myHero.getHP() > 0 && myMonster.getHP() <= 0;
     }
 
+    /**
+     * Checks if it is the Hero's turn to attack in battle.
+     *
+     * @return A boolean that represents the Hero's turn.
+     */
     public boolean isPlayerTurn() {
         return myTurn;
     }

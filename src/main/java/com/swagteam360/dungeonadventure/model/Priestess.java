@@ -14,7 +14,7 @@ import java.util.Random;
 public class Priestess extends Hero{
 
     /** Field utilized for the heal ability of the priestess */
-    private int maximumHP;
+    private final int maximumHP;
 
     /**
      * Parametered constructor, calls upon the super constructor to help establish the object.
@@ -36,17 +36,19 @@ public class Priestess extends Hero{
      * "Heal" is the ability of the priestess, in which they can heal
      * their HP by a value up to 75% of their maximum health points.
      *
+     * @return String representing the outcome of this special move.
      */
-    private void heal() {
+    @Override
+    public String specialMove(final Monster theMonster) {
         Random rand = new Random();
 
         int minHeal = 10;
         int maxHeal = (int)(0.75 * maximumHP);
-
         int healAmt = rand.nextInt(maxHeal - minHeal + 1) + minHeal;
 
         //making sure overhealing doesn't happen.
         healAmt = (Math.min(super.getHP() + healAmt, maximumHP));
         super.heal(healAmt);
+        return "You healed for " + healAmt + " points of health!";
     }
 }

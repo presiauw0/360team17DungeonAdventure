@@ -20,6 +20,8 @@
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="myBattleStatusLabel" alignment="CENTER" layoutY="268.0" prefHeight="17.0" prefWidth="491.0" />
+            <ProgressBar fx:id="myMonsterHealthBar" layoutX="145.0" layoutY="248.0" prefWidth="200.0" progress="0.0" />
+            <Label fx:id="myMonsterNameLabel" layoutX="205.0" layoutY="231.0" text="Monster Name" />
          </children></Pane>
    </center>
    <right>
@@ -98,7 +100,7 @@
                                     <Font size="10.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="mySpecialMoveButton" mnemonicParsing="false" text="Special" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                              <Button fx:id="mySpecialMoveButton" mnemonicParsing="false" onAction="#handleSpecialMoveButton" text="Special" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -114,7 +116,7 @@
                            <children>
                               <Label fx:id="myHeroNameLabel" alignment="CENTER" prefHeight="17.0" prefWidth="253.0" text="Hero Name" />
                               <ProgressBar fx:id="myHealthBar" prefHeight="20.0" prefWidth="234.0" progress="0.0" />
-                              <Button alignment="CENTER" mnemonicParsing="false" onAction="#goToInventoryView" text="Inventory 🎒" />
+                              <Button fx:id="myInventoryButton" alignment="CENTER" mnemonicParsing="false" onAction="#goToInventoryView" text="Inventory 🎒" />
                            </children>
                         </VBox>
                      </children>

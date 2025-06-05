@@ -1,8 +1,11 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
+import static com.swagteam360.dungeonadventure.model.PillarType.*;
 
 /**
  * The GameManager class serves as a singleton responsible for managing the game's lifecycle.
@@ -14,7 +17,11 @@ import java.beans.PropertyChangeSupport;
  */
 public class GameManager {
 
-    public static final int PIT_DAMAGE = 10;
+    private static final int PIT_DAMAGE = 10;
+
+    private static final double MONSTER_SPAWN_CHANCE_EASY = 0.25;
+    private static final double MONSTER_SPAWN_CHANCE_NORMAL = 0.34;
+    private static final double MONSTER_SPAWN_CHANCE_HARD = 0.50;
 
     /**
      * A singleton instance of the GameManager class. This instance ensures that only one
@@ -96,6 +103,19 @@ public class GameManager {
                 myDungeon.getEntranceCol()
         );
 
+        // Debugging
+        Pillar b = new Pillar(BRONZE);
+        Pillar s = new Pillar(SILVER);
+        Pillar g = new Pillar(GOLD);
+        Pillar p = new Pillar(PLATINUM);
+        List<Item> list = new ArrayList<>();
+        list.add(b);
+        list.add(s);
+        list.add(g);
+        list.add(p);
+
+        myHero.addToInventory(list);
+
         //FIXME DEBUG
         System.out.println(myDungeon.toStringWithPlayer(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
         System.out.println();
@@ -128,7 +148,6 @@ public class GameManager {
         chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
-
 
         debugPrintDungeon(row, col);
 
@@ -210,15 +229,15 @@ public class GameManager {
     private void chanceToSpawnMonster(final Room theRoom) {
 
         if (theRoom.isEntranceOrExit()) {
-            return;
+            return; // TODO: Would we like to add a monster at the exit?
         }
 
         double monsterSpawnChance = Math.random();
         final String difficulty = myGameSettings.getDifficulty().toLowerCase();
         boolean spawnMonster = switch (difficulty) {
-            case "easy" -> monsterSpawnChance > 0.75;
-            case "normal" -> monsterSpawnChance > 0.66;
-            case "hard" -> monsterSpawnChance > 0.50;
+            case "easy" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_EASY);
+            case "normal" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_NORMAL);
+            case "hard" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_HARD);
             default -> false;
         };
 
@@ -253,6 +272,11 @@ public class GameManager {
             myPCS.firePropertyChange("Pit", null, PIT_DAMAGE);
         }
 
+        // In case we die from the pit
+        if (myHero.getHP() <= 0) {
+            myPCS.firePropertyChange("Dead", null, myHero);
+        }
+
         if (myCurrentRoom.hasItems()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             myHero.addToInventory(roomItems);
@@ -281,11 +305,11 @@ public class GameManager {
 
     public Hero getHero() {return myHero;}
 
-    public void addPropertyChangeListener(PropertyChangeListener l) {
-        myPCS.addPropertyChangeListener(l);
+    public void addPropertyChangeListener(final PropertyChangeListener theListener) {
+        myPCS.addPropertyChangeListener(theListener);
     }
-    public void removePropertyChangeListener(PropertyChangeListener l) {
-        myPCS.removePropertyChangeListener(l);
+    public void removePropertyChangeListener(final PropertyChangeListener theListener) {
+        myPCS.removePropertyChangeListener(theListener);
     }
 
 }
