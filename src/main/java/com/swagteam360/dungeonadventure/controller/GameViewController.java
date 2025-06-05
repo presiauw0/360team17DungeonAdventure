@@ -25,10 +25,12 @@ import java.util.*;
  * It provides functionality to respond to user interface events. Events include moving between rooms, attacking,
  * checking inventory, toggling light/dark mode, and displaying informational dialogs.
  *
- * @author Jonathan Hernandez
+ * @author Jonathan Hernandez, Preston Sia
  * @version 1.1 (June 4, 2025)
  */
 public class GameViewController implements PropertyChangeListener {
+
+    /* **** THE FOLLOWING FIELDS HOLD REFERENCES TO FXML ELEMENTS **** */
 
     /**
      * A reference to the root pane of the scene.
@@ -94,13 +96,6 @@ public class GameViewController implements PropertyChangeListener {
      */
     @FXML
     private Label myHeroNameLabel;
-
-    /**
-     * Represents a Timeline object used for managing and animating hero dialogue sequences
-     * within the game interface.
-     * This variable governs the timing and transitions of dialogue displayed for the hero.
-     */
-    private Timeline myHeroDialogueTimeline;
 
     /**
      * Represents the button in the user interface that initiates movement
@@ -197,6 +192,16 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private Label myMonsterNameLabel;
 
+
+    /* **** THE FOLLOWING FIELDS ARE GENERAL INSTANCE FIELDS FOR THE CONTROLLER **** */
+
+    /**
+     * Represents a Timeline object used for managing and animating hero dialogue sequences
+     * within the game interface.
+     * This variable likely governs the timing and transitions of dialogue displayed for the hero.
+     */
+    private Timeline myHeroDialogueTimeline;
+
     /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
@@ -223,17 +228,17 @@ public class GameViewController implements PropertyChangeListener {
     private BattleSystem myCurrentBattle;
 
     /**
-     * Handles the event triggered by clicking the "Save and Quit" button.
-     * This method is intended to save the current game state and exit the application.
-     * The saving logic is yet to be implemented.
-     * <p>
-     * This method is invoked via FXML when the associated button is clicked.
+     * Maintain a list of the player's current inventory items.
+     * This list will be updated as property changes are fired for
+     * inventory changes. By default, this field references
+     * an empty array list. When the inventory is opened,
+     * the reference held here will be sent to the appropriate
+     * method in the InventoryController class.
      */
-    @FXML
-    private void saveAndQuitButtonEvent() {
-        // TODO: Add save logic here. Current state (hero, dungeon, etc.) should be saved.
-        Platform.exit();
-    }
+    private List<Item> myInventoryItems = new ArrayList<>();
+
+
+    /* *** FXML HELPER METHODS *** */
 
     /**
      * Initializes the GameViewController instance and its associated user interface elements.
@@ -248,9 +253,10 @@ public class GameViewController implements PropertyChangeListener {
      */
     @FXML
     private void initialize() {
-
+        // *** GET THE SINGLETON INSTANCE OF gameManager ***
         GameManager gameManager = GameManager.getInstance();
 
+        // *** PERFORM NULL CHECKS ***
         if (myHeroImageView == null) {
             myHeroImageView = new ImageView();
         }
@@ -259,7 +265,7 @@ public class GameViewController implements PropertyChangeListener {
             myHeroDialogueLabel = new Label();
         }
 
-        gameManager.removePropertyChangeListener(this);
+        // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
 
         GUIUtils.initializeDarkModeToggle(myDarkModeToggle); // Initialize dark mode toggle button
@@ -280,7 +286,7 @@ public class GameViewController implements PropertyChangeListener {
             myMonsterHealthBar.setVisible(false);
         }
 
-        // Set the name label, update movement buttons, hide battle controls, set health bar, and start hero dialogue
+        // *** SET the name label, UPDATE movement buttons, HIDE battle controls, SET health bar, and START hero dialogue ***
         myHeroNameLabel.setText(gameManager.getGameSettings().getName());
         updateMovementButtons(gameManager.getCurrentRoom().getAvailableDirections());
         showBattleControls(false);
@@ -289,26 +295,16 @@ public class GameViewController implements PropertyChangeListener {
     }
 
     /**
-     * Sets the hero image in the user interface based on the specified hero type.
-     * This method constructs the file path to the corresponding hero image
-     * and updates the image displayed in the hero's image view.
-     *
-     * @param theHeroType the type of the hero whose image is to be displayed
-     *                    (e.g., "warrior", "thief"). This should match the file name
-     *                    (excluding the extension) located in the images' directory.
+     * Handles the event triggered by clicking the "Save and Quit" button.
+     * This method is intended to save the current game state and exit the application.
+     * The saving logic is yet to be implemented.
+     * <p>
+     * This method is invoked via FXML when the associated button is clicked.
      */
-    private void setHeroImage(final String theHeroType) {
-        final String imagePath = "/images/" + theHeroType + ".png";
-        final var imageStream = getClass().getResourceAsStream(imagePath);
-
-        if (imageStream == null) {
-            throw new IllegalStateException("Could not load hero image for type: " + theHeroType +
-                    ". Ensure the image exists at path: " + imagePath);
-        }
-
-        final Image heroImage = new Image(imageStream);
-        myHeroImageView.setImage(heroImage);
-
+    @FXML
+    private void saveAndQuitButtonEvent() {
+        // TODO: Add save logic here. Current state (hero, dungeon, etc.) should be saved.
+        Platform.exit();
     }
 
     /**
@@ -326,45 +322,6 @@ public class GameViewController implements PropertyChangeListener {
         GUIUtils.showHowToPlayInfo();
     }
 
-    /**
-     * Starts the hero dialogue sequence in the game view.
-     * This method initializes a timeline to periodically select random dialogue sentences
-     * for the hero to display, creating a dynamic and interactive experience for the user.
-     * <p>
-     * The dialogue text is displayed with fade-in and fade-out effects:
-     * - A random sentence is selected from the list of available hero dialogues.
-     * - The label displaying the dialogue is initially hidden, then it fades in over 1 second.
-     * - After remaining visible for 2 seconds, it fades out over another second.
-     * <p>
-     * The timeline is set to repeat indefinitely, ensuring that the hero conversations continue
-     * throughout the gameplay or until the timeline is stopped manually.
-     */
-    private void startHeroDialogue() {
-        myHeroDialogueTimeline = new Timeline(new KeyFrame(
-                Duration.seconds(5 + myRandom.nextInt(6)),
-                event -> {
-                    final String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
-                    myHeroDialogueLabel.setText(randomSentence);
-                    myHeroDialogueLabel.setOpacity(0); // Start hidden
-
-                    // Fade in
-                    final FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
-                    fadeIn.setFromValue(0);
-                    fadeIn.setToValue(1);
-
-                    // Fade out after a pause
-                    final FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
-                    fadeOut.setFromValue(1);
-                    fadeOut.setToValue(0);
-                    fadeOut.setDelay(Duration.seconds(2)); // Label stays visible for 2 seconds
-
-                    fadeIn.setOnFinished(e -> fadeOut.play());
-                    fadeIn.play();
-                }
-        ));
-        myHeroDialogueTimeline.setCycleCount(Animation.INDEFINITE);
-        myHeroDialogueTimeline.play(); // Had help from CHATGPT for this whole method
-    }
 
     /**
      * Handles the event triggered by clicking on the hero image.
@@ -409,6 +366,11 @@ public class GameViewController implements PropertyChangeListener {
         final FXMLLoader loader = new FXMLLoader(getClass()
                 .getResource("/com/swagteam360/dungeonadventure/inventory-view.fxml"));
         GUIUtils.switchScene(theActionEvent, loader);
+
+        InventoryController ic = loader.getController();
+        ic.setInventoryList(myInventoryItems);
+
+        unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCH
     }
 
     /**
@@ -458,6 +420,72 @@ public class GameViewController implements PropertyChangeListener {
         } catch(IllegalArgumentException e) {
             System.out.println("Illegal Move!");
         }
+
+    }
+
+
+    /* *** PRIVATE CONTROLLER HELPER METHODS *** */
+
+    /**
+     * Starts the hero dialogue sequence in the game view.
+     * This method initializes a timeline to periodically select random dialogue sentences
+     * for the hero to display, creating a dynamic and interactive experience for the user.
+     * <p>
+     * The dialogue text is displayed with fade-in and fade-out effects:
+     * - A random sentence is selected from the list of available hero dialogues.
+     * - The label displaying the dialogue is initially hidden, then it fades in over 1 second.
+     * - After remaining visible for 2 seconds, it fades out over another second.
+     * <p>
+     * The timeline is set to repeat indefinitely, ensuring that the hero conversations continue
+     * throughout the gameplay or until the timeline is stopped manually.
+     */
+    private void startHeroDialogue() {
+        myHeroDialogueTimeline = new Timeline(new KeyFrame(
+                Duration.seconds(5 + myRandom.nextInt(6)),
+                event -> {
+                    final String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
+                    myHeroDialogueLabel.setText(randomSentence);
+                    myHeroDialogueLabel.setOpacity(0); // Start hidden
+
+                    // Fade in
+                    final FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    fadeIn.setFromValue(0);
+                    fadeIn.setToValue(1);
+
+                    // Fade out after a pause
+                    final FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), myHeroDialogueLabel);
+                    fadeOut.setFromValue(1);
+                    fadeOut.setToValue(0);
+                    fadeOut.setDelay(Duration.seconds(2)); // Label stays visible for 2 seconds
+
+                    fadeIn.setOnFinished(e -> fadeOut.play());
+                    fadeIn.play();
+                }
+        ));
+        myHeroDialogueTimeline.setCycleCount(Animation.INDEFINITE);
+        myHeroDialogueTimeline.play(); // Had help from CHATGPT for this whole method
+    }
+
+    /**
+     * Sets the hero image in the user interface based on the specified hero type.
+     * This method constructs the file path to the corresponding hero image
+     * and updates the image displayed in the hero's image view.
+     *
+     * @param theHeroType the type of the hero whose image is to be displayed
+     *                    (e.g., "warrior", "thief"). This should match the file name
+     *                    (excluding the extension) located in the images' directory.
+     */
+    private void setHeroImage(final String theHeroType) {
+        final String imagePath = "/images/" + theHeroType + ".png";
+        final var imageStream = getClass().getResourceAsStream(imagePath);
+
+        if (imageStream == null) {
+            throw new IllegalStateException("Could not load hero image for type: " + theHeroType +
+                    ". Ensure the image exists at path: " + imagePath);
+        }
+
+        final Image heroImage = new Image(imageStream);
+        myHeroImageView.setImage(heroImage);
 
     }
 
@@ -711,6 +739,8 @@ public class GameViewController implements PropertyChangeListener {
 
     }
 
+    /* *** BATTLE-RELATED CODE *** */
+
     /**
      * Handles the property change event that occurs when a monster is present in the room. myCurrentBattle is
      * instantiated given the Hero and Monster, battle controls are enabled, monster info is visible, movement buttons
@@ -841,6 +871,32 @@ public class GameViewController implements PropertyChangeListener {
     }
 
     /**
+     * Helper method to update the inventory list by performing
+     * a safe cast on the returned list of items.
+     * @param theList An object representing a list of items (uncast)
+     */
+    private void updateInventoryList(final Object theList) {
+        final List<Item> itemList = new ArrayList<>();
+        // Cast check - check if theList is of type List (generic)
+        if (theList instanceof List) {
+            // Cast to a generic list
+            final List<?> newValCast = (List<?>) theList;
+
+            // Check every item in the list to make sure it is of type Item
+            for (final Object o : newValCast) {
+                if (o instanceof Item) {
+                    itemList.add((Item) o);
+                }
+            }
+        }
+
+        myInventoryItems = itemList;
+    }
+
+
+    /* *** OBSERVER EVENT HANDLING *** */
+
+    /**
      * Handles property changes that come from GameManager.
      * @param theEvent A PropertyChangeEvent object describing the event source
      *          and the property that has changed.
@@ -857,6 +913,11 @@ public class GameViewController implements PropertyChangeListener {
             case "Pit" -> onPitDamageTaken(GameManager.getInstance().getHero(), (int) theEvent.getNewValue());
             case "Dead" -> handleGameOver();
             case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
+            case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
         }
+    }
+
+    private void unloadObserver() {
+        GameManager.getInstance().removePropertyChangeListener(this);
     }
 }
