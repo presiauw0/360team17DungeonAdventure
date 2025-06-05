@@ -423,6 +423,56 @@ public class GameViewController implements PropertyChangeListener {
 
     }
 
+    /**
+     * Handles the event where the player attacks the monster. A call is made in BattleSystem through myCurrentBattle
+     * to process and receive the result from the attack.
+     */
+    @FXML
+    private void handleAttackButton() {
+
+        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
+            final String result = myCurrentBattle.processPlayerAttacks(); // Get the result from the player's attack
+            continueBattleAfterPlayerMove(result);
+        }
+
+    }
+
+    /**
+     * Handles the event where the player decides to use their special move in battle. A call is made in BattleSystem
+     * through myCurrentBattle to process and receive the result from this action.
+     */
+    @FXML
+    private void handleSpecialMoveButton() {
+
+        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
+            String result = myCurrentBattle.processPlayerSpecialMove();
+            continueBattleAfterPlayerMove(result);
+        }
+
+    }
+
+    /**
+     * Handles the event in which the player chooses to heal themselves with a health potion.
+     */
+    @FXML
+    private void handleHealthPotionButton() {
+
+        List<Item> inventory = GameManager.getInstance().getHero().getInventory();
+        Optional<Item> healthPotion = inventory.stream()
+                .filter(item -> item instanceof HealthPotion).findFirst();
+
+        if (healthPotion.isPresent()) {
+            HealthPotion hp = (HealthPotion) healthPotion.get();
+            GameManager.getInstance().getHero().heal(hp.getHealAmount());
+            inventory.remove(hp);
+            updateHealthBar(GameManager.getInstance().getHero()); // Update the GUI
+            updateBattleStatus("You used a health potion! Gained " + hp.getHealAmount() + " health.");
+        }
+
+        showBattleControls(true); // Inventory may not have anymore health potions, so update it here.
+
+    }
+
 
     /* *** PRIVATE CONTROLLER HELPER METHODS *** */
 
@@ -650,33 +700,7 @@ public class GameViewController implements PropertyChangeListener {
         pb.setProgress(percentage);
     }
 
-    /**
-     * Handles the event where the player attacks the monster. A call is made in BattleSystem through myCurrentBattle
-     * to process and receive the result from the attack.
-     */
-    @FXML
-    private void handleAttackButton() {
-
-        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
-            final String result = myCurrentBattle.processPlayerAttacks(); // Get the result from the player's attack
-            continueBattleAfterPlayerMove(result);
-        }
-
-    }
-
-    /**
-     * Handles the event where the player decides to use their special move in battle. A call is made in BattleSystem
-     * through myCurrentBattle to process and receive the result from this action.
-     */
-    @FXML
-    private void handleSpecialMoveButton() {
-
-        if (myCurrentBattle != null && myCurrentBattle.isPlayerTurn()) {
-            String result = myCurrentBattle.processPlayerSpecialMove();
-            continueBattleAfterPlayerMove(result);
-        }
-
-    }
+    /* *** BATTLE-RELATED CODE *** */
 
     /**
      * Helper method that updates the status label given the result of the user's attack/special move. A timeline is
@@ -716,30 +740,6 @@ public class GameViewController implements PropertyChangeListener {
             onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
         }
     }
-
-    /**
-     * Handles the event in which the player chooses to heal themselves with a health potion.
-     */
-    @FXML
-    private void handleHealthPotionButton() {
-
-        List<Item> inventory = GameManager.getInstance().getHero().getInventory();
-        Optional<Item> healthPotion = inventory.stream()
-                .filter(item -> item instanceof HealthPotion).findFirst();
-
-        if (healthPotion.isPresent()) {
-            HealthPotion hp = (HealthPotion) healthPotion.get();
-            GameManager.getInstance().getHero().heal(hp.getHealAmount());
-            inventory.remove(hp);
-            updateHealthBar(GameManager.getInstance().getHero()); // Update the GUI
-            updateBattleStatus("You used a health potion! Gained " + hp.getHealAmount() + " health.");
-        }
-
-        showBattleControls(true); // Inventory may not have anymore health potions, so update it here.
-
-    }
-
-    /* *** BATTLE-RELATED CODE *** */
 
     /**
      * Handles the property change event that occurs when a monster is present in the room. myCurrentBattle is
@@ -815,6 +815,8 @@ public class GameViewController implements PropertyChangeListener {
         });
     }
 
+    /* *** GAME MOVEMENTS AND BEHAVIOR *** */
+
     /**
      * Handles the event where the player successfully reaches the exit room of the dungeon with all four pillars. The
      * player may choose to continue exploring or exit the dungeon, which ends the game.
@@ -870,6 +872,8 @@ public class GameViewController implements PropertyChangeListener {
         updateBattleStatus("You've taken " + theDamage + " damage from the pit!");
     }
 
+    /* *** OBSERVER EVENT HANDLING *** */
+
     /**
      * Helper method to update the inventory list by performing
      * a safe cast on the returned list of items.
@@ -893,8 +897,9 @@ public class GameViewController implements PropertyChangeListener {
         myInventoryItems = itemList;
     }
 
-
-    /* *** OBSERVER EVENT HANDLING *** */
+    private void unloadObserver() {
+        GameManager.getInstance().removePropertyChangeListener(this);
+    }
 
     /**
      * Handles property changes that come from GameManager.
@@ -915,9 +920,5 @@ public class GameViewController implements PropertyChangeListener {
             case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
             case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
         }
-    }
-
-    private void unloadObserver() {
-        GameManager.getInstance().removePropertyChangeListener(this);
     }
 }

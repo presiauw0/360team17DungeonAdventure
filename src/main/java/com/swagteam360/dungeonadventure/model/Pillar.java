@@ -22,6 +22,12 @@ public class Pillar implements Item {
         return myPillarType;
     }
 
+    @Override
+    public String getName() {
+        return "Pillar";
+    }
+
+    @Override
     public String buff() {
         //TODO implement
         return null;
