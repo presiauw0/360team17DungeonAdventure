@@ -145,7 +145,7 @@ public class GameManager {
         col = newCoordinates[1];
         Room newRoom = validateAndGetRoom(row, col, maxRow, maxCol);
 
-//chanceToSpawnMonster(newRoom); // May or may not spawn a monster
+        chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
 
