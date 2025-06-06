@@ -24,7 +24,7 @@ public class Pillar implements Item {
 
     @Override
     public String getName() {
-        return "Pillar";
+        return myPillarType.name();
     }
 
     @Override
