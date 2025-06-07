@@ -126,6 +126,4 @@ public class Database {
         //if hero isnt found
         return null;
     }
-
-
 }

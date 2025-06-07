@@ -196,13 +196,6 @@ public class GameViewController implements PropertyChangeListener {
     /* **** THE FOLLOWING FIELDS ARE GENERAL INSTANCE FIELDS FOR THE CONTROLLER **** */
 
     /**
-     * Represents a Timeline object used for managing and animating hero dialogue sequences
-     * within the game interface.
-     * This variable likely governs the timing and transitions of dialogue displayed for the hero.
-     */
-    private Timeline myHeroDialogueTimeline;
-
-    /**
      * A Random instance used to generate random values within the GameViewController class.
      * This variable is final and ensures consistent usage of a single Random object
      * throughout the lifecycle of the GameViewController.
@@ -236,7 +229,6 @@ public class GameViewController implements PropertyChangeListener {
      * method in the InventoryController class.
      */
     private List<Item> myInventoryItems = new ArrayList<>();
-
 
     /* *** FXML HELPER METHODS *** */
 
@@ -370,7 +362,7 @@ public class GameViewController implements PropertyChangeListener {
         InventoryController ic = loader.getController();
         ic.setInventoryList(myInventoryItems);
 
-        unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCH
+        unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCHES
     }
 
     /**
@@ -490,7 +482,12 @@ public class GameViewController implements PropertyChangeListener {
      * throughout the gameplay or until the timeline is stopped manually.
      */
     private void startHeroDialogue() {
-        myHeroDialogueTimeline = new Timeline(new KeyFrame(
+        // Start hidden
+        // Fade in
+        // Fade out after a pause
+        // Label stays visible for 2 seconds
+
+        Timeline myHeroDialogueTimeline = new Timeline(new KeyFrame(
                 Duration.seconds(5 + myRandom.nextInt(6)),
                 event -> {
                     final String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
@@ -622,16 +619,22 @@ public class GameViewController implements PropertyChangeListener {
     private void showMonsterNameAndHealthBar(final Monster theMonster) {
 
         if (theMonster == null) {
-            myMonsterNameLabel.setVisible(false);
-            myMonsterHealthBar.setVisible(false);
+            if (myMonsterNameLabel != null) {
+                myMonsterNameLabel.setVisible(false);
+            }
+            if (myMonsterHealthBar != null) {
+                myMonsterHealthBar.setVisible(false);
+            }
             return;
         }
 
         if (myMonsterNameLabel != null) {
             myMonsterNameLabel.setText(theMonster.getName());
+            myMonsterNameLabel.setVisible(true);
         }
         if (myMonsterHealthBar != null) {
             updateHealthBar(theMonster);
+            myMonsterHealthBar.setVisible(true);
         }
     }
 
@@ -709,7 +712,9 @@ public class GameViewController implements PropertyChangeListener {
      * @param theResult The result given by processing the player's attack, which updates the battle status.
      */
     private void continueBattleAfterPlayerMove(final String theResult) {
+
         updateBattleStatus(theResult);
+        updateHealthBar(GameManager.getInstance().getCurrentRoom().getMonster());
 
         final boolean battleOverAfterPlayer = myCurrentBattle.isBattleOver();
 
@@ -720,6 +725,11 @@ public class GameViewController implements PropertyChangeListener {
                             final String monsterResult = myCurrentBattle.processMonsterAttacks();
                             updateBattleStatus(monsterResult); // Show monster attack results
                             updateHealthBar(GameManager.getInstance().getHero()); // Update Hero health
+
+                            if (myCurrentBattle.isBattleOver()) {
+                                onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
+                            }
+
                         }
                     }),
                     new KeyFrame(Duration.seconds(1.5), event -> {
@@ -897,6 +907,9 @@ public class GameViewController implements PropertyChangeListener {
         myInventoryItems = itemList;
     }
 
+    /**
+     * Helper method that removes this controller classes as a listener of the current instance of GameManager.
+     */
     private void unloadObserver() {
         GameManager.getInstance().removePropertyChangeListener(this);
     }

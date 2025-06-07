@@ -71,6 +71,8 @@ public class Room implements Cell, IRoom {
      */
     private boolean myTraversalFlag;
 
+    private boolean myVisited = false;
+
     /**
      * Store the room's monster
      */
@@ -265,6 +267,15 @@ public class Room implements Cell, IRoom {
         }
     }
 
+    /**
+     * Represents whether the Hero has visited the given room.
+     *
+     * @param theVisited True if a room has been visited, false otherwise.
+     */
+    public void setVisited(final boolean theVisited) {
+        myVisited = theVisited;
+    }
+
     @Override
     public boolean hasMonster() {
         return myMonster != null;
@@ -322,6 +333,8 @@ public class Room implements Cell, IRoom {
     public boolean isEntrance() {
         return IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit);
     }
+
+    public boolean isVisited() { return myVisited; }
 
     // Package helpers
 
