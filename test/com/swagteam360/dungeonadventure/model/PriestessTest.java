@@ -19,7 +19,7 @@ import java.util.List;
 public class PriestessTest {
 
     // FIXME ALL OF THE METHODS IN DungeonCharacter SHOULD PROBABLY BE PROTECTED
-    // FIXME JONATHAN WHY ARE THERE 2 MAXIMUM HEALTH POINT FIELDS??? (Priestess line 32, DungeonCharacter line 25)
+    // FIXME LUKE, JONATHAN WHY ARE THERE 2 MAXIMUM HEALTH POINT FIELDS??? (Priestess line 32, DungeonCharacter line 25)
 
     private final String myName = "Test Priestess";
     private final int myHp = 15;
