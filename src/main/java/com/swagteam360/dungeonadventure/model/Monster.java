@@ -46,19 +46,24 @@ public abstract class Monster extends DungeonCharacter {
 
     /**
      * 'Heal' method represents Monsters' ability to randomly heal in combat.
-     * Utilizes a random object to simulate the "chance" that a monster will heal.
+     *  Uses a random object to simulate the "chance" that a monster will heal.
      */
     public int heal() {
         //establish random object
         Random random = new Random();
 
-        //roll for heal chance
-        int healRoll = random.nextInt(100) + 1; //roll 1-100
-
         //if healchance is greater than or equal to the random rolled, will heal :)
-        if (myHealChance >= healRoll) {
-            this.setHP(this.getHP() + healRoll); //set new Health Points
-            return healRoll;
+        if (random.nextDouble() < myHealChance) {
+            int healRange = myMaxHealPoints - myMinHealPoints + 1;
+            int healAmount = random.nextInt(healRange) + myMinHealPoints;
+
+            int currentHP = this.getHP();
+            int maxHP = this.getMaxHP();
+
+            int actualHeal = Math.min(healAmount, maxHP - currentHP);
+            this.setHP(currentHP + actualHeal);
+
+            return actualHeal;
         }
         return 0;
     }

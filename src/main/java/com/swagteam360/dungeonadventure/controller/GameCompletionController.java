@@ -19,7 +19,7 @@ import java.util.Set;
  * This scene displays the dungeon layout along with a New Game button and a Quit Game button.
  *
  * @author Jonathan Hernandez
- * @version 1.1 (June 4rd, 2025)
+ * @version 1.1 (June 5th, 2025)
  */
 public class GameCompletionController {
 
@@ -71,15 +71,17 @@ public class GameCompletionController {
 
                 // If there are items, we can represent them here
                 if (room.isEntrance()) {
-                    label.setText("🟩");
+                    label.setText("🚪");
                 } else if (room.hasPillar()) {
-                    label.setText("🔷");
+                    label.setText("💎");
                 } else if (room.hasMonster()) {
                     label.setText("👹");
                 } else if (room.isExit()) {
-                    label.setText("🚪");
-                } else {
-                    label.setText(""); // Or some placeholder
+                    label.setText("🔚");
+                } else if (room.hasPit()){
+                    label.setText("🌀");
+                } else if (room.hasItems()) {
+                    label.setText("📦");
                 }
 
                 roomPane.getChildren().add(label);

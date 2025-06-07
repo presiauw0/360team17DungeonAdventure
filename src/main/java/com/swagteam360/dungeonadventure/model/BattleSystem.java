@@ -95,27 +95,37 @@ public class BattleSystem {
         myTurn = !theHeroTurn;
 
         String attackerName = theHeroTurn ? "You" : "The " + theAttacker.getName();
+
         if (hits == 0 && blocks == 0) {
-            return attackerName + " attempted " + attempts + (attempts == 1 ? " attack, but missed!"
-                    : " attacks, but all missed!");
+            return attackerName + " attempted " + attempts + (attempts == 1
+                    ? " attack, but it missed!"
+                    : " attacks, but they all missed!");
         } else if (hits == 0 && blocks > 0) {
-            return attackerName + " attempted " + attempts + (attempts == 1 ? " attack, but it was blocked!"
-                    : " attacks, but all were blocked!");
+            return attackerName + " attempted " + attempts + (attempts == 1
+                    ? " attack, but it was blocked!"
+                    : " attacks, but they were all blocked!");
         } else if (hits == attempts) {
-            return attackerName + " landed all " + hits + (hits == 1 ? " attack" : " attacks") +
-                    " for a total of " + totalDamage + " damage!";
+            return attackerName + " landed " + hits + (hits == 1
+                    ? " attack"
+                    : " attacks") + " for a total of " + totalDamage + " damage!";
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(attackerName)
-                    .append(" attempted ").append(attempts).append(attempts == 1 ? " attack" : " attacks")
+                    .append(" attempted ")
+                    .append(attempts)
+                    .append(attempts == 1 ? " attack" : " attacks")
                     .append(", ");
 
             if (blocks > 0) {
-                sb.append(blocks).append(blocks == 1 ? " was blocked, " : " were blocked, ");
+                sb.append(blocks)
+                        .append(blocks == 1 ? " was blocked, " : " were blocked, ");
             }
 
-            sb.append("and ").append(hits).append(" landed")
-                    .append(" for a total of ").append(totalDamage).append(" damage!");
+            sb.append(hits)
+                    .append(" landed")
+                    .append(" for a total of ")
+                    .append(totalDamage)
+                    .append(" damage!");
 
             return sb.toString();
         }
