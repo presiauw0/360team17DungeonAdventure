@@ -452,7 +452,7 @@ public class PriestessTest {
 
         myPriestess.addToInventory(testItems);
 
-        // loop through all items to make sure the same items are being referenced
+        // LOOP through all items to make sure the same items are being referenced
         boolean multipleItemsNotFound = false;
         final List<Item> currentInventory = myPriestess.getInventory();
         for (Item x : testItems) {
@@ -470,6 +470,7 @@ public class PriestessTest {
             }
         }
 
+        // RUN assertions
         assertEquals(
                 myPriestess.getInventory().size(),
                 testItems.size(),
@@ -489,7 +490,59 @@ public class PriestessTest {
 
     @Test
     void testGetPillarCount() {
+        final List<Item> testItems = new ArrayList<>();
+        testItems.add(new Pillar(PillarType.GOLD));
+        testItems.add(new Pillar(PillarType.PLATINUM));
+        testItems.add(new VisionPotion());
+        testItems.add(new HealthPotion(2));
 
+        myPriestess.addToInventory(testItems);
+
+        assertEquals(
+                myPriestess.getPillarCount(),
+                2,
+                "Wrong pillar count."
+        );
     }
 
+    @Test
+    void testBlockNoChance() {
+        int blockChance = 0;
+        Priestess priestess = new Priestess(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, blockChance);
+        assertFalse(
+                priestess.block(),
+                "Should not have been able to block"
+        );
+    }
+
+    @Test
+    void testBlockAlways() {
+        int blockChance = 100;
+        Priestess priestess = new Priestess(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, blockChance);
+        assertTrue(
+                priestess.block(),
+                "Should have blocked"
+        );
+    }
+    // TODO THE BLOCK CHANCE BOUNDS NEED TO BE DOCUMENTED
+
+    /* PRIESTESS TEST SUITE */
+
+    // FIXME This test is flaky
+    @Test
+    void testSpecialMove() {
+        int damage = myHp - 1;
+        myPriestess.takeDamage(damage);
+        int maxHeal = (int)(0.75 * myHp); // Can heal up to 75% of max health points
+        int hpAfterDamage = myPriestess.getHP();
+        // use special move
+        myPriestess.specialMove(null);
+
+        assertTrue(
+                myPriestess.getHP() - hpAfterDamage <= maxHeal,
+                "Incorrect healing value range.\n" +
+                        "75% value: " + maxHeal + "\nActual: " +
+                        (myPriestess.getHP() - hpAfterDamage)
+        );
+    }
 }
