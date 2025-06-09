@@ -8,7 +8,7 @@ package com.swagteam360.dungeonadventure.model;
  * @author Jonathan Hernandez
  * @version 1.1 (4 June 2025)
  */
-public class BattleSystem {
+public final class BattleSystem {
 
     /**
      * Represents the Hero participating in the battle within the BattleSystem.

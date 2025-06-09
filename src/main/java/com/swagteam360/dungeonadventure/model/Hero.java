@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.Random;
  * @author Luke Willis, Jonathan Hernandez
  * @version 4 June 2025
  */
-public abstract class Hero extends DungeonCharacter {
+public abstract class Hero extends DungeonCharacter implements Serializable {
 
     /**
      * Field myBlockChance represents a percent chance that a hero might block a

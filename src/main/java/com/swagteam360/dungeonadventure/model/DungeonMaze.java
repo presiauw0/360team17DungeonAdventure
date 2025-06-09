@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -13,7 +14,7 @@ import java.util.Stack;
  * @author Preston Sia (psia97)
  * @version 1.00, 02 May 2025
  */
-public final class DungeonMaze {
+public final class DungeonMaze implements Serializable {
     /**
      * Grid of Cells representing the maze
      */

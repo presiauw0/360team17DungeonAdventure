@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.*;
 import java.util.List;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -13,7 +14,7 @@ import java.beans.PropertyChangeSupport;
  * @author Jonathan Hernandez
  * @version 1.2 (7 June, 2025)
  */
-public class GameManager {
+public final class GameManager {
 
     /**
      * Constant that represents the damage dealt from a pit.
@@ -155,6 +156,60 @@ public class GameManager {
 
         handleEvents();
 
+    }
+
+    // The following two methods were written based on the Serializable example from the modules.
+
+    /**
+     * Handles saving logic when called from the controller. Serializable objects are saved to the specified file.
+     *
+     * @param theFile The file to be written to.
+     */
+    public void saveGame(final File theFile) {
+
+        try {
+
+            final FileOutputStream file = new FileOutputStream(theFile);
+            final ObjectOutputStream out = new ObjectOutputStream(file);
+
+            out.writeObject(myGameSettings);
+            out.writeObject(myHero);
+            out.writeObject(myDungeon);
+            out.writeObject(myCurrentRoom);
+
+            out.close();
+            file.close();
+
+        } catch (IOException e) {
+            e.printStackTrace(); // Might want to log this exception.
+        }
+
+    }
+
+    /**
+     * Handles loading logic when called from the controller. Serializable objects are loaded from the specified file.
+     *
+     * @param theFile The file to be read from.
+     */
+    public void loadGame(final File theFile) {
+
+        try {
+
+            final FileInputStream file = new FileInputStream(theFile);
+            final ObjectInputStream in = new ObjectInputStream(file);
+
+            myGameSettings = (GameSettings) in.readObject();
+            myHero = (Hero) in.readObject();
+            myDungeon = (Dungeon) in.readObject();
+            myCurrentRoom = (Room) in.readObject();
+            in.close();
+            file.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace(); // Might want to log this exception
+        }
     }
 
     /**

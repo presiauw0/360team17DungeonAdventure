@@ -17,6 +17,10 @@ import javafx.util.Duration;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 
@@ -28,7 +32,7 @@ import java.util.*;
  * @author Jonathan Hernandez, Preston Sia
  * @version 1.1 (June 4, 2025)
  */
-public class GameViewController implements PropertyChangeListener {
+public final class GameViewController implements PropertyChangeListener {
 
     /* **** THE FOLLOWING FIELDS HOLD REFERENCES TO FXML ELEMENTS **** */
 
@@ -289,14 +293,37 @@ public class GameViewController implements PropertyChangeListener {
     /**
      * Handles the event triggered by clicking the "Save and Quit" button.
      * This method is intended to save the current game state and exit the application.
-     * The saving logic is yet to be implemented.
      * <p>
      * This method is invoked via FXML when the associated button is clicked.
      */
     @FXML
     private void saveAndQuitButtonEvent() {
-        // TODO: Add save logic here. Current state (hero, dungeon, etc.) should be saved.
+
+        final File savedFile = new File("saved_game.txt");
+
+        // There might be some issues in saving, so we use a try-catch block.
+
+        try {
+            GameManager.getInstance().saveGame(savedFile);
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Save Successful");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Game saved successfully!");
+            successAlert.showAndWait();
+
+        } catch (Exception e) {
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error in saving game!");
+            alert.setContentText("An error occurred while saving the game.");
+            alert.showAndWait();
+            return;
+
+        }
+
         Platform.exit();
+
     }
 
     /**

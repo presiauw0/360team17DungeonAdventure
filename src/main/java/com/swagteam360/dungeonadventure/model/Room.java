@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -12,7 +13,7 @@ import java.util.*;
  * @version 1.2 10 May 2025
  *
  */
-public class Room implements Cell, IRoom {
+public class Room implements Cell, IRoom, Serializable {
 
     /**
      * Contains the items in the room, such
