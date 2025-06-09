@@ -120,4 +120,28 @@ public interface IRoom {
      * @return True if the player visited the room, false otherwise
      */
     boolean isVisited();
+
+    /**
+     * Get an immutable record if this room's state.
+     * @return A RoomViewModel record of this room's state.
+     */
+    RoomViewModel getRoomViewModel();
+
+    /**
+     * Represents an immutable record of the room's state
+     * with information that can be safely sent to the view.
+     *
+     * @param leftWall Left wall state
+     * @param rightWall Right wall state
+     * @param topWall Top wall state
+     * @param bottomWall Bottom wall state
+     * @param entranceExit Entrance or exit state
+     * @param hasPit Pit state - whether the room has a pit or not
+     * @param pillar Reference to the room's pillar if applicable
+     * @param items List of the room's items
+     * @param roomString toString representation of the room
+     */
+    record RoomViewModel(boolean leftWall, boolean rightWall, boolean topWall,
+                                boolean bottomWall, String entranceExit, boolean hasPit, Pillar pillar,
+                                List<Item> items, String roomString) { }
 }
