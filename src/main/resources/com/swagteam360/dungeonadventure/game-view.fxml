@@ -34,7 +34,7 @@
             <Label alignment="CENTER" contentDisplay="CENTER" text="Minimap" textAlignment="CENTER" />
             <VBox alignment="CENTER" prefHeight="150.0" prefWidth="110.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#saveAndQuitButtonEvent" prefHeight="20.0" prefWidth="110.0" text="Save and Quit">
+                  <Button mnemonicParsing="false" onAction="#saveAndQuitButtonEvent" prefHeight="20.0" prefWidth="110.0" text="Save / Exit">
                      <font>
                         <Font size="10.0" />
                      </font></Button>
