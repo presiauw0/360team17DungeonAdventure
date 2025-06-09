@@ -1,6 +1,7 @@
 package com.swagteam360.dungeonadventure.view;
 
 
+import com.swagteam360.dungeonadventure.model.Room;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -12,9 +13,16 @@ public class RoomView extends Canvas {
 //        // TODO: IMPLEMENT THIS
 //    }
 
-    public RoomView(final int theWidth, final int theHeight) {
+    private final Room myRoom;
+
+    public RoomView(final int theWidth, final int theHeight, final Room theRoom) {
         super((double)theWidth, (double)theHeight);
+        myRoom = theRoom;
         drawRoom(getGraphicsContext2D());
+    }
+
+    public void updateRoom() {
+
     }
 
     private void drawRoom(GraphicsContext theGc) {
@@ -22,12 +30,55 @@ public class RoomView extends Canvas {
         theGc.clearRect(0, 0, getWidth(), getHeight());
 
         // Draw stuff
-        theGc.setFill(Color.RED);
-        theGc.setStroke(Color.BLUE);
-        theGc.setLineWidth(5);
-        theGc.strokeLine(40, 10, 10, 40);
-        theGc.fillOval(10, 60, 30, 30);
-        theGc.fillRoundRect(110, 60, 30, 30, 10, 10);
+        drawDoors(theGc);
+    }
+
+    private void drawDoors(final GraphicsContext theGc) {
+        theGc.setLineWidth(6);
+        theGc.setStroke(Color.GRAY);
+
+        // x coordinates 0, 1
+        double[] xBounds = {getWidth() * (1.0/3), getWidth() * (2.0/3)};
+        // y coordinates 0, 1
+        double[] yBounds = {getHeight() * (1.0/3), getHeight() * (2.0/3)};
+
+        // x coordinates 1/4, 3/4
+        double[] xStops = {xBounds[0] + (1.0/4) * (xBounds[1] - xBounds[0]),
+                            xBounds[0] + (3.0/4) * (xBounds[1] - xBounds[0])};
+
+        // y coordinates 1/4, 3/4
+        double[] yStops = {yBounds[0] + (1.0/4) * (yBounds[1] - yBounds[0]),
+                            yBounds[0] + (3.0/4) * (yBounds[1] - yBounds[0])};
+
+        // top line
+        theGc.strokeLine(xBounds[0], yBounds[0], xStops[0], yBounds[0]);
+        theGc.strokeLine(xStops[1], yBounds[0], xBounds[1], yBounds[0]);
+
+        // bottom line
+        theGc.strokeLine(xBounds[0], yBounds[1], xStops[0], yBounds[1]);
+        theGc.strokeLine(xStops[1], yBounds[1], xBounds[1], yBounds[1]);
+
+        // left line
+        theGc.strokeLine(xBounds[0], yBounds[0], xBounds[0], yStops[0]);
+        theGc.strokeLine(xBounds[0], yStops[1], xBounds[0], yBounds[1]);
+
+        // right line
+        theGc.strokeLine(xBounds[1], yBounds[0], xBounds[1], yStops[0]);
+        theGc.strokeLine(xBounds[1], yStops[1], xBounds[1], yBounds[1]);
+
+        // add the middle thirds if the walls are up
+        if (myRoom.hasTopWall()) {
+            theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
+        }
+        if (myRoom.hasBottomWall()) {
+            theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
+        }
+        if (myRoom.hasLeftWall()) {
+            theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
+        }
+        if (myRoom.hasRightWall()) {
+            theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
+        }
     }
 
 }

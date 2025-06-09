@@ -139,9 +139,10 @@ public interface IRoom {
      * @param hasPit Pit state - whether the room has a pit or not
      * @param pillar Reference to the room's pillar if applicable
      * @param items List of the room's items
+     * @param visited Indication of whether the player visited the room
      * @param roomString toString representation of the room
      */
     record RoomViewModel(boolean leftWall, boolean rightWall, boolean topWall,
                                 boolean bottomWall, String entranceExit, boolean hasPit, Pillar pillar,
-                                List<Item> items, String roomString) { }
+                                List<Item> items, boolean visited, String roomString) { }
 }
