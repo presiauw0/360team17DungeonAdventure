@@ -102,4 +102,22 @@ public interface IRoom {
      * @return Boolean indicator of whether the room is an exit
      */
     boolean isExit();
+
+    /**
+     * Detects whether the room contains an entrance.
+     * @return Boolean indicator of whether the room is an entrance
+     */
+    boolean isEntrance();
+
+    /**
+     * Represents whether the Hero has visited the given room.
+     * @param theVisited True if a room has been visited, false otherwise.
+     */
+    void setVisited(boolean theVisited);
+
+    /**
+     * Indicates if the room has been visited by the player.
+     * @return True if the player visited the room, false otherwise
+     */
+    boolean isVisited();
 }
