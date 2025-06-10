@@ -14,6 +14,27 @@ import java.io.IOException;
 
 public class RoomView extends Canvas {
     /**
+     * Color of the doors.
+     */
+    private static final Color DOOR_COLOR = Color.WHITE;
+    /**
+     * Color of the walls.
+     */
+    private static final Color WALL_COLOR = Color.rgb(136, 108, 108);
+    /**
+     * Color of null rooms - call it the "void."
+     */
+    private static final Color VOID_COLOR = Color.BLACK;
+    /**
+     * Color of the rooms which have not been visited yet.
+     */
+    private static final Color UNVISITED_COLOR = Color.rgb(40, 40, 40);
+    /**
+     * Width of the walls.
+     */
+    private static final int WALL_WIDTH = 8;
+
+    /**
      * Stores the player's current room and all surrounding rooms.
      */
     private IRoom.RoomViewModel[][] myRoomMatrix;
@@ -86,8 +107,8 @@ public class RoomView extends Canvas {
      * @param theCol Column coordinate in the room matrix where the target room is
      */
     private void drawDoors(final GraphicsContext theGc, final int theRow, final int theCol) {
-        theGc.setLineWidth(6);
-        theGc.setStroke(Color.GRAY);
+        theGc.setLineWidth(WALL_WIDTH);
+        theGc.setStroke(WALL_COLOR);
 
         // x coordinates 0, 1 representing the vertices of the current room
         double[] xBounds = getXBounds(theCol);
@@ -120,34 +141,34 @@ public class RoomView extends Canvas {
 
         // add the middle thirds if the walls are up
         if (myRoomMatrix[theRow][theCol].topWall()) {
-            theGc.setStroke(Color.GRAY);
+            theGc.setStroke(WALL_COLOR);
             theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
         } else {
-            theGc.setStroke(Color.WHITE);
+            theGc.setStroke(DOOR_COLOR);
             theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
         }
 
         if (myRoomMatrix[theRow][theCol].bottomWall()) {
-            theGc.setStroke(Color.GRAY);
+            theGc.setStroke(WALL_COLOR);
             theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
         } else {
-            theGc.setStroke(Color.WHITE);
+            theGc.setStroke(DOOR_COLOR);
             theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
         }
 
         if (myRoomMatrix[theRow][theCol].leftWall()) {
-            theGc.setStroke(Color.GRAY);
+            theGc.setStroke(WALL_COLOR);
             theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
         } else {
-            theGc.setStroke(Color.WHITE);
+            theGc.setStroke(DOOR_COLOR);
             theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
         }
 
         if (myRoomMatrix[theRow][theCol].rightWall()) {
-            theGc.setStroke(Color.GRAY);
+            theGc.setStroke(WALL_COLOR);
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         } else {
-            theGc.setStroke(Color.WHITE);
+            theGc.setStroke(DOOR_COLOR);
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         }
     }
@@ -157,9 +178,9 @@ public class RoomView extends Canvas {
         final double[] yBounds = getYBounds(theRow);
         final double width = getWidth() * (1.0 / myRoomMatrix[0].length);
         final double height = getHeight() * (1.0 / myRoomMatrix.length);
-        theGc.setLineWidth(6);
-        theGc.setStroke(Color.GRAY);
-        theGc.setFill(Color.rgb(40, 40, 40));
+        theGc.setLineWidth(WALL_WIDTH);
+        theGc.setStroke(WALL_COLOR);
+        theGc.setFill(UNVISITED_COLOR);
         theGc.fillRect(xBounds[0], yBounds[0], width, height);
         theGc.strokeRect(xBounds[0], yBounds[0], width, height);
     }
@@ -170,7 +191,7 @@ public class RoomView extends Canvas {
         final double width = getWidth() * (1.0 / myRoomMatrix[0].length);
         final double height = getHeight() * (1.0 / myRoomMatrix.length);
 
-        theGc.setFill(Color.BLACK);
+        theGc.setFill(VOID_COLOR);
         theGc.fillRect(xBounds[0], yBounds[0], width, height);
     }
 
