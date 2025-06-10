@@ -2,7 +2,6 @@ package com.swagteam360.dungeonadventure.view;
 
 
 import com.swagteam360.dungeonadventure.model.IRoom;
-import com.swagteam360.dungeonadventure.model.Room;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -18,11 +17,6 @@ public class RoomView extends Canvas {
      * Stores the player's current room and all surrounding rooms.
      */
     private IRoom.RoomViewModel[][] myRoomMatrix;
-    /**
-     * Stores the player's current room only.
-     */
-    private IRoom.RoomViewModel myCurrentRoom;
-
     /**
      * Create a new room view with a specified width and height.
      * @param theWidth Width
@@ -40,7 +34,6 @@ public class RoomView extends Canvas {
      */
     public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
         myRoomMatrix = theRooms;
-        myCurrentRoom = theRooms[1][1];
         drawRoom(getGraphicsContext2D());
     }
 
@@ -52,8 +45,34 @@ public class RoomView extends Canvas {
         // Clear Canvas
         theGc.clearRect(0, 0, getWidth(), getHeight());
 
-        // Draw stuff
-        drawDoors(theGc, 1, 2);
+        // Draw null spaces
+        for (int i = 0; i < myRoomMatrix.length; i++) {
+            for (int j = 0; j < myRoomMatrix[i].length; j++) {
+                // Draw a room if it's not null
+                if (myRoomMatrix[i][j] == null) {
+                    drawNullSpace(theGc, i, j);
+                }
+            }
+        }
+
+        // Draw unvisited rooms
+        for (int i = 0; i < myRoomMatrix.length; i++) {
+            for (int j = 0; j < myRoomMatrix[i].length; j++) {
+                if (myRoomMatrix[i][j] != null && !myRoomMatrix[i][j].visited()) {
+                    drawUnvisitedRoom(theGc, i, j);
+                }
+            }
+        }
+
+        // Draw visited rooms
+        for (int i = 0; i < myRoomMatrix.length; i++) {
+            for (int j = 0; j < myRoomMatrix[i].length; j++) {
+                if (myRoomMatrix[i][j] != null && myRoomMatrix[i][j].visited()) {
+                    drawDoors(theGc, i, j);
+                }
+            }
+        }
+
         drawCharacter(theGc);
     }
 
@@ -64,16 +83,13 @@ public class RoomView extends Canvas {
      * @param theCol Column coordinate in the room matrix where the target room is
      */
     private void drawDoors(final GraphicsContext theGc, final int theRow, final int theCol) {
-        int roomCols = myRoomMatrix[0].length; // TOTAL number of room columns (X)
-        int roomRows = myRoomMatrix.length; // TOTAL number of room rows (Y)
-
         theGc.setLineWidth(6);
         theGc.setStroke(Color.GRAY);
 
         // x coordinates 0, 1 representing the vertices of the current room
-        double[] xBounds = {getWidth() * ((double)(theCol)/roomCols), getWidth() * ((double)(theCol + 1)/roomCols)};
+        double[] xBounds = getXBounds(theCol);
         // y coordinates 0, 1 representing the vertices of the current room
-        double[] yBounds = {getHeight() * ((double)(theRow)/roomRows), getHeight() * ((double)(theRow + 1)/roomRows)};
+        double[] yBounds = getYBounds(theRow);
 
         // x coordinates 1/4, 3/4
         double[] xStops = {xBounds[0] + (1.0/4) * (xBounds[1] - xBounds[0]),
@@ -101,17 +117,68 @@ public class RoomView extends Canvas {
 
         // add the middle thirds if the walls are up
         if (myRoomMatrix[theRow][theCol].topWall()) {
+            theGc.setStroke(Color.GRAY);
+            theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
+        } else {
+            theGc.setStroke(Color.WHITE);
             theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
         }
+
         if (myRoomMatrix[theRow][theCol].bottomWall()) {
+            theGc.setStroke(Color.GRAY);
+            theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
+        } else {
+            theGc.setStroke(Color.WHITE);
             theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
         }
+
         if (myRoomMatrix[theRow][theCol].leftWall()) {
+            theGc.setStroke(Color.GRAY);
+            theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
+        } else {
+            theGc.setStroke(Color.WHITE);
             theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
         }
+
         if (myRoomMatrix[theRow][theCol].rightWall()) {
+            theGc.setStroke(Color.GRAY);
+            theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
+        } else {
+            theGc.setStroke(Color.WHITE);
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         }
+    }
+
+    private void drawUnvisitedRoom(final GraphicsContext theGc, final int theRow, final int theCol) {
+        final double[] xBounds = getXBounds(theCol);
+        final double[] yBounds = getYBounds(theRow);
+        final double width = getWidth() * (1.0 / myRoomMatrix[0].length);
+        final double height = getHeight() * (1.0 / myRoomMatrix.length);
+        theGc.setLineWidth(6);
+        theGc.setStroke(Color.GRAY);
+        theGc.setFill(Color.rgb(40, 40, 40));
+        theGc.fillRect(xBounds[0], yBounds[0], width, height);
+        theGc.strokeRect(xBounds[0], yBounds[0], width, height);
+    }
+
+    private void drawNullSpace(final GraphicsContext theGc, final int theRow, final int theCol) {
+        double[] xBounds = getXBounds(theCol);
+        double[] yBounds = getYBounds(theRow);
+        final double width = getWidth() * (1.0 / myRoomMatrix[0].length);
+        final double height = getHeight() * (1.0 / myRoomMatrix.length);
+
+        theGc.setFill(Color.BLACK);
+        theGc.fillRect(xBounds[0], yBounds[0], width, height);
+    }
+
+    private double[] getXBounds(final int theCol) {
+        int roomCols = myRoomMatrix[0].length; // TOTAL number of room columns (X)
+        return new double[]{getWidth() * ((double)(theCol)/roomCols), getWidth() * ((double)(theCol + 1)/roomCols)};
+    }
+
+    private double[] getYBounds(final int theRow) {
+        int roomRows = myRoomMatrix.length; // TOTAL number of room rows (Y)
+        return new double[]{getHeight() * ((double)(theRow)/roomRows), getHeight() * ((double)(theRow + 1)/roomRows)};
     }
 
     private void drawCharacter(final GraphicsContext theGc) {

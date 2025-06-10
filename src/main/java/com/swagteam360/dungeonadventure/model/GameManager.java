@@ -103,6 +103,8 @@ public class GameManager {
                 myDungeon.getEntranceCol()
         );
 
+        myCurrentRoom.setVisited(true); // set the first room to visited since the first room is always visited
+
         // Debugging
         Pillar b = new Pillar(BRONZE);
         Pillar s = new Pillar(SILVER);
@@ -148,6 +150,7 @@ public class GameManager {
         chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
+        myCurrentRoom.setVisited(true);
 
         debugPrintDungeon(row, col);
 
