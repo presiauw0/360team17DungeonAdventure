@@ -8,20 +8,40 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class RoomView extends Canvas {
-
+    /**
+     * Stores the player's current room and all surrounding rooms.
+     */
     private IRoom.RoomViewModel[][] myRoomMatrix;
+    /**
+     * Stores the player's current room only.
+     */
     private IRoom.RoomViewModel myCurrentRoom;
 
+    /**
+     * Create a new room view with a specified width and height.
+     * @param theWidth Width
+     * @param theHeight Height
+     */
     public RoomView(final int theWidth, final int theHeight) {
         super((double)theWidth, (double)theHeight);
     }
 
+    /**
+     * Updates the state of RoomView with a new 2D matrix of rooms
+     * with the room in the center being the room that the player is
+     * currently in.
+     * @param theRooms 2D array of rooms.
+     */
     public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
         myRoomMatrix = theRooms;
         myCurrentRoom = theRooms[1][1];
         drawRoom(getGraphicsContext2D());
     }
 
+    /**
+     * Delegates tasks for drawing rooms.
+     * @param theGc 2D graphics context
+     */
     private void drawRoom(GraphicsContext theGc) {
         // Clear Canvas
         theGc.clearRect(0, 0, getWidth(), getHeight());
