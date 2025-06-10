@@ -917,7 +917,7 @@ public class GameViewController implements PropertyChangeListener {
 
     private void updateRoomView(final Object theRoomMatrix) {
         if (theRoomMatrix instanceof IRoom.RoomViewModel[][]) {
-            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix);
+            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix, GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
         }
     }
 

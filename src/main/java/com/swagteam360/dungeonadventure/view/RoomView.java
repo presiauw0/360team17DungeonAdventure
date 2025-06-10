@@ -17,6 +17,8 @@ public class RoomView extends Canvas {
      * Stores the player's current room and all surrounding rooms.
      */
     private IRoom.RoomViewModel[][] myRoomMatrix;
+
+    private String myCharType;
     /**
      * Create a new room view with a specified width and height.
      * @param theWidth Width
@@ -32,8 +34,9 @@ public class RoomView extends Canvas {
      * currently in.
      * @param theRooms 2D array of rooms.
      */
-    public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
+    public void updateRoom(final IRoom.RoomViewModel[][] theRooms, final String theCharType) {
         myRoomMatrix = theRooms;
+        myCharType = theCharType;
         drawRoom(getGraphicsContext2D());
     }
 
@@ -186,19 +189,20 @@ public class RoomView extends Canvas {
         Image image;
 
         // find specified image
-        try (final FileInputStream imageStream = new FileInputStream("src/main/resources/images/img.png")) {
+        try (final FileInputStream imageStream = new FileInputStream("src/main/resources/images/" + myCharType + "_model.png")) {
             image = new Image(imageStream);
             theGc.drawImage(image, getWidth()/2 - image.getWidth()/2, getHeight()/2 - image.getHeight()/2);
             System.out.println("Image width: " + image.getWidth());
+
         } catch (FileNotFoundException e) {
             System.out.println("Image not found: " + e);
         } catch (IOException e) {
             System.out.println("Image not loaded: " + e);
         }
 
-
-
-
+    }
+    private String fetchCharType() {
+        return myCharType;
     }
 
 }
