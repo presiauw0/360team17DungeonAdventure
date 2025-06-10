@@ -273,8 +273,8 @@ public class Room implements Cell, IRoom {
     }
 
     @Override
-    public void setVisited(final boolean theVisisted) {
-        myVisited = theVisisted;
+    public void setVisited(final boolean theVisited) {
+        myVisited = theVisited;
     }
 
     @Override

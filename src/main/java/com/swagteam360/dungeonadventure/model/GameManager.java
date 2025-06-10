@@ -102,8 +102,7 @@ public class GameManager {
                 myDungeon.getEntranceRow(),
                 myDungeon.getEntranceCol()
         );
-
-        myCurrentRoom.setVisited(true); // set the first room to visited since the first room is always visited
+        myCurrentRoom.setVisited(true);
 
         // Debugging
         Pillar b = new Pillar(BRONZE);
