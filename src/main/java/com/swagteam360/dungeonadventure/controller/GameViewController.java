@@ -278,7 +278,8 @@ public class GameViewController implements PropertyChangeListener {
             myHeroDialogueLabel = new Label();
         }
 
-        myRoomView = new RoomView(380, 250);
+        myRoomView = new RoomView(380, 250,
+                GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
 
         // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
@@ -917,7 +918,7 @@ public class GameViewController implements PropertyChangeListener {
 
     private void updateRoomView(final Object theRoomMatrix) {
         if (theRoomMatrix instanceof IRoom.RoomViewModel[][]) {
-            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix, GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
+            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix);
         }
     }
 

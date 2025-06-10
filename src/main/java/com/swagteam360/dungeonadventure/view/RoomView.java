@@ -18,14 +18,15 @@ public class RoomView extends Canvas {
      */
     private IRoom.RoomViewModel[][] myRoomMatrix;
 
-    private String myCharType;
+    private final String myCharType;
     /**
      * Create a new room view with a specified width and height.
      * @param theWidth Width
      * @param theHeight Height
      */
-    public RoomView(final int theWidth, final int theHeight) {
+    public RoomView(final int theWidth, final int theHeight, final String theCharType) {
         super((double)theWidth, (double)theHeight);
+        myCharType = theCharType;
     }
 
     /**
@@ -34,9 +35,8 @@ public class RoomView extends Canvas {
      * currently in.
      * @param theRooms 2D array of rooms.
      */
-    public void updateRoom(final IRoom.RoomViewModel[][] theRooms, final String theCharType) {
+    public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
         myRoomMatrix = theRooms;
-        myCharType = theCharType;
         drawRoom(getGraphicsContext2D());
     }
 
