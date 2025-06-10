@@ -7,6 +7,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import javafx.scene.image.Image;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class RoomView extends Canvas {
     /**
      * Stores the player's current room and all surrounding rooms.
@@ -48,6 +54,7 @@ public class RoomView extends Canvas {
 
         // Draw stuff
         drawDoors(theGc);
+        drawCharacter(theGc);
     }
 
     private void drawDoors(final GraphicsContext theGc) {
@@ -96,6 +103,26 @@ public class RoomView extends Canvas {
         if (myCurrentRoom.rightWall()) {
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         }
+    }
+
+    private void drawCharacter(final GraphicsContext theGc) {
+
+        Image image;
+
+        // find specified image
+        try (final FileInputStream imageStream = new FileInputStream("src/main/resources/images/img.png")) {
+            image = new Image(imageStream);
+            theGc.drawImage(image, getWidth()/2 - image.getWidth()/2, getHeight()/2 - image.getHeight()/2);
+            System.out.println("Image width: " + image.getWidth());
+        } catch (FileNotFoundException e) {
+            System.out.println("Image not found: " + e);
+        } catch (IOException e) {
+            System.out.println("Image not loaded: " + e);
+        }
+
+
+
+
     }
 
 }
