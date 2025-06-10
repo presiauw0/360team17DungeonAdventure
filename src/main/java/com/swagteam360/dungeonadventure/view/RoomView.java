@@ -1,6 +1,7 @@
 package com.swagteam360.dungeonadventure.view;
 
 
+import com.swagteam360.dungeonadventure.model.IRoom;
 import com.swagteam360.dungeonadventure.model.Room;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,21 +9,17 @@ import javafx.scene.paint.Color;
 
 public class RoomView extends Canvas {
 
-//    @Override
-//    public void update(Room theRoom, Hero theHero, List<Item> theInventory) {
-//        // TODO: IMPLEMENT THIS
-//    }
+    private IRoom.RoomViewModel[][] myRoomMatrix;
+    private IRoom.RoomViewModel myCurrentRoom;
 
-    private final Room myRoom;
-
-    public RoomView(final int theWidth, final int theHeight, final Room theRoom) {
+    public RoomView(final int theWidth, final int theHeight) {
         super((double)theWidth, (double)theHeight);
-        myRoom = theRoom;
-        drawRoom(getGraphicsContext2D());
     }
 
-    public void updateRoom() {
-
+    public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
+        myRoomMatrix = theRooms;
+        myCurrentRoom = theRooms[1][1];
+        drawRoom(getGraphicsContext2D());
     }
 
     private void drawRoom(GraphicsContext theGc) {
@@ -67,16 +64,16 @@ public class RoomView extends Canvas {
         theGc.strokeLine(xBounds[1], yStops[1], xBounds[1], yBounds[1]);
 
         // add the middle thirds if the walls are up
-        if (myRoom.hasTopWall()) {
+        if (myCurrentRoom.topWall()) {
             theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
         }
-        if (myRoom.hasBottomWall()) {
+        if (myCurrentRoom.bottomWall()) {
             theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
         }
-        if (myRoom.hasLeftWall()) {
+        if (myCurrentRoom.leftWall()) {
             theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
         }
-        if (myRoom.hasRightWall()) {
+        if (myCurrentRoom.rightWall()) {
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         }
     }
