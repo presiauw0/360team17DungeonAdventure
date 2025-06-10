@@ -81,6 +81,74 @@ public final class Dungeon {
         }
     }
 
+    /**
+     * Returns a 3x3 matrix of the current room surrounded by adjacent rooms.
+     * @param theRow Row of the target (central) room
+     * @param theCol Column of the target (central) room
+     * @return A 3x3 Room[][] matrix of the central room and all surrounding rooms
+     */
+    public Room[][] getAdjacentRooms(final int theRow, final int theCol) {
+        if (theRow < 0 || theCol < 0) {
+            throw new IllegalArgumentException("Row and column cannot be negative");
+        }
+
+        final Room[][] adjacentRooms = new Room[3][3];
+
+        // Array of target row coordinate offsets
+        final int[] dRow = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+        // Array of target column offsets
+        final int[] dCol = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+
+        // Loop through all coordinate offsets
+        for (int i = 0; i < dRow.length; i++) {
+            // Find the coordinate based on the current row offset
+            int targetRow = theRow + dRow[i];
+            // Find the coordinate based on the current column offset
+            int targetCol = theCol + dCol[i];
+
+            // Check if the coordinates are in bounds
+            if ((targetRow < 0 || targetCol < 0) || (targetRow >= myRowSize || targetCol >= myColSize)) {
+                // set the room in the matrix to null
+                adjacentRooms[dRow[i] + 1][dCol[i] + 1] = null; // offset by 1 to fit the new matrix
+            } else {
+                // get the room at the target positions
+                adjacentRooms[dRow[i] + 1][dCol[i] + 1] = getRoom(targetRow, targetCol);
+            }
+        }
+
+        return adjacentRooms;
+    }
+
+    /**
+     * Get adjacent room data as a matrix of immutable records.
+     * This is functionally the same as getAdjacentRooms() except
+     * it returns a matrix of RoomViewModels that are safe to use outside
+     * the model package.
+     * @param theRow Row of the target (central) room
+     * @param theCol Column of the target (central) room
+     * @return A 3x3 Room[][] matrix of the central room and all surrounding rooms
+     */
+    public IRoom.RoomViewModel[][] getAdjacentRoomViewModels(final int theRow, final int theCol) {
+        if (theRow < 0 || theCol < 0) {
+            throw new IllegalArgumentException("Row and column cannot be negative");
+        }
+
+        final Room[][] rooms = getAdjacentRooms(theRow, theCol);
+        final IRoom.RoomViewModel[][] roomViewModels = new IRoom.RoomViewModel[rooms.length][rooms[0].length];
+
+        for (int i = 0; i < rooms.length; i++) {
+            for (int j = 0; j < rooms[i].length; j++) {
+                if (rooms[i][j] != null) {
+                    roomViewModels[i][j] = rooms[i][j].getRoomViewModel();
+                } else {
+                    roomViewModels[i][j] = null;
+                }
+            }
+        }
+
+        return roomViewModels;
+    }
+
     private Stack<Pillar> generatePillars() {
         final Stack<Pillar> pillarStack = new Stack<>();
 

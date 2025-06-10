@@ -102,4 +102,47 @@ public interface IRoom {
      * @return Boolean indicator of whether the room is an exit
      */
     boolean isExit();
+
+    /**
+     * Detects whether the room contains an entrance.
+     * @return Boolean indicator of whether the room is an entrance
+     */
+    boolean isEntrance();
+
+    /**
+     * Represents whether the Hero has visited the given room.
+     * @param theVisited True if a room has been visited, false otherwise.
+     */
+    void setVisited(boolean theVisited);
+
+    /**
+     * Indicates if the room has been visited by the player.
+     * @return True if the player visited the room, false otherwise
+     */
+    boolean isVisited();
+
+    /**
+     * Get an immutable record if this room's state.
+     * @return A RoomViewModel record of this room's state.
+     */
+    RoomViewModel getRoomViewModel();
+
+    /**
+     * Represents an immutable record of the room's state
+     * with information that can be safely sent to the view.
+     *
+     * @param leftWall Left wall state
+     * @param rightWall Right wall state
+     * @param topWall Top wall state
+     * @param bottomWall Bottom wall state
+     * @param entranceExit Entrance or exit state
+     * @param hasPit Pit state - whether the room has a pit or not
+     * @param pillar Reference to the room's pillar if applicable
+     * @param items List of the room's items
+     * @param visited Indication of whether the player visited the room
+     * @param roomString toString representation of the room
+     */
+    record RoomViewModel(boolean leftWall, boolean rightWall, boolean topWall,
+                                boolean bottomWall, String entranceExit, boolean hasPit, Pillar pillar,
+                                List<Item> items, boolean visited, String roomString) { }
 }
