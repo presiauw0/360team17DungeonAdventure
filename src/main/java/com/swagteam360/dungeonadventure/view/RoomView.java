@@ -53,18 +53,27 @@ public class RoomView extends Canvas {
         theGc.clearRect(0, 0, getWidth(), getHeight());
 
         // Draw stuff
-        drawDoors(theGc);
+        drawDoors(theGc, 1, 2);
         drawCharacter(theGc);
     }
 
-    private void drawDoors(final GraphicsContext theGc) {
+    /**
+     * Draws the doors for the room at the specified location.
+     * @param theGc GraphicsContext to use
+     * @param theRow Row coordinate in the room matrix where the target room is
+     * @param theCol Column coordinate in the room matrix where the target room is
+     */
+    private void drawDoors(final GraphicsContext theGc, final int theRow, final int theCol) {
+        int roomCols = myRoomMatrix[0].length; // TOTAL number of room columns (X)
+        int roomRows = myRoomMatrix.length; // TOTAL number of room rows (Y)
+
         theGc.setLineWidth(6);
         theGc.setStroke(Color.GRAY);
 
-        // x coordinates 0, 1
-        double[] xBounds = {getWidth() * (1.0/3), getWidth() * (2.0/3)};
-        // y coordinates 0, 1
-        double[] yBounds = {getHeight() * (1.0/3), getHeight() * (2.0/3)};
+        // x coordinates 0, 1 representing the vertices of the current room
+        double[] xBounds = {getWidth() * ((double)(theCol)/roomCols), getWidth() * ((double)(theCol + 1)/roomCols)};
+        // y coordinates 0, 1 representing the vertices of the current room
+        double[] yBounds = {getHeight() * ((double)(theRow)/roomRows), getHeight() * ((double)(theRow + 1)/roomRows)};
 
         // x coordinates 1/4, 3/4
         double[] xStops = {xBounds[0] + (1.0/4) * (xBounds[1] - xBounds[0]),
@@ -74,33 +83,33 @@ public class RoomView extends Canvas {
         double[] yStops = {yBounds[0] + (1.0/4) * (yBounds[1] - yBounds[0]),
                             yBounds[0] + (3.0/4) * (yBounds[1] - yBounds[0])};
 
-        // top line
+        // top line - e.g. |---    ---| (wall without the door)
         theGc.strokeLine(xBounds[0], yBounds[0], xStops[0], yBounds[0]);
         theGc.strokeLine(xStops[1], yBounds[0], xBounds[1], yBounds[0]);
 
-        // bottom line
+        // bottom line - e.g. |---   ---| (wall without the door)
         theGc.strokeLine(xBounds[0], yBounds[1], xStops[0], yBounds[1]);
         theGc.strokeLine(xStops[1], yBounds[1], xBounds[1], yBounds[1]);
 
-        // left line
+        // left line - wall without the door, but vertical
         theGc.strokeLine(xBounds[0], yBounds[0], xBounds[0], yStops[0]);
         theGc.strokeLine(xBounds[0], yStops[1], xBounds[0], yBounds[1]);
 
-        // right line
+        // right line - wall without the door, but vertical
         theGc.strokeLine(xBounds[1], yBounds[0], xBounds[1], yStops[0]);
         theGc.strokeLine(xBounds[1], yStops[1], xBounds[1], yBounds[1]);
 
         // add the middle thirds if the walls are up
-        if (myCurrentRoom.topWall()) {
+        if (myRoomMatrix[theRow][theCol].topWall()) {
             theGc.strokeLine(xStops[0], yBounds[0], xStops[1], yBounds[0]);
         }
-        if (myCurrentRoom.bottomWall()) {
+        if (myRoomMatrix[theRow][theCol].bottomWall()) {
             theGc.strokeLine(xStops[0], yBounds[1], xStops[1], yBounds[1]);
         }
-        if (myCurrentRoom.leftWall()) {
+        if (myRoomMatrix[theRow][theCol].leftWall()) {
             theGc.strokeLine(xBounds[0], yStops[0], xBounds[0], yStops[1]);
         }
-        if (myCurrentRoom.rightWall()) {
+        if (myRoomMatrix[theRow][theCol].rightWall()) {
             theGc.strokeLine(xBounds[1], yStops[0], xBounds[1], yStops[1]);
         }
     }
