@@ -92,7 +92,8 @@ public class InventoryController {
     private void onBuffClick() {
         final Item selected = inventoryList.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            System.out.println(selected.buff());
+            System.out.println(selected.buff()); // buff the item
+            myObservableItems.remove(selected);  // remove the selected item (now used) from the list (on frontend)
         } else {
             btnBuff.disableProperty().setValue(true);
         }
