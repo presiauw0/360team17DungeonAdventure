@@ -102,6 +102,7 @@ public class GameManager {
                 myDungeon.getEntranceRow(),
                 myDungeon.getEntranceCol()
         );
+        myCurrentRoom.setVisited(true);
 
         // Debugging
         Pillar b = new Pillar(BRONZE);
@@ -148,6 +149,7 @@ public class GameManager {
         chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
+        myCurrentRoom.setVisited(true);
 
         debugPrintDungeon(row, col);
 
@@ -261,6 +263,9 @@ public class GameManager {
 
         myPCS.firePropertyChange("Clear Label", null, null);
 
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
             myPCS.firePropertyChange("Fight", null, monster);
@@ -309,6 +314,8 @@ public class GameManager {
         myPCS.addPropertyChangeListener(theListener);
         //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
         myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
     }
     public void removePropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.removePropertyChangeListener(theListener);

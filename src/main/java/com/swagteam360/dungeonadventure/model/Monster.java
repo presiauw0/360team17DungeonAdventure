@@ -53,12 +53,16 @@ public abstract class Monster extends DungeonCharacter {
         Random random = new Random();
 
         //roll for heal chance
-        int healRoll = random.nextInt(100) + 1; //roll 1-100
+        double healRoll = (double) (random.nextInt(100) + 1) / 100 ; //roll (1-100) / 100 to get the chance
+                                                                            // to heal
+
+
+        int amtHealed = (random.nextInt(myMinHealPoints, myMaxHealPoints)); //generating the amount healed
 
         //if healchance is greater than or equal to the random rolled, will heal :)
-        if (myHealChance >= healRoll) {
-            this.setHP(this.getHP() + healRoll); //set new Health Points
-            return healRoll;
+        if (myHealChance <= healRoll) {
+            this.setHP(this.getHP() + amtHealed); //set new Health Points
+            return amtHealed;
         }
         return 0;
     }
