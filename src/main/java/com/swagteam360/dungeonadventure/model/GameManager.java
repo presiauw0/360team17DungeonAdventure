@@ -20,6 +20,11 @@ public final class GameManager {
      * Constant that represents the damage dealt from a pit.
      */
     private static final int PIT_DAMAGE = 10;
+    /**
+     * The maximum number of rooms the player can
+     * visit before the vision potion runs out.
+     */
+    private static final int MAX_SUPER_VISION_ROOMS = 3;
 
     /**
      * The spawn chance of monsters in easy mode.
@@ -75,6 +80,18 @@ public final class GameManager {
     private Room myCurrentRoom;
 
     /**
+     * Indicates if vision powers given by the vision
+     * potion should apply.
+     */
+    private boolean mySuperVision;
+
+    /**
+     * Keep track of how many rooms have been visited before
+     * the vision powers wear off.
+     */
+    private int mySuperVisionCounter;
+
+     /**
      * Fires property changes to listeners (primarily controller classes) of GameManager to update the GUI.
      */
     private final PropertyChangeSupport myPCS = new PropertyChangeSupport(this);
@@ -118,6 +135,10 @@ public final class GameManager {
                 myDungeon.getEntranceRow(),
                 myDungeon.getEntranceCol()
         );
+
+        mySuperVision = false;
+        mySuperVisionCounter = 0;
+
         myCurrentRoom.setVisited(true);
 
         debugPrintDungeon(myCurrentRoom.getRow(), myCurrentRoom.getCol()); // DEBUGGING PURPOSES
@@ -150,6 +171,9 @@ public final class GameManager {
 
         myCurrentRoom = newRoom; // Moves the character by updating the room. That room is then set as visited.
         myCurrentRoom.setVisited(true);
+
+        // Update super vision counters if a vision potion is applied
+        updateSuperVision();
 
         debugPrintDungeon(row, col); // FOR DEBUGGING PURPOSES
 
@@ -209,6 +233,18 @@ public final class GameManager {
         } catch (ClassNotFoundException e) {
             e.printStackTrace(); // Might want to log this exception
         }
+    }
+
+    /**
+     * Enable vision powers for the player.
+     * Super vision will be active for
+     * a certain number of room moves.
+     */
+    public void enableSuperVision() {
+        mySuperVision = true;
+        mySuperVisionCounter = 0;
+        // Fire property change
+        myPCS.firePropertyChange("VISION_POWERS", false, true);
     }
 
     /**
@@ -329,6 +365,20 @@ public final class GameManager {
 
     }
 
+    private void updateSuperVision() {
+        if (mySuperVision) {
+            if (mySuperVisionCounter < MAX_SUPER_VISION_ROOMS){
+                mySuperVisionCounter++;
+            } else {
+                // DISABLE super vision
+                mySuperVision = false;
+                mySuperVisionCounter = 0;
+                // Fire property change
+                myPCS.firePropertyChange("VISION_POWERS", true, false);
+            }
+        }
+    }
+
     /**
      * Prints out the toString() methods of the Dungeon to the console for debugging purposes.
      *
@@ -432,6 +482,7 @@ public final class GameManager {
         myPCS.addPropertyChangeListener(theListener);
         //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
         myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
+        myPCS.firePropertyChange("VISION_POWERS", null, mySuperVision);
         myPCS.firePropertyChange("ROOM_CHANGE", null,
                 myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
     }
