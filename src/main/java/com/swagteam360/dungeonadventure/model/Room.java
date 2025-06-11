@@ -21,8 +21,15 @@ public class Room implements Cell, IRoom, Serializable {
      */
     private final List<Item> myItems;
 
+    /**
+     * Reference to the room's pillar, if applicable.
+     */
     private Pillar myPillar;
-    private boolean myPit = false; //FIXME
+
+    /**
+     * States whether the room has a pit.
+     */
+    private boolean myPit = false;
 
     /**
      * Specify whether the room is an entrance,
@@ -305,9 +312,16 @@ public class Room implements Cell, IRoom, Serializable {
     @Override
     public List<Item> collectAllItems() {
         //TODO implement checks to ensure that items aren't collected during certain conditions
-        final List<Item> roomItems = new ArrayList<>(myItems); // create a copy of the list
-        myItems.clear(); // clear the list for the room so that items cannot be collected again
-        return roomItems; // return the list of items to the player
+        final List<Item> roomItems = new ArrayList<>(myItems); // CREATE a COPY of the list
+
+        // ADD a pillar if a pillar exists in the room
+        if (myPillar != null) {
+            roomItems.add(myPillar);
+            myPillar = null; // REMOVE pillar
+        }
+
+        myItems.clear(); // CLEAR the list for the room so that items cannot be collected again
+        return roomItems; // RETURN the list of items to the player
     }
 
     @Override

@@ -421,7 +421,7 @@ public final class GameManager {
             myPCS.firePropertyChange("Dead", null, myHero);
         }
 
-        if (myCurrentRoom.hasItems()) {
+        if (myCurrentRoom.hasItems() || myCurrentRoom.hasPillar()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             myHero.addToInventory(roomItems);
             myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
