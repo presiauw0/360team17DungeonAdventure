@@ -222,8 +222,5 @@ public class RoomView extends Canvas {
         }
 
     }
-    private String fetchCharType() {
-        return myCharType;
-    }
 
 }
