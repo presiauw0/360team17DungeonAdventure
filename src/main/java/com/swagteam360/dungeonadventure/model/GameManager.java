@@ -298,6 +298,9 @@ public class GameManager {
 
         myPCS.firePropertyChange("Clear Label", null, null);
 
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
             myPCS.firePropertyChange("Fight", null, monster);
@@ -364,6 +367,10 @@ public class GameManager {
      */
     public void addPropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.addPropertyChangeListener(theListener);
+        //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
+        myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
     }
 
     /**
