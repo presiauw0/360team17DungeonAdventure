@@ -1,5 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
+
 /**
  * A concrete class that creates Room instances.
  * Objects are constructed with information on
@@ -9,7 +11,7 @@ package com.swagteam360.dungeonadventure.model;
  * @author Preston Sia (psia97)
  * @version 1.00, 10 May 2025
  */
-public class RoomFactory implements CellFactory {
+public class RoomFactory implements CellFactory, Serializable {
     /**
      * The row that the entrance room will reside.
      */

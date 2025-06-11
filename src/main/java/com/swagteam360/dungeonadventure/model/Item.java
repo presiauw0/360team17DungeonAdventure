@@ -1,5 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
+
 /**
  * The Item interface represents a general entity within the dungeon
  * that provides a beneficial effect or enhancement. Items implementing
@@ -9,7 +11,7 @@ package com.swagteam360.dungeonadventure.model;
  * @author Jonathan Hernandez
  * @version 1.0 (April 30th, 2025)
  */
-public interface Item {
+public interface Item extends Serializable {
 
     /**
      * Percent probability that an item is generated.

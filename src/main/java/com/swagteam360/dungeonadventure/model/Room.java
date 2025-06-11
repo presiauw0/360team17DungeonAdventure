@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -12,7 +13,7 @@ import java.util.*;
  * @version 1.2 10 May 2025
  *
  */
-public class Room implements Cell, IRoom {
+public class Room implements Cell, IRoom, Serializable {
 
     /**
      * Contains the items in the room, such
@@ -70,6 +71,12 @@ public class Room implements Cell, IRoom {
      * a room has been visited during creation
      */
     private boolean myTraversalFlag;
+
+    /**
+     * Store information on whether the player
+     * has visited this room.
+     */
+    private boolean myVisited;
 
     /**
      * Store the room's monster
@@ -130,6 +137,7 @@ public class Room implements Cell, IRoom {
         myCol = theCol;
 
         myTraversalFlag = false;
+        myVisited = false;
 
         myWallLeft = theLeftDoor;
         myWallRight = theRightDoor;
@@ -266,6 +274,11 @@ public class Room implements Cell, IRoom {
     }
 
     @Override
+    public void setVisited(final boolean theVisited) {
+        myVisited = theVisited;
+    }
+
+    @Override
     public boolean hasMonster() {
         return myMonster != null;
     }
@@ -319,8 +332,20 @@ public class Room implements Cell, IRoom {
         return IRoom.PROPERTY_EXIT.equals(myEntranceExit);
     }
 
+    @Override
     public boolean isEntrance() {
         return IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit);
+    }
+
+    @Override
+    public boolean isVisited() {
+        return myVisited;
+    }
+
+    @Override
+    public RoomViewModel getRoomViewModel() {
+        return new RoomViewModel(myWallLeft, myWallRight, myWallTop, myWallBottom,
+                myEntranceExit, myPit, myPillar, myItems, myVisited, myRow, myCol, this.toString());
     }
 
     // Package helpers

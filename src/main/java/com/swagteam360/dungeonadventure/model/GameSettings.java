@@ -1,5 +1,7 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
+
 /**
  * The GameSettings class is designed to encapsulate and manage the
  * configuration settings related to a player's game session, such as
@@ -8,7 +10,7 @@ package com.swagteam360.dungeonadventure.model;
  * @author Jonathan Hernandez
  * @version 1.0 (May 11, 2025)
  */
-public class GameSettings {
+public final class GameSettings implements Serializable {
 
     /**
      * Represents the name of the player in the game settings.
