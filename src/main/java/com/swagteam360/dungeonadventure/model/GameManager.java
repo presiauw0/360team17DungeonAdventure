@@ -149,7 +149,6 @@ public class GameManager {
 
         myCurrentRoom = newRoom; // Moves the character by updating the room. That room is then set as visited.
         myCurrentRoom.setVisited(true);
-        myPCS.firePropertyChange("Player Moved", null, myCurrentRoom);
 
         debugPrintDungeon(row, col); // FOR DEBUGGING PURPOSES
 
@@ -345,6 +344,15 @@ public class GameManager {
      * @return The current room.
      */
     public Room getCurrentRoom() {return myCurrentRoom;}
+
+    /**
+     * Return an immutable Java Record representing the
+     * state of the current room.
+     * @return RoomViewModel Java Record of the current room
+     */
+    public IRoom.RoomViewModel getCurrentRoomViewModel() {
+        return myCurrentRoom.getRoomViewModel();
+    }
 
     /**
      * Returns the Dungeon

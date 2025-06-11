@@ -344,7 +344,7 @@ public class Room implements Cell, IRoom {
     @Override
     public RoomViewModel getRoomViewModel() {
         return new RoomViewModel(myWallLeft, myWallRight, myWallTop, myWallBottom,
-                myEntranceExit, myPit, myPillar, myItems, myVisited, this.toString());
+                myEntranceExit, myPit, myPillar, myItems, myVisited, myRow, myCol, this.toString());
     }
 
     // Package helpers
