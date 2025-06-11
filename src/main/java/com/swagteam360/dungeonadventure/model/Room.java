@@ -72,7 +72,11 @@ public class Room implements Cell, IRoom, Serializable {
      */
     private boolean myTraversalFlag;
 
-    private boolean myVisited = false;
+    /**
+     * Store information on whether the player
+     * has visited this room.
+     */
+    private boolean myVisited;
 
     /**
      * Store the room's monster
@@ -133,6 +137,7 @@ public class Room implements Cell, IRoom, Serializable {
         myCol = theCol;
 
         myTraversalFlag = false;
+        myVisited = false;
 
         myWallLeft = theLeftDoor;
         myWallRight = theRightDoor;
@@ -268,11 +273,7 @@ public class Room implements Cell, IRoom, Serializable {
         }
     }
 
-    /**
-     * Represents whether the Hero has visited the given room.
-     *
-     * @param theVisited True if a room has been visited, false otherwise.
-     */
+    @Override
     public void setVisited(final boolean theVisited) {
         myVisited = theVisited;
     }
@@ -331,11 +332,21 @@ public class Room implements Cell, IRoom, Serializable {
         return IRoom.PROPERTY_EXIT.equals(myEntranceExit);
     }
 
+    @Override
     public boolean isEntrance() {
         return IRoom.PROPERTY_ENTRANCE.equals(myEntranceExit);
     }
 
-    public boolean isVisited() { return myVisited; }
+    @Override
+    public boolean isVisited() {
+        return myVisited;
+    }
+
+    @Override
+    public RoomViewModel getRoomViewModel() {
+        return new RoomViewModel(myWallLeft, myWallRight, myWallTop, myWallBottom,
+                myEntranceExit, myPit, myPillar, myItems, myVisited, myRow, myCol, this.toString());
+    }
 
     // Package helpers
 

@@ -2,6 +2,7 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.*;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import com.swagteam360.dungeonadventure.view.RoomView;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -193,6 +195,12 @@ public final class GameViewController implements PropertyChangeListener {
     @FXML
     private Label myMonsterNameLabel;
 
+    /**
+     * The pane where the RoomView canvas will be inserted.
+     */
+    @FXML
+    private Pane roomViewPane;
+
 
     /* **** THE FOLLOWING FIELDS ARE GENERAL INSTANCE FIELDS FOR THE CONTROLLER **** */
 
@@ -231,6 +239,12 @@ public final class GameViewController implements PropertyChangeListener {
      */
     private List<Item> myInventoryItems = new ArrayList<>();
 
+    /**
+     * Holds a reference to the RoomView canvas.
+     */
+    private RoomView myRoomView;
+
+
     /* *** FXML HELPER METHODS *** */
 
     /**
@@ -249,7 +263,7 @@ public final class GameViewController implements PropertyChangeListener {
         // *** GET THE SINGLETON INSTANCE OF gameManager ***
         final GameManager gameManager = GameManager.getInstance();
 
-        // *** PERFORM NULL CHECKS ***
+        // *** PERFORM NULL CHECKS AND INITIALIZE FIELDS ***
         if (myHeroImageView == null) {
             myHeroImageView = new ImageView();
         }
@@ -257,6 +271,9 @@ public final class GameViewController implements PropertyChangeListener {
         if (myHeroDialogueLabel == null) {
             myHeroDialogueLabel = new Label();
         }
+
+        myRoomView = new RoomView((int)roomViewPane.getPrefWidth(), (int)roomViewPane.getPrefHeight(),
+                GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
 
         // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
@@ -279,6 +296,9 @@ public final class GameViewController implements PropertyChangeListener {
             myMonsterHealthBar.setVisible(false);
         }
 
+        // ADD room view to the scene
+        roomViewPane.getChildren().add(myRoomView);
+
         // *** SET the name label, UPDATE movement buttons, HIDE battle controls, SET health bar, and START hero dialogue ***
         myHeroNameLabel.setText(gameManager.getGameSettings().getName());
         updateMovementButtons(gameManager.getCurrentRoom().getAvailableDirections());
@@ -290,6 +310,7 @@ public final class GameViewController implements PropertyChangeListener {
     /**
      * Handles the event triggered by clicking the "Save and Quit" button.
      * This method is intended to save the current game state and exit the application.
+     * The saving logic is yet to be implemented.
      * <p>
      * This method is invoked via FXML when the associated button is clicked.
      */
@@ -962,6 +983,12 @@ public final class GameViewController implements PropertyChangeListener {
         myInventoryItems = itemList;
     }
 
+    private void updateRoomView(final Object theRoomMatrix) {
+        if (theRoomMatrix instanceof IRoom.RoomViewModel[][]) {
+            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix);
+        }
+    }
+
     /**
      * Helper method that removes this controller classes as a listener of the current instance of GameManager.
      */
@@ -987,6 +1014,7 @@ public final class GameViewController implements PropertyChangeListener {
             case "Dead" -> handleGameOver();
             case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
             case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
+            case "ROOM_CHANGE" -> updateRoomView(theEvent.getNewValue());
         }
     }
 }

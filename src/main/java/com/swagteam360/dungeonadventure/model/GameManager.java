@@ -150,7 +150,6 @@ public final class GameManager {
 
         myCurrentRoom = newRoom; // Moves the character by updating the room. That room is then set as visited.
         myCurrentRoom.setVisited(true);
-        myPCS.firePropertyChange("Player Moved", null, myCurrentRoom);
 
         debugPrintDungeon(row, col); // FOR DEBUGGING PURPOSES
 
@@ -353,6 +352,9 @@ public final class GameManager {
 
         myPCS.firePropertyChange("Clear Label", null, null);
 
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
             myPCS.firePropertyChange("Fight", null, monster);
@@ -399,6 +401,15 @@ public final class GameManager {
     public Room getCurrentRoom() {return myCurrentRoom;}
 
     /**
+     * Return an immutable Java Record representing the
+     * state of the current room.
+     * @return RoomViewModel Java Record of the current room
+     */
+    public IRoom.RoomViewModel getCurrentRoomViewModel() {
+        return myCurrentRoom.getRoomViewModel();
+    }
+
+    /**
      * Returns the Dungeon
      *
      * @return The dungeon.
@@ -419,6 +430,10 @@ public final class GameManager {
      */
     public void addPropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.addPropertyChangeListener(theListener);
+        //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
+        myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
+        myPCS.firePropertyChange("ROOM_CHANGE", null,
+                myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
     }
 
     /**
