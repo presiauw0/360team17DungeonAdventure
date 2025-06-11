@@ -1,26 +1,38 @@
 package com.swagteam360.dungeonadventure.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
-import static com.swagteam360.dungeonadventure.model.PillarType.*;
 
 /**
  * The GameManager class serves as a singleton responsible for managing the game's lifecycle.
  * It handles game initialization, including the setup of game settings and the creation
  * of hero characters based on the specified configurations in the GameSettings object.
+ * Moving and handling events fire property changes to the controller to update the GUI.
  *
  * @author Jonathan Hernandez
- * @version 1.1 (May 20, 2025)
+ * @version 1.2 (7 June, 2025)
  */
 public class GameManager {
 
+    /**
+     * Constant that represents the damage dealt from a pit.
+     */
     private static final int PIT_DAMAGE = 10;
 
+    /**
+     * The spawn chance of monsters in easy mode.
+     */
     private static final double MONSTER_SPAWN_CHANCE_EASY = 0.25;
+
+    /**
+     * The spawn chance of monsters in normal mode.
+     */
     private static final double MONSTER_SPAWN_CHANCE_NORMAL = 0.34;
+
+    /**
+     * The spawn chance of monsters in hard mode.
+     */
     private static final double MONSTER_SPAWN_CHANCE_HARD = 0.50;
 
     /**
@@ -61,6 +73,9 @@ public class GameManager {
      */
     private Room myCurrentRoom;
 
+    /**
+     * Fires property changes to listeners (primarily controller classes) of GameManager to update the GUI.
+     */
     private final PropertyChangeSupport myPCS = new PropertyChangeSupport(this);
 
     /**
@@ -87,7 +102,7 @@ public class GameManager {
      * Starts a new game session by initializing game settings, creating a hero,
      * and generating a dungeon based on the specified game settings.
      * The game is prepared using the configurations provided in the supplied
-     * GameSettings object.
+     * GameSettings object. The current room is retrieved and marked as visited.
      *
      * @param theGameSettings an instance of GameSettings containing the player's name,
      *                        selected hero, and chosen difficulty level for the game session.
@@ -104,23 +119,7 @@ public class GameManager {
         );
         myCurrentRoom.setVisited(true);
 
-        // Debugging
-        Pillar b = new Pillar(BRONZE);
-        Pillar s = new Pillar(SILVER);
-        Pillar g = new Pillar(GOLD);
-        Pillar p = new Pillar(PLATINUM);
-        List<Item> list = new ArrayList<>();
-        list.add(b);
-        list.add(s);
-        list.add(g);
-        list.add(p);
-
-        myHero.addToInventory(list);
-
-        //FIXME DEBUG
-        System.out.println(myDungeon.toStringWithPlayer(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
-        System.out.println();
-        System.out.println(myDungeon.toDetailedString(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
+        debugPrintDungeon(myCurrentRoom.getRow(), myCurrentRoom.getCol()); // DEBUGGING PURPOSES
 
     }
 
@@ -128,8 +127,8 @@ public class GameManager {
      * Moves the player to a specified position in the dungeon by updating the
      * current row, column, and room based on the provided coordinates.
      * Validates that the specified position is within the bounds of the dungeon.
-     * Notifies all observers of the updated game state after the player's position
-     * has been updated. Throws an exception if the inputs are invalid.
+     * A call to a private helper method handleEvents is made in case the room
+     * has anything noteworthy to handle.
      *
      * @param theDirection Direction enumeration type - either NORTH, SOUTH, WEST, or EAST
      * @throws IllegalArgumentException if the specified row or column is out of bounds.
@@ -141,17 +140,18 @@ public class GameManager {
         final int maxCol = myDungeon.getColSize() - 1; // maximum column index inclusive
 
         // Get coordinates and the corresponding new room based on the direction
-        int[] newCoordinates = getNewCoordinates(row, col, maxRow, maxCol, theDirection);
+        final int[] newCoordinates = getNewCoordinates(row, col, maxRow, maxCol, theDirection);
         row = newCoordinates[0];
         col = newCoordinates[1];
-        Room newRoom = validateAndGetRoom(row, col, maxRow, maxCol);
+        final Room newRoom = validateAndGetRoom(row, col, maxRow, maxCol);
 
-        chanceToSpawnMonster(newRoom); // May or may not spawn a monster
+        chanceToSpawnMonster(newRoom); // May spawn a monster
 
-        myCurrentRoom = newRoom; // moves the character by updating the room
+        myCurrentRoom = newRoom; // Moves the character by updating the room. That room is then set as visited.
         myCurrentRoom.setVisited(true);
+        myPCS.firePropertyChange("Player Moved", null, myCurrentRoom);
 
-        debugPrintDungeon(row, col);
+        debugPrintDungeon(row, col); // FOR DEBUGGING PURPOSES
 
         handleEvents();
 
@@ -201,6 +201,16 @@ public class GameManager {
         };
     }
 
+    /**
+     * Takes in coordinates, bounds, and a direction to return a new set of coordinates.
+     *
+     * @param theRow The current row.
+     * @param theCol The current column.
+     * @param theMaxRow The max row size of the dungeon.
+     * @param theMaxCol The max column size of the dungeon.
+     * @param theDirection The direction in which theRow and theCol may be adjusted to.
+     * @return A new set of coordinates that are adjusted from theRow and theCol.
+     */
     private int[] getNewCoordinates(final int theRow, final int theCol, final int theMaxRow,
                                     final int theMaxCol, final Direction theDirection) {
 
@@ -218,6 +228,15 @@ public class GameManager {
 
     }
 
+    /**
+     * Takes in coordinates (in row and column) and bounds and validates them.
+     *
+     * @param theRow The row to be examined.
+     * @param theCol The column to be examined.
+     * @param theMaxRow The row bound.
+     * @param theMaxCol The column bound.
+     * @return The room of the examined rows and columns as long as they are valid.
+     */
     private Room validateAndGetRoom(final int theRow, final int theCol, final int theMaxRow, final int theMaxCol) {
 
         if (theRow < 0 || theRow > theMaxRow || theCol < 0 || theCol > theMaxCol) {
@@ -228,15 +247,22 @@ public class GameManager {
 
     }
 
+    /**
+     * Temporary method that generates a random percentage and compares it to the monster spawn chance, which may
+     * change, according to the selected difficulty. This method may not do anything at all if the monster spawn chance
+     * is too low.
+     *
+     * @param theRoom The room in which the monster may spawn.
+     */
     private void chanceToSpawnMonster(final Room theRoom) {
 
         if (theRoom.isEntranceOrExit()) {
             return; // TODO: Would we like to add a monster at the exit?
         }
 
-        double monsterSpawnChance = Math.random();
+        final double monsterSpawnChance = Math.random();
         final String difficulty = myGameSettings.getDifficulty().toLowerCase();
-        boolean spawnMonster = switch (difficulty) {
+        final boolean spawnMonster = switch (difficulty) {
             case "easy" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_EASY);
             case "normal" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_NORMAL);
             case "hard" -> monsterSpawnChance > (1 - MONSTER_SPAWN_CHANCE_HARD);
@@ -249,6 +275,12 @@ public class GameManager {
 
     }
 
+    /**
+     * Prints out the toString() methods of the Dungeon to the console for debugging purposes.
+     *
+     * @param theRow The row in which the Hero may exist, which is outputted to the console.
+     * @param theCol The column in which the Hero may exist, which is outputted to the console.
+     */
     private void debugPrintDungeon(final int theRow, final int theCol) {
 
         // FIXME DEBUGGING
@@ -259,6 +291,9 @@ public class GameManager {
 
     }
 
+    /**
+     * Fires property changes to listeners according to what the room may have or to pass Hero information.
+     */
     private void handleEvents() {
 
         myPCS.firePropertyChange("Clear Label", null, null);
@@ -304,12 +339,32 @@ public class GameManager {
      */
     public GameSettings getGameSettings() {return myGameSettings;}
 
+    /**
+     * Returns the current room.
+     *
+     * @return The current room.
+     */
     public Room getCurrentRoom() {return myCurrentRoom;}
 
+    /**
+     * Returns the Dungeon
+     *
+     * @return The dungeon.
+     */
     public Dungeon getDungeon() {return myDungeon;}
 
+    /**
+     * Returns the Hero of the game.
+     *
+     * @return The hero.
+     */
     public Hero getHero() {return myHero;}
 
+    /**
+     * Adds listeners to GameManager.
+     *
+     * @param theListener A listener of GameManager.
+     */
     public void addPropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.addPropertyChangeListener(theListener);
         //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
@@ -317,6 +372,12 @@ public class GameManager {
         myPCS.firePropertyChange("ROOM_CHANGE", null,
                 myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
     }
+
+    /**
+     * Removes listeners of GameManager
+     *
+     * @param theListener A listener of GameManager
+     */
     public void removePropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.removePropertyChangeListener(theListener);
     }
