@@ -13,7 +13,14 @@ import com.swagteam360.dungeonadventure.model.Item;
 import java.io.FileInputStream;
 
 public class InventoryCellFactory implements Callback<ListView<Item>, ListCell<Item>> {
+    /**
+     * Source file path for the image source folder.
+     */
     private static final String IMAGE_PREFIX = "src/main/resources/images/";
+    /**
+     * File path of a generic image to use
+     * as a fallback.
+     */
     private static final String GENERIC_IMAGE = "src/main/resources/images/generic.png";
 
     /**
@@ -57,8 +64,8 @@ public class InventoryCellFactory implements Callback<ListView<Item>, ListCell<I
                     setGraphic(null);
                     setTooltip(null);
                 } else {
-                    // get file name based on class name
-                    String fileName = theItem.getClass().getSimpleName() + ".png";
+                    // get image file name based on class name
+                    final String fileName = theItem.getClass().getSimpleName() + ".png";
                     setGraphic(createContainer(fileName));
                     setTooltip(new Tooltip(theItem.getName()));
                 }

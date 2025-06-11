@@ -14,9 +14,13 @@ import javafx.scene.control.ListCell;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Locale;
 
 public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item>> {
-
+    /**
+     * Total number of pillars present in the game.
+     * Used to calculate the size of the items.
+     */
     private static final double NUM_PILLARS_TOTAL = 4.0;
     /**
      * Resizing causes scrollbars to show up. This makes each item slightly
@@ -24,23 +28,36 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
      */
     private static final double OVERFLOW_COMPENSATION = 4.0;
 
+    /**
+     * File path of a generic image to use
+     * as a fallback.
+     */
     private static final String GENERIC_IMAGE = "src/main/resources/images/generic.png";
+    /**
+     * Source file path for the image source folder.
+     */
+    private static final String IMAGE_PREFIX = "src/main/resources/images/";
 
-
-    private VBox createContainer(final String theName) {
-        return createContainer(theName, GENERIC_IMAGE);
-    }
-
-    private VBox createContainer(final String theName, final String theImagePath) {
+    /**
+     * Creates a VBox container for the content of each list item.
+     * @param theImageName File name of the image (without the path)
+     * @return A VBox container
+     */
+    private VBox createContainer(final String theImageName) {
         final VBox content = new VBox();
         final ImageView imageView = new ImageView();
 
         // find specified image
-        try (final FileInputStream imageStream = new FileInputStream(theImagePath)) {
+        try (final FileInputStream imageStream = new FileInputStream(IMAGE_PREFIX + theImageName)) {
             imageView.setImage(new Image(imageStream));
-        } catch (FileNotFoundException e) {
-            System.out.println("Image not found: " + e);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            // try to load generic image
+            try (final FileInputStream imageStream = new FileInputStream(GENERIC_IMAGE)) {
+                imageView.setImage(new Image(imageStream));
+            } catch (Exception e2) {
+                System.out.println("Image not loaded: " + e2);
+            }
+
             System.out.println("Image not loaded: " + e);
         }
 
@@ -58,13 +75,15 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
             public void updateItem(final Item theItem, final boolean empty) {
                 super.updateItem(theItem, empty);
 
-
                 if (empty || theItem == null) {
                     setText(null);
                     setGraphic(null);
                     setTooltip(null);
                 } else {
-                    setGraphic(createContainer(theItem.getName()));
+                    // get image file name based on enum name
+                    final String fileName = theItem.getName().toLowerCase(Locale.ROOT)
+                            + "_pillar.png";
+                    setGraphic(createContainer(fileName));
                     setTooltip(new Tooltip(theItem.getName()));
 
                     // resize items (according to ChatGPT)
