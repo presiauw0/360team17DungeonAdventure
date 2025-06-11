@@ -2,6 +2,7 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.*;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import com.swagteam360.dungeonadventure.view.InventoryPanel;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -244,6 +245,12 @@ public class GameViewController implements PropertyChangeListener {
      */
     private List<Item> myInventoryItems = new ArrayList<>();
 
+    /**
+     * Hold a reference to the active inventory panel
+     * (a JavaFX HBox).
+     */
+    private InventoryPanel myInventoryPanel;
+
 
     /* *** FXML HELPER METHODS *** */
 
@@ -272,6 +279,8 @@ public class GameViewController implements PropertyChangeListener {
             myHeroDialogueLabel = new Label();
         }
 
+        myInventoryPanel = new InventoryPanel();
+
         // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
 
@@ -292,6 +301,9 @@ public class GameViewController implements PropertyChangeListener {
         if (myMonsterHealthBar != null) {
             myMonsterHealthBar.setVisible(false);
         }
+
+        // ADD inventory panel to the scene
+        heroControlsSpaceRight.getChildren().add(myInventoryPanel);
 
         // *** SET the name label, UPDATE movement buttons, HIDE battle controls, SET health bar, and START hero dialogue ***
         myHeroNameLabel.setText(gameManager.getGameSettings().getName());

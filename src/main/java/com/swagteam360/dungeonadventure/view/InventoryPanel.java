@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.view;
 
+import com.swagteam360.dungeonadventure.model.GameManager;
 import com.swagteam360.dungeonadventure.model.Item;
 import com.swagteam360.dungeonadventure.model.Pillar;
 import javafx.collections.FXCollections;
@@ -36,6 +37,10 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
     private final PillarCellFactory myPillarCellFactory;
 
     public InventoryPanel() {
+        this.setMinHeight(46);
+        this.setHeight(46);
+        this.setMaxHeight(46);
+
         myInventory = new ListView<>();
         myPillars = new ListView<>();
 
@@ -45,6 +50,12 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
         myPillarCellFactory = new PillarCellFactory();
 
         initializeListViewProperties();
+
+        // ADD ListView controls to this panel
+        getChildren().addAll(myInventory, myPillars);
+
+        // ADD PropertyChangeListener
+        GameManager.getInstance().addPropertyChangeListener(this);
     }
 
     private void initializeListViewProperties() {
@@ -69,6 +80,10 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
             // Cast check - check if the new event data is of type List (generic)
             if (theEvent.getNewValue() instanceof List) {
                 final List<?> newValCast = (List<?>) theEvent.getNewValue();
+
+                // CLEAR current lists
+                myObservableItems.clear();
+                myObservablePillars.clear();
 
                 // Check every item in the list to make sure it's of type Item
                 // and assign it to the appropriate Observable list

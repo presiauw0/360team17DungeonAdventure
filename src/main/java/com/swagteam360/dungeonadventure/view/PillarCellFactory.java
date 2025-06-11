@@ -4,6 +4,7 @@ import com.swagteam360.dungeonadventure.model.Item;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -46,7 +47,7 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
 
         content.setAlignment(Pos.CENTER);
 
-        label.setText(theName);
+        //label.setText(theName);
         content.getChildren().addAll(imageView, label);
 
         return content;
@@ -62,8 +63,10 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
 
                 if (empty || theItem == null) {
                     setText(null);
+                    setTooltip(null);
                 } else {
                     setGraphic(createContainer(theItem.getName()));
+                    setTooltip(new Tooltip(theItem.getName()));
 
                     // resize items (according to ChatGPT)
                     setPrefWidth(theListView.widthProperty().doubleValue() / (NUM_PILLARS_TOTAL) - OVERFLOW_COMPENSATION);
