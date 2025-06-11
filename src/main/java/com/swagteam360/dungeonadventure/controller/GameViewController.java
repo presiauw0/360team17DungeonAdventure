@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -177,8 +178,14 @@ public class GameViewController implements PropertyChangeListener {
      * Represents the button that allows the player to view their inventory. This button is disabled during battle
      * as only health potions from the inventory are to be used (by myUseHealthPotion button).
      */
+    //@FXML
+    //private Button myInventoryButton;
+
+    /**
+     * Hero controls space where the new inventory will be placed.
+     */
     @FXML
-    private Button myInventoryButton;
+    private VBox heroControlsSpaceRight;
 
     /**
      * Represents the monster's health bar in battle.
@@ -361,6 +368,7 @@ public class GameViewController implements PropertyChangeListener {
      * @param theActionEvent the ActionEvent instance triggered by the user interaction
      *                       that initiates the navigation to the Inventory View.
      */
+    /*
     @FXML
     private void goToInventoryView(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
@@ -371,7 +379,7 @@ public class GameViewController implements PropertyChangeListener {
         ic.setInventoryList(myInventoryItems);
 
         unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCH
-    }
+    }*/
 
     /**
      * Handles the room movement buttons in the game interface.
@@ -607,7 +615,7 @@ public class GameViewController implements PropertyChangeListener {
         if (!theShow) {
             if (GameManager.getInstance().getCurrentRoom() != null) {
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
-                myInventoryButton.setVisible(true);
+                //myInventoryButton.setVisible(true);
             }
         }
 
@@ -651,10 +659,10 @@ public class GameViewController implements PropertyChangeListener {
         if (myWestButton != null) {
             myWestButton.setVisible(false);
         }
-        if (myInventoryButton != null) {
-            myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
+        //if (myInventoryButton != null) {
+        //    myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
                                                  // accidentally.
-        }
+        //}
     }
 
     /**
