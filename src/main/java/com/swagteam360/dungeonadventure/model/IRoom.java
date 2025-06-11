@@ -144,5 +144,5 @@ public interface IRoom {
      */
     record RoomViewModel(boolean leftWall, boolean rightWall, boolean topWall,
                                 boolean bottomWall, String entranceExit, boolean hasPit, Pillar pillar,
-                                List<Item> items, boolean visited, String roomString) { }
+                                List<Item> items, boolean visited, int row, int col, String roomString) { }
 }

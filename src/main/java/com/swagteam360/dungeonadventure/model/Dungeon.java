@@ -149,6 +149,23 @@ public final class Dungeon {
         return roomViewModels;
     }
 
+    /**
+     * Get all room data as a matrix of immutable records.
+     * This matrix of RoomViewModels is safe to use outside the
+     * model package.
+     * @return A RoomViewModel[][] matrix of all rooms
+     */
+    public IRoom.RoomViewModel[][] getAllRoomViewModels() {
+        final IRoom.RoomViewModel[][] roomViewModels = new IRoom.RoomViewModel[myRowSize][myColSize];
+        for (int i = 0; i < myRowSize; i++) {
+            for (int j = 0; j < myColSize; j++) {
+                roomViewModels[i][j] = getRoom(i, j).getRoomViewModel();
+            }
+        }
+
+        return roomViewModels;
+    }
+
     private Stack<Pillar> generatePillars() {
         final Stack<Pillar> pillarStack = new Stack<>();
 

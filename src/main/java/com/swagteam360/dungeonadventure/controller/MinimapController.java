@@ -1,9 +1,6 @@
 package com.swagteam360.dungeonadventure.controller;
 
-import com.swagteam360.dungeonadventure.model.Direction;
-import com.swagteam360.dungeonadventure.model.Dungeon;
-import com.swagteam360.dungeonadventure.model.GameManager;
-import com.swagteam360.dungeonadventure.model.Room;
+import com.swagteam360.dungeonadventure.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -93,7 +90,7 @@ public class MinimapController implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
-        if (theEvent.getPropertyName().equals("Player Moved")) {
+        if (theEvent.getPropertyName().equals("ROOM_CHANGE")) {
             updateMinimap();
         }
     }
@@ -104,32 +101,30 @@ public class MinimapController implements PropertyChangeListener {
      */
     private void updateMinimap() {
 
-        int rows = myDungeon.getRowSize();
-        int cols = myDungeon.getColSize();
-        Room currentRoom = GameManager.getInstance().getCurrentRoom(); // Get dungeon information
+        IRoom.RoomViewModel[][] allRooms = GameManager.getInstance().getDungeon().getAllRoomViewModels(); // ALL room information
+        IRoom.RoomViewModel currentRoom = GameManager.getInstance().getCurrentRoomViewModel(); // CURRENT room information
 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
+        for (int row = 0; row < allRooms.length; row++) {
+            for (int col = 0; col < allRooms[0].length; col++) {
 
-                Room room = myDungeon.getRoom(row, col);
+                IRoom.RoomViewModel room = allRooms[row][col];
                 StackPane cell = myCells[row][col];
 
-                Set<Direction> doors = room.getAvailableDirections();
-
-                final String top = doors.contains(Direction.NORTH) ? "0" : "1";
-                final String right = doors.contains(Direction.EAST) ? "0" : "1";
-                final String bottom = doors.contains(Direction.SOUTH) ? "0" : "1";
-                final String left = doors.contains(Direction.WEST) ? "0" : "1"; // To construct a maze layout
+                final String top = !room.topWall() ? "0" : "1";
+                final String right = !room.rightWall() ? "0" : "1";
+                final String bottom = !room.bottomWall() ? "0" : "1";
+                final String left = !room.leftWall() ? "0" : "1"; // To construct a maze layout
 
                 cell.getChildren().clear();
                 StringBuilder style = new StringBuilder();
                 style.append(String.format("-fx-border-color: black; -fx-border-width: %s %s %s %s;",
                         top, right, bottom, left));
 
-                if (room == currentRoom) {
+                if (room.row() == currentRoom.row() && room.col() == currentRoom.col()) {
                     style.append(" -fx-background-color: red;"); // The current room cell will be red
-                } else if (room.isVisited()) {
-                    if (room.isEntrance() || room.isExit()) {
+                } else if (room.visited()) {
+                    if (IRoom.PROPERTY_ENTRANCE.equals(room.entranceExit())
+                            || IRoom.PROPERTY_EXIT.equals(room.entranceExit())) {
                         style.append(" -fx-background-color: green;");
                     } else if (room.hasPit()) {
                         style.append(" -fx-background-color: gray;");
