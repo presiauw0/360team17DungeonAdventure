@@ -11,7 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The StartMenuController class manages the interactions and navigation
@@ -22,7 +24,7 @@ import java.util.Map;
  * @author Jonathan Hernandez
  * @version 1.2 (May 14th, 2025)
  */
-public class StartMenuController {
+public final class StartMenuController {
 
     /**
      * A ToggleButton in the user interface for enabling or disabling dark mode.
@@ -275,6 +277,43 @@ public class StartMenuController {
                 .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
         GUIUtils.switchScene(theActionEvent, loader);
 
+    }
+
+    /**
+     * Event handler for the Load Game button in the application's user interface.
+     *
+     * @param theActionEvent the ActionEvent triggered by the user's interaction.
+     */
+    @FXML
+    private void loadGameButtonEvent(final ActionEvent theActionEvent) {
+
+        final File savedFile = new File("saved_game.txt");
+
+        // Load game may not exist. Prompt user to start a new game
+        if (!savedFile.exists()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Missing Saved Game");
+            alert.setHeaderText(null);
+            alert.setContentText("No saved game found. Please start a new game.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Confirmation dialog before loading
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Load Previously Saved Game?");
+        confirmAlert.setHeaderText(null);
+        confirmAlert.setContentText("Do you want to load your previously saved game?");
+
+        // Switch to the game view scene if confirmed. Call load game from GameManager.
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            GameManager.getInstance().loadGame(savedFile);
+
+            final FXMLLoader loader = new FXMLLoader(getClass()
+                    .getResource("/com/swagteam360/dungeonadventure/game-view.fxml"));
+            GUIUtils.switchScene(theActionEvent, loader);
+        }
     }
 
     /**

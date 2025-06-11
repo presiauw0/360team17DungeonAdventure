@@ -21,7 +21,7 @@ import java.util.Set;
  * @author Jonathan Hernandez
  * @version 1.1 (June 5th, 2025)
  */
-public class GameCompletionController {
+public final class GameCompletionController {
 
     /**
      * Cell size for each room of the dungeon. This accommodates up to the size for harder dungeons (9x9).

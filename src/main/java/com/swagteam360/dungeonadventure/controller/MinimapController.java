@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Jonathan Hernandez
  * @version 1.0 5 June 2025
  */
-public class MinimapController implements PropertyChangeListener {
+public final class MinimapController implements PropertyChangeListener {
 
     /**
      * A reference to a GridPane which represents the dungeon layout to be filled out dynamically in playthrough.

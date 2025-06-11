@@ -19,6 +19,7 @@ import javafx.util.Duration;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.*;
 
 
@@ -30,7 +31,7 @@ import java.util.*;
  * @author Jonathan Hernandez, Preston Sia
  * @version 1.1 (June 4, 2025)
  */
-public class GameViewController implements PropertyChangeListener {
+public final class GameViewController implements PropertyChangeListener {
 
     /* **** THE FOLLOWING FIELDS HOLD REFERENCES TO FXML ELEMENTS **** */
 
@@ -260,7 +261,7 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private void initialize() {
         // *** GET THE SINGLETON INSTANCE OF gameManager ***
-        GameManager gameManager = GameManager.getInstance();
+        final GameManager gameManager = GameManager.getInstance();
 
         // *** PERFORM NULL CHECKS AND INITIALIZE FIELDS ***
         if (myHeroImageView == null) {
@@ -315,8 +316,63 @@ public class GameViewController implements PropertyChangeListener {
      */
     @FXML
     private void saveAndQuitButtonEvent() {
-        // TODO: Add save logic here. Current state (hero, dungeon, etc.) should be saved.
-        Platform.exit();
+
+        // Prompt user to save before quitting.
+        final Alert savePrompt = new Alert(Alert.AlertType.CONFIRMATION);
+        savePrompt.setTitle("Quit Game");
+        savePrompt.setHeaderText("Do you want to save before quitting?");
+        savePrompt.setContentText("Choose your option:");
+
+        final ButtonType saveAndQuit = new ButtonType("Yes, Save First");
+        final ButtonType quitWithoutSaving = new ButtonType("No, Quit Now");
+        final ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        savePrompt.getButtonTypes().setAll(saveAndQuit, quitWithoutSaving, cancel);
+
+        final Optional<ButtonType> saveResponse = savePrompt.showAndWait();
+
+        if (saveResponse.isPresent()) {
+            if (saveResponse.get() == saveAndQuit) {
+                final File savedFile = new File("saved_game.txt");
+
+                try {
+                    GameManager.getInstance().saveGame(savedFile);
+
+                    // Let user know that the game saved successfully
+                    final Alert savedAlert = new Alert(Alert.AlertType.INFORMATION);
+                    savedAlert.setTitle("Save Successful");
+                    savedAlert.setHeaderText(null);
+                    savedAlert.setContentText("Game saved successfully!");
+                    savedAlert.showAndWait();
+
+                    // Ask if they still want to quit
+                    final Alert exitPrompt = new Alert(Alert.AlertType.CONFIRMATION);
+                    exitPrompt.setTitle("Exit Game?");
+                    exitPrompt.setHeaderText("Do you still want to exit the application?");
+                    exitPrompt.setContentText("Choose your option:");
+
+                    final ButtonType exitNow = new ButtonType("Yes, Exit");
+                    final ButtonType stay = new ButtonType("No, Continue Playing");
+
+                    exitPrompt.getButtonTypes().setAll(exitNow, stay);
+
+                    final Optional<ButtonType> exitResponse = exitPrompt.showAndWait();
+                    if (exitResponse.isPresent() && exitResponse.get() == exitNow) {
+                        Platform.exit();
+                    }
+
+                } catch (Exception e) {
+                    final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Save Error");
+                    errorAlert.setHeaderText("Could not save game.");
+                    errorAlert.setContentText("An error occurred while saving.");
+                    errorAlert.showAndWait();
+                }
+
+            } else if (saveResponse.get() == quitWithoutSaving) {
+                Platform.exit();
+            }
+        }
     }
 
     /**

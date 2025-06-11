@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.Stack;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Stack;
  * @author Preston Sia (psia97), Jonathan Hernandez
  * @version 1.01, 20 May 2025
  */
-public final class Dungeon {
+public final class Dungeon implements Serializable {
 
     /**
      * Represents the number of rows making up the maze.
