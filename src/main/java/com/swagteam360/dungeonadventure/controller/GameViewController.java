@@ -278,7 +278,7 @@ public class GameViewController implements PropertyChangeListener {
             myHeroDialogueLabel = new Label();
         }
 
-        myRoomView = new RoomView(380, 250,
+        myRoomView = new RoomView((int)roomViewPane.getPrefWidth(), (int)roomViewPane.getPrefHeight(),
                 GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
 
         // *** OBSERVER REGISTRATION ***
