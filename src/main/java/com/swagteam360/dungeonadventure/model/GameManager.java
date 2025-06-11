@@ -407,8 +407,10 @@ public final class GameManager {
 
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
-            myPCS.firePropertyChange("Fight", null, monster);
-            return; // fixme this is a problem - you won't be able to collect pillars if a monster exists in the room
+            if (monster.getHP() > 0) {
+                myPCS.firePropertyChange("Fight", null, monster);
+                return;
+            }
         }
 
         if (myCurrentRoom.hasPit()) {
