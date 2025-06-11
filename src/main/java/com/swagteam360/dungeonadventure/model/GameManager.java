@@ -18,6 +18,11 @@ import static com.swagteam360.dungeonadventure.model.PillarType.*;
 public class GameManager {
 
     private static final int PIT_DAMAGE = 10;
+    /**
+     * The maximum number of rooms the player can
+     * visit before the vision potion runs out.
+     */
+    private static final int MAX_SUPER_VISION_ROOMS = 3;
 
     private static final double MONSTER_SPAWN_CHANCE_EASY = 0.25;
     private static final double MONSTER_SPAWN_CHANCE_NORMAL = 0.34;
@@ -61,6 +66,18 @@ public class GameManager {
      */
     private Room myCurrentRoom;
 
+    /**
+     * Indicates if vision powers given by the vision
+     * potion should apply.
+     */
+    private boolean mySuperVision;
+
+    /**
+     * Keep track of how many rooms have been visited before
+     * the vision powers wear off.
+     */
+    private int mySuperVisionCounter;
+
     private final PropertyChangeSupport myPCS = new PropertyChangeSupport(this);
 
     /**
@@ -102,6 +119,8 @@ public class GameManager {
                 myDungeon.getEntranceRow(),
                 myDungeon.getEntranceCol()
         );
+        mySuperVision = false;
+        mySuperVisionCounter = 0;
 
         // Debugging
         Pillar b = new Pillar(BRONZE);
@@ -148,6 +167,9 @@ public class GameManager {
         chanceToSpawnMonster(newRoom); // May or may not spawn a monster
 
         myCurrentRoom = newRoom; // moves the character by updating the room
+
+        // Update super vision counters if a vision potion is applied
+        updateSuperVision();
 
         debugPrintDungeon(row, col);
 
@@ -245,6 +267,25 @@ public class GameManager {
             theRoom.addMonster();
         }
 
+    }
+
+    public void enableSuperVision() {
+        mySuperVision = true;
+        mySuperVisionCounter = 0;
+        // Fire property change
+        myPCS.firePropertyChange("VISION_POWERS", false, true);
+    }
+
+    private void updateSuperVision() {
+        if (mySuperVision && mySuperVisionCounter < MAX_SUPER_VISION_ROOMS) {
+            mySuperVisionCounter++;
+        } else {
+            // DISABLE super vision
+            mySuperVision = false;
+            mySuperVisionCounter = 0;
+            // Fire property change
+            myPCS.firePropertyChange("VISION_POWERS", true, false);
+        }
     }
 
     private void debugPrintDungeon(final int theRow, final int theCol) {

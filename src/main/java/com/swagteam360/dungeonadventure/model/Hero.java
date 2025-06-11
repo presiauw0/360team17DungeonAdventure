@@ -65,6 +65,19 @@ public abstract class Hero extends DungeonCharacter {
     }
 
     /**
+     * Remove the specified item from the inventory
+     * by looking for a matching reference to the
+     * item parameter and removing it from the inventory.
+     * @param theItem An Item object to remove.
+     */
+    public void removeFromInventory(final Item theItem) {
+        // Item does not override the equals method, so
+        // a simple remove() call on the list should use reference equality
+        // and remove an exact match to the referenced item passed as a parameter.
+        myInventory.remove(theItem);
+    }
+
+    /**
      * Returns the pillar count of the Hero. Goes through the Hero's inventory and checks whether an item is an
      * instance of a pillar.
      *

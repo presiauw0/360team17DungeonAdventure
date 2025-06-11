@@ -34,6 +34,9 @@ public class VisionPotion implements Item {
      */
     @Override
     public String buff() {
+        Hero player = GameManager.getInstance().getHero();
+        GameManager.getInstance().enableSuperVision();  // ENABLE vision powers
+        player.removeFromInventory(this);       // REMOVE this item from inventory
         return "You gain vision of the surrounding area!";
     }
 
