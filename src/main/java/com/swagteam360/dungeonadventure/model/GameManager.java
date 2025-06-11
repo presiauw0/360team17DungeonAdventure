@@ -178,6 +178,18 @@ public class GameManager {
     }
 
     /**
+     * Enable vision powers for the player.
+     * Super vision will be active for
+     * a certain number of room moves.
+     */
+    public void enableSuperVision() {
+        mySuperVision = true;
+        mySuperVisionCounter = 0;
+        // Fire property change
+        myPCS.firePropertyChange("VISION_POWERS", false, true);
+    }
+
+    /**
      * Creates and returns a Hero instance based on the provided game settings.
      * The hero type is determined by the value of the hero field in the supplied
      * GameSettings object. If the hero type is not recognized, an IllegalArgumentException
@@ -269,22 +281,17 @@ public class GameManager {
 
     }
 
-    public void enableSuperVision() {
-        mySuperVision = true;
-        mySuperVisionCounter = 0;
-        // Fire property change
-        myPCS.firePropertyChange("VISION_POWERS", false, true);
-    }
-
     private void updateSuperVision() {
-        if (mySuperVision && mySuperVisionCounter < MAX_SUPER_VISION_ROOMS) {
-            mySuperVisionCounter++;
-        } else {
-            // DISABLE super vision
-            mySuperVision = false;
-            mySuperVisionCounter = 0;
-            // Fire property change
-            myPCS.firePropertyChange("VISION_POWERS", true, false);
+        if (mySuperVision) {
+            if (mySuperVisionCounter < MAX_SUPER_VISION_ROOMS){
+                mySuperVisionCounter++;
+            } else {
+                // DISABLE super vision
+                mySuperVision = false;
+                mySuperVisionCounter = 0;
+                // Fire property change
+                myPCS.firePropertyChange("VISION_POWERS", true, false);
+            }
         }
     }
 
@@ -350,6 +357,7 @@ public class GameManager {
         myPCS.addPropertyChangeListener(theListener);
         //handleEvents(); // Immediately SEND INVENTORY property updates to the registered listener.
         myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
+        myPCS.firePropertyChange("VISION_POWERS", null, mySuperVision);
     }
     public void removePropertyChangeListener(final PropertyChangeListener theListener) {
         myPCS.removePropertyChangeListener(theListener);
