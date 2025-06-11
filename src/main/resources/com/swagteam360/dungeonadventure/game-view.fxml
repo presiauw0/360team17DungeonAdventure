@@ -103,9 +103,12 @@
                               </Button>
                            </children>
                         </GridPane>
-                        <VBox fx:id="heroControlsSpaceRight" alignment="TOP_CENTER" prefHeight="96.0" prefWidth="274.0" spacing="5.0">
+                        <VBox fx:id="heroControlsSpaceRight" alignment="TOP_CENTER" prefHeight="96.0" prefWidth="320.0" spacing="5.0">
                            <children>
-                              <Label fx:id="myHeroNameLabel" alignment="CENTER" prefHeight="11.0" prefWidth="254.0" text="Hero Name" />
+                              <Label fx:id="myHeroNameLabel" alignment="CENTER" prefHeight="11.0" prefWidth="254.0" text="Hero Name">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Label>
                               <ProgressBar fx:id="myHealthBar" prefHeight="14.0" prefWidth="234.0" progress="0.0" />
                            </children>
                         </VBox>

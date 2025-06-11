@@ -33,7 +33,6 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
 
     private VBox createContainer(final String theName, final String theImagePath) {
         final VBox content = new VBox();
-        final Label label = new Label();
         final ImageView imageView = new ImageView();
 
         // find specified image
@@ -47,8 +46,7 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
 
         content.setAlignment(Pos.CENTER);
 
-        //label.setText(theName);
-        content.getChildren().addAll(imageView, label);
+        content.getChildren().addAll(imageView);
 
         return content;
     }
@@ -63,6 +61,7 @@ public class PillarCellFactory implements Callback<ListView<Item>, ListCell<Item
 
                 if (empty || theItem == null) {
                     setText(null);
+                    setGraphic(null);
                     setTooltip(null);
                 } else {
                     setGraphic(createContainer(theItem.getName()));
