@@ -75,6 +75,8 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
         // SET all lists to horizontal
         myInventory.setOrientation(Orientation.HORIZONTAL);
         myPillars.setOrientation(Orientation.HORIZONTAL);
+        // DISABLE selection of pillars
+        myPillars.setFocusTraversable(false);
 
         // Set the cell factory so that when the list is built, it is displayed
         // in a certain way as specified in the cell factory.
