@@ -238,7 +238,6 @@ public class RoomView extends Canvas {
         try (final FileInputStream imageStream = new FileInputStream("src/main/resources/images/" + myCharType + "_model.png")) {
             image = new Image(imageStream);
             theGc.drawImage(image, getWidth()/2 - image.getWidth()/2, getHeight()/2 - image.getHeight()/2);
-            System.out.println("Image width: " + image.getWidth());
 
         } catch (FileNotFoundException e) {
             System.out.println("Image not found: " + e);
