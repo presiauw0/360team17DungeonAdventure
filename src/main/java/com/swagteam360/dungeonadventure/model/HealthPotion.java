@@ -38,6 +38,9 @@ public class HealthPotion implements Item {
      */
     @Override
     public String buff() {
+        Hero player = GameManager.getInstance().getHero();
+        player.heal(myHealAmount);
+        player.removeFromInventory(this);
         return "You gain " + myHealAmount + " HP!";
     }
 

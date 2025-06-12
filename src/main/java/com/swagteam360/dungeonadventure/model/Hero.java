@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.Random;
  * @author Luke Willis, Jonathan Hernandez
  * @version 4 June 2025
  */
-public abstract class Hero extends DungeonCharacter {
+public abstract class Hero extends DungeonCharacter implements Serializable {
 
     /**
      * Field myBlockChance represents a percent chance that a hero might block a
@@ -62,6 +63,19 @@ public abstract class Hero extends DungeonCharacter {
      */
     public List<Item> getInventory() {
         return new ArrayList<>(myInventory); // create a copy of the list to return
+    }
+
+    /**
+     * Remove the specified item from the inventory
+     * by looking for a matching reference to the
+     * item parameter and removing it from the inventory.
+     * @param theItem An Item object to remove.
+     */
+    public void removeFromInventory(final Item theItem) {
+        // Item does not override the equals method, so
+        // a simple remove() call on the list should use reference equality
+        // and remove an exact match to the referenced item passed as a parameter.
+        myInventory.remove(theItem);
     }
 
     /**

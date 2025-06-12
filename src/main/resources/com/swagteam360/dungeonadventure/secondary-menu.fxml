@@ -15,7 +15,7 @@
       <VBox layoutX="244.0" layoutY="173.0" prefHeight="105.0" prefWidth="151.0" spacing="10.0">
          <children>
             <Button mnemonicParsing="false" onAction="#newGameEvent" prefWidth="150.0" text="New Game" />
-            <Button mnemonicParsing="false" prefWidth="150.0" text="Load Game" />
+            <Button mnemonicParsing="false" onAction="#loadGameButtonEvent" prefWidth="150.0" text="Load Game" />
             <Button mnemonicParsing="false" onAction="#optionsButtonEvent" prefWidth="150.0" text="Options" />
             <Button mnemonicParsing="false" onAction="#quitButtonEvent" prefWidth="150.0" text="Quit" />
          </children>
