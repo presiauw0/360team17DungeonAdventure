@@ -176,13 +176,6 @@ public class GameViewController implements PropertyChangeListener {
     private ProgressBar myHealthBar;
 
     /**
-     * Represents the button that allows the player to view their inventory. This button is disabled during battle
-     * as only health potions from the inventory are to be used (by myUseHealthPotion button).
-     */
-    //@FXML
-    //private Button myInventoryButton;
-
-    /**
      * Hero controls space where the new inventory will be placed.
      */
     @FXML
