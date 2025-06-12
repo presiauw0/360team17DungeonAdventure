@@ -476,6 +476,14 @@ public final class GameManager {
     public Hero getHero() {return myHero;}
 
     /**
+     * Allow a property change to be manually fired
+     * alerting subscribers of a change in the player's health.
+     */
+    public void sendHeroHealthUpdate() {
+        myPCS.firePropertyChange("HERO_HEALTH_CHANGE", null, myHero.getHP());
+    }
+
+    /**
      * Adds listeners to GameManager.
      *
      * @param theListener A listener of GameManager.
