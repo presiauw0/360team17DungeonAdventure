@@ -10,9 +10,21 @@
    <center>
       <Pane fx:id="roomViewPane" prefHeight="340.0" prefWidth="530.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="myBattleStatusLabel" alignment="CENTER" layoutY="268.0" prefHeight="17.0" prefWidth="491.0" />
-            <ProgressBar fx:id="myMonsterHealthBar" layoutX="146.0" layoutY="302.0" prefWidth="200.0" progress="0.0" />
-            <Label fx:id="myMonsterNameLabel" layoutX="206.0" layoutY="285.0" text="Monster Name" />
+            <VBox alignment="CENTER" layoutY="253.0" prefHeight="73.0" prefWidth="530.0">
+               <children>
+                  <Text fx:id="myBattleStatusLabel" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-stroke: lightgray; -fx-stroke-width: 1px;" textAlignment="CENTER" wrappingWidth="530.0">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="myMonsterNameLabel" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-stroke: lightgray; -fx-stroke-width: 1px;" text="Monster" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Text>
+                  <ProgressBar fx:id="myMonsterHealthBar" prefWidth="200.0" progress="0.0" />
+               </children>
+            </VBox>
          </children></Pane>
    </center>
    <right>
