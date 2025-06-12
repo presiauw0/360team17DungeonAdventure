@@ -19,8 +19,9 @@ import java.util.Map;
 public class Database {
 
     /** String which represents the path to the Database */
-    private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game.db";
-
+    //private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game.db";
+    private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game_win.db";
+    //private static final String DB_URL = "jdbc:sqlite:src/main/resources/Database/360Game_lose.db";
 
     /**
      * Establishing this class as a singleton
