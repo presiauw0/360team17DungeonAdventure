@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -88,7 +89,7 @@ public final class GameViewController implements PropertyChangeListener {
      * A label element in the FXML file, used to mainly display events that occur during battle.
      */
     @FXML
-    private Label myBattleStatusLabel;
+    private Text myBattleStatusLabel;
 
     /**
      * A Label element in the FXML file, used to display the name of the player's hero in the game.
@@ -194,7 +195,7 @@ public final class GameViewController implements PropertyChangeListener {
      * Represents the monster's name to be shown in battle.
      */
     @FXML
-    private Label myMonsterNameLabel;
+    private Text myMonsterNameLabel;
 
     /**
      * The pane where the RoomView canvas will be inserted.
@@ -307,6 +308,7 @@ public final class GameViewController implements PropertyChangeListener {
 
         // ADD room view to the scene
         roomViewPane.getChildren().add(myRoomView);
+        myRoomView.toBack();
 
         // ADD inventory panel to the scene
         heroControlsSpaceRight.getChildren().add(myInventoryPanel);
@@ -1028,6 +1030,8 @@ public final class GameViewController implements PropertyChangeListener {
             case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
             case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
             case "ROOM_CHANGE" -> updateRoomView(theEvent.getNewValue());
+            case "HERO_HEALTH_CHANGE" -> updateHealthBar(GameManager.getInstance().getHero());
+            case "VISION_POWERS" -> myRoomView.setVisionPowers((boolean) theEvent.getNewValue());
         }
     }
 }

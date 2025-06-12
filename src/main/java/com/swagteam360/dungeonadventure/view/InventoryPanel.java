@@ -90,7 +90,7 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
 
     private void initializeBuffButton() {
         myBuffButton.setText("USE");
-        myBuffButton.setMinWidth(44);
+        myBuffButton.setMinWidth(48);
         myBuffButton.setMinHeight(44);
         myBuffButton.setPrefHeight(44);
 

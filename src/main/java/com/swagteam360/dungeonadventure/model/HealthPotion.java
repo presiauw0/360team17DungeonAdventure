@@ -40,7 +40,9 @@ public class HealthPotion implements Item {
     public String buff() {
         Hero player = GameManager.getInstance().getHero();
         player.heal(myHealAmount);
+        GameManager.getInstance().sendHeroHealthUpdate(); // manually send a health update
         player.removeFromInventory(this);
+
         return "You gain " + myHealAmount + " HP!";
     }
 
