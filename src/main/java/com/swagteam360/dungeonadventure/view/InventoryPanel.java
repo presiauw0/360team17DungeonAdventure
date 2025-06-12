@@ -111,6 +111,7 @@ public class InventoryPanel extends HBox implements PropertyChangeListener {
         final Item selected = myInventory.getSelectionModel().getSelectedItem();
         if (selected != null) {
             System.out.println(selected.buff()); // BUFF the item
+            myObservableItems.remove(selected);
         } else {
             myBuffButton.disableProperty().setValue(true);
         }
