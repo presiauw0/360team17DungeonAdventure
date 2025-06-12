@@ -2,6 +2,7 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.*;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import com.swagteam360.dungeonadventure.view.InventoryPanel;
 import com.swagteam360.dungeonadventure.view.RoomView;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -177,11 +179,10 @@ public final class GameViewController implements PropertyChangeListener {
     private ProgressBar myHealthBar;
 
     /**
-     * Represents the button that allows the player to view their inventory. This button is disabled during battle
-     * as only health potions from the inventory are to be used (by myUseHealthPotion button).
+     * Hero controls space where the new inventory will be placed.
      */
     @FXML
-    private Button myInventoryButton;
+    private VBox heroControlsSpaceRight;
 
     /**
      * Represents the monster's health bar in battle.
@@ -244,6 +245,12 @@ public final class GameViewController implements PropertyChangeListener {
      */
     private RoomView myRoomView;
 
+    /**
+     * Hold a reference to the active inventory panel
+     * (a JavaFX HBox).
+     */
+    private InventoryPanel myInventoryPanel;
+
 
     /* *** FXML HELPER METHODS *** */
 
@@ -275,6 +282,8 @@ public final class GameViewController implements PropertyChangeListener {
         myRoomView = new RoomView((int)roomViewPane.getPrefWidth(), (int)roomViewPane.getPrefHeight(),
                 GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
 
+        myInventoryPanel = new InventoryPanel();
+
         // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
 
@@ -298,6 +307,9 @@ public final class GameViewController implements PropertyChangeListener {
 
         // ADD room view to the scene
         roomViewPane.getChildren().add(myRoomView);
+
+        // ADD inventory panel to the scene
+        heroControlsSpaceRight.getChildren().add(myInventoryPanel);
 
         // *** SET the name label, UPDATE movement buttons, HIDE battle controls, SET health bar, and START hero dialogue ***
         myHeroNameLabel.setText(gameManager.getGameSettings().getName());
@@ -429,6 +441,7 @@ public final class GameViewController implements PropertyChangeListener {
      * @param theActionEvent the ActionEvent instance triggered by the user interaction
      *                       that initiates the navigation to the Inventory View.
      */
+    /*
     @FXML
     private void goToInventoryView(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
@@ -439,7 +452,7 @@ public final class GameViewController implements PropertyChangeListener {
         ic.setInventoryList(myInventoryItems);
 
         unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCHES
-    }
+    }*/
 
     /**
      * Handles the room movement buttons in the game interface.
@@ -680,7 +693,7 @@ public final class GameViewController implements PropertyChangeListener {
         if (!theShow) {
             if (GameManager.getInstance().getCurrentRoom() != null) {
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
-                myInventoryButton.setVisible(true);
+                //myInventoryButton.setVisible(true);
             }
         }
 
@@ -730,10 +743,10 @@ public final class GameViewController implements PropertyChangeListener {
         if (myWestButton != null) {
             myWestButton.setVisible(false);
         }
-        if (myInventoryButton != null) {
-            myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
+        //if (myInventoryButton != null) {
+        //    myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
                                                  // accidentally.
-        }
+        //}
     }
 
     /**

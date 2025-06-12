@@ -34,14 +34,14 @@ public final class GUIUtils {
      * Used for specifying the width when creating a new {@link Scene}.
      * This value is constant and cannot be modified.
      */
-    private static final double WIDTH = 600;
+    private static final double WIDTH = 640;
 
     /**
      * Represents the fixed height of the scene in pixels.
      * Used for specifying the height when creating a new {@link Scene}.
      * This value is constant and cannot be modified.
      */
-    private static final double HEIGHT = 400;
+    private static final double HEIGHT = 480;
 
     /**
      * The file path for the CSS file used to apply the dark theme in the application.
