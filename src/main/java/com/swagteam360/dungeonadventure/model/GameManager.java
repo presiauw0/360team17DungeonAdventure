@@ -407,8 +407,10 @@ public final class GameManager {
 
         if (myCurrentRoom.hasMonster()) {
             final Monster monster = myCurrentRoom.getMonster();
-            myPCS.firePropertyChange("Fight", null, monster);
-            return;
+            if (monster.getHP() > 0) {
+                myPCS.firePropertyChange("Fight", null, monster);
+                return;
+            }
         }
 
         if (myCurrentRoom.hasPit()) {
@@ -421,7 +423,7 @@ public final class GameManager {
             myPCS.firePropertyChange("Dead", null, myHero);
         }
 
-        if (myCurrentRoom.hasItems()) {
+        if (myCurrentRoom.hasItems() || myCurrentRoom.hasPillar()) {
             List<Item> roomItems = myCurrentRoom.collectAllItems();
             myHero.addToInventory(roomItems);
             myPCS.firePropertyChange("INVENTORY_CHANGE", null, myHero.getInventory());
