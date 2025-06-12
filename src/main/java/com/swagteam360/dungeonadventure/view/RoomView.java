@@ -39,7 +39,18 @@ public class RoomView extends Canvas {
      */
     private IRoom.RoomViewModel[][] myRoomMatrix;
 
+    /**
+     * String representing the type of hero character.
+     */
     private final String myCharType;
+
+    /**
+     * Flag indicating whether the player
+     * can see all surrounding rooms.
+     */
+    private boolean myVisionPowers;
+
+
     /**
      * Create a new room view with a specified width and height.
      * @param theWidth Width
@@ -48,6 +59,7 @@ public class RoomView extends Canvas {
     public RoomView(final int theWidth, final int theHeight, final String theCharType) {
         super((double)theWidth, (double)theHeight);
         myCharType = theCharType;
+        myVisionPowers = false;
     }
 
     /**
@@ -59,6 +71,13 @@ public class RoomView extends Canvas {
     public void updateRoom(final IRoom.RoomViewModel[][] theRooms) {
         myRoomMatrix = theRooms;
         drawRoom(getGraphicsContext2D());
+    }
+
+    public void setVisionPowers(final boolean theValue) {
+        myVisionPowers = theValue;
+        if (myRoomMatrix != null) {
+            drawRoom(getGraphicsContext2D());
+        }
     }
 
     /**
@@ -83,7 +102,13 @@ public class RoomView extends Canvas {
         for (int i = 0; i < myRoomMatrix.length; i++) {
             for (int j = 0; j < myRoomMatrix[i].length; j++) {
                 if (myRoomMatrix[i][j] != null && !myRoomMatrix[i][j].visited()) {
-                    drawUnvisitedRoom(theGc, i, j);
+                    // If vision powers are enabled (vision potion used),
+                    // draw the unvisited rooms as visited rooms.
+                    if (myVisionPowers) {
+                        drawDoors(theGc, i, j);
+                    } else {
+                        drawUnvisitedRoom(theGc, i, j);
+                    }
                 }
             }
         }

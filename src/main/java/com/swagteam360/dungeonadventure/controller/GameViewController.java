@@ -1031,6 +1031,7 @@ public final class GameViewController implements PropertyChangeListener {
             case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
             case "ROOM_CHANGE" -> updateRoomView(theEvent.getNewValue());
             case "HERO_HEALTH_CHANGE" -> updateHealthBar(GameManager.getInstance().getHero());
+            case "VISION_POWERS" -> myRoomView.setVisionPowers((boolean) theEvent.getNewValue());
         }
     }
 }
