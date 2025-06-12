@@ -8,7 +8,7 @@
 
 <BorderPane fx:id="myRootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.swagteam360.dungeonadventure.controller.GameViewController">
    <center>
-      <Pane prefHeight="340.0" prefWidth="530.0" BorderPane.alignment="CENTER">
+      <Pane fx:id="roomViewPane" prefHeight="340.0" prefWidth="530.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="myBattleStatusLabel" alignment="CENTER" layoutY="268.0" prefHeight="17.0" prefWidth="491.0" />
             <ProgressBar fx:id="myMonsterHealthBar" layoutX="146.0" layoutY="302.0" prefWidth="200.0" progress="0.0" />
