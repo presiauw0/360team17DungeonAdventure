@@ -411,6 +411,27 @@ public class PriestessTest {
     }
 
     @Test
+    void testSetMyAttackSpeed() {
+        int attackParam = 4;
+        myPriestess.setMyAttackSpeed(attackParam);
+        assertEquals(
+                attackParam,
+                myPriestess.getMyAttackSpeed(),
+                "Attack speed not set correctly"
+        );
+    }
+
+    @Test
+    void testSetMyAttackSpeedNegative() {
+        int attackParam = -1;
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> myPriestess.setMyAttackSpeed(attackParam),
+                "Failed to protect against negative parameters"
+        );
+    }
+
+    @Test
     void testToString() {
         final String correctString = myName + "\n" +
                 "----------\n" +
