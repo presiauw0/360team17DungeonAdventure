@@ -1,5 +1,6 @@
 package com.swagteam360.dungeonadventure.model;
 
+import java.util.Objects;
 import java.util.Random;
 import java.io.Serializable;
 
@@ -54,7 +55,20 @@ public abstract class DungeonCharacter implements Serializable {
     public DungeonCharacter(final String theName, final int theHP,
                             final int theAttackSpeed, final int theDamageRangeMin, final int theDamageRangeMax,
                             final int theHitChance) {
-        myName = theName;
+        myName = Objects.requireNonNull(theName);
+
+        // test for negative value
+        if (theHP < 0 || theAttackSpeed < 0 || theDamageRangeMin < 0
+            || theDamageRangeMax < 0 || theHitChance < 0) {
+            throw new IllegalArgumentException("Parameters cannot be negative");
+        }
+        // test if minimum values are greater than maximum values
+        if (theDamageRangeMin > theDamageRangeMax) {
+            throw new IllegalArgumentException(
+                    "The minimum damage range cannot be greater than the maximum damage range"
+            );
+        }
+
         myHP = theHP;
         myMaxHP = theHP;
         myAttackSpeed = theAttackSpeed;
@@ -74,6 +88,11 @@ public abstract class DungeonCharacter implements Serializable {
      */
     public int attack(final int theDamageRangeMin, final int theDamageRangeMax,
                       final int theHitChance) {
+
+        // test negative hit chance
+        if (theHitChance < 0){
+            throw new IllegalArgumentException("Hit chance cannot be negative");
+        }
 
         int returned;
         Random random = new Random();
@@ -103,6 +122,11 @@ public abstract class DungeonCharacter implements Serializable {
      * @param theDamage represents damage taken.
      */
     public void takeDamage(int theDamage) {
+        // test negative parameter
+        if (theDamage < 0) {
+            throw new IllegalArgumentException("Damage value cannot be negative");
+        }
+
         this.myHP = Math.max(0,  this.myHP - theDamage);
     }
 
@@ -111,6 +135,11 @@ public abstract class DungeonCharacter implements Serializable {
      * @param theAdded represents the health added to the character
      */
     public void heal(int theAdded) {
+        // test negative value
+        if (theAdded < 0) {
+            throw new IllegalArgumentException("Parameter cannot be negative");
+        }
+
         this.myHP += theAdded;
     }
     /**
@@ -175,6 +204,11 @@ public abstract class DungeonCharacter implements Serializable {
      * @param theAttackSpeed represents new attack speed.
      */
     public void setMyAttackSpeed(final int theAttackSpeed) {
+        // check negative value
+        if (theAttackSpeed < 0) {
+            throw new IllegalArgumentException("Attack speed cannot be negative");
+        }
+
         myAttackSpeed = theAttackSpeed;
     }
     /**
