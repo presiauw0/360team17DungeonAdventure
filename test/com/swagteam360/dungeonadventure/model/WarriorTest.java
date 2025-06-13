@@ -141,8 +141,62 @@ public class WarriorTest {
     }
 
     /* WARRIOR TEST SUITE - SPECIAL MOVE */
+
+    /**
+     * Tests if the special move is successful 30% of the time
+     * with a 10% tolerance.
+     */
     @Test
-    void testSpecialMove() {
-        // TODO how to test?
+    void testSpecialMoveChance() {
+        Monster monster = new Witch("Test", myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance,
+                0.5, 1, 15);
+
+        int bashFail = 0;
+        int bashSuccess = 0;
+
+        String result;
+
+        for (int i = 0; i < 100; i++) {
+            result = myWarrior.specialMove(monster);
+            if ("Bash failed! You missed!".equals(result)) {
+                bashFail++;
+            } else {
+                bashSuccess++;
+            }
+        }
+
+        assertTrue(
+                bashSuccess < 40,
+                "Bash successes are not within 10% of the 30% probability"
+        );
+        assertTrue(
+                bashFail > 60,
+                "Bash failures are not within 10% of the 70% probability"
+        );
+    }
+
+    // FIXME Sometimes the special move indicates that it was successful
+    //  but deals 0 damage
+    @Test
+    void testSpecialMoveValue() {
+        // custom warrior with a fixed damage amount
+        Warrior testWarrior = new Warrior(myName, myHp, myAttackSpeed, 10,
+                10, myHitChance, myBlockChance);
+
+        Monster monster = new Witch("Test", myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance,
+                0.5, 1, 15);
+
+
+        String result;
+
+        do {
+            result = testWarrior.specialMove(monster);
+        } while("Bash failed! You missed!".equals(result));
+
+        assertEquals(
+                "Bash successful! You dealt " + 20 + " damage.",
+                result,
+                "Incorrect bash calculation"
+        );
     }
 }

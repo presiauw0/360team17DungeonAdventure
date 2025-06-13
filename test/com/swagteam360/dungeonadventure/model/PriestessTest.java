@@ -207,6 +207,8 @@ public class PriestessTest {
         );
     }
 
+    // FIXME It appears it sometimes deals 0 damage
+
     /**
      * Calls the method 100 times to see if
      * the random attack value is sometimes less
