@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.swagteam360.dungeonadventure.controller.StartMenuController">
+<AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.swagteam360.dungeonadventure.controller.StartMenuController">
    <children>
-      <Button layoutX="14.0" layoutY="350.0" mnemonicParsing="false" onAction="#backButtonToSecondaryMenuEvent" text="Back" />
+      <Button layoutX="14.0" layoutY="392.0" mnemonicParsing="false" onAction="#backButtonToSecondaryMenuEvent" text="Back" />
       <MenuButton layoutY="1.0" mnemonicParsing="false" text="Help" underline="true">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#aboutUsMenuEvent" text="About Us" />
             <MenuItem mnemonicParsing="false" onAction="#howToPlayMenuEvent" text="How To Play" />
         </items>
       </MenuButton>
-      <ToggleButton fx:id="myDarkModeToggle" layoutX="249.0" layoutY="187.0" mnemonicParsing="false" onAction="#toggleDarkMode" text="Change Theme" />
+      <ToggleButton fx:id="myDarkModeToggle" layoutX="272.0" layoutY="214.0" mnemonicParsing="false" onAction="#toggleDarkMode" text="Change Theme" />
    </children>
 </AnchorPane>

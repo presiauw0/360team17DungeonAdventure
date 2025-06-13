@@ -38,7 +38,7 @@ public class StartMenuView extends Application {
         try {
             final Parent root = FXMLLoader.load(Objects.requireNonNull(getClass()
                     .getResource("/com/swagteam360/dungeonadventure/start-menu.fxml")));
-            final Scene scene = new Scene(root, 600, 400);
+            final Scene scene = new Scene(root, 640, 480);
             scene.getStylesheets().add(Objects.requireNonNull(getClass()
                     .getResource("/com/swagteam360/dungeonadventure/light-theme.css")).toExternalForm());
 

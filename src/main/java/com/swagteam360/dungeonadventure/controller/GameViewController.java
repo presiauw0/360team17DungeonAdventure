@@ -2,6 +2,8 @@ package com.swagteam360.dungeonadventure.controller;
 
 import com.swagteam360.dungeonadventure.model.*;
 import com.swagteam360.dungeonadventure.utility.GUIUtils;
+import com.swagteam360.dungeonadventure.view.InventoryPanel;
+import com.swagteam360.dungeonadventure.view.RoomView;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,11 +14,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.*;
 
 
@@ -28,7 +34,7 @@ import java.util.*;
  * @author Jonathan Hernandez, Preston Sia
  * @version 1.1 (June 4, 2025)
  */
-public class GameViewController implements PropertyChangeListener {
+public final class GameViewController implements PropertyChangeListener {
 
     /* **** THE FOLLOWING FIELDS HOLD REFERENCES TO FXML ELEMENTS **** */
 
@@ -83,7 +89,7 @@ public class GameViewController implements PropertyChangeListener {
      * A label element in the FXML file, used to mainly display events that occur during battle.
      */
     @FXML
-    private Label myBattleStatusLabel;
+    private Text myBattleStatusLabel;
 
     /**
      * A Label element in the FXML file, used to display the name of the player's hero in the game.
@@ -174,11 +180,10 @@ public class GameViewController implements PropertyChangeListener {
     private ProgressBar myHealthBar;
 
     /**
-     * Represents the button that allows the player to view their inventory. This button is disabled during battle
-     * as only health potions from the inventory are to be used (by myUseHealthPotion button).
+     * Hero controls space where the new inventory will be placed.
      */
     @FXML
-    private Button myInventoryButton;
+    private VBox heroControlsSpaceRight;
 
     /**
      * Represents the monster's health bar in battle.
@@ -190,17 +195,16 @@ public class GameViewController implements PropertyChangeListener {
      * Represents the monster's name to be shown in battle.
      */
     @FXML
-    private Label myMonsterNameLabel;
+    private Text myMonsterNameLabel;
+
+    /**
+     * The pane where the RoomView canvas will be inserted.
+     */
+    @FXML
+    private Pane roomViewPane;
 
 
     /* **** THE FOLLOWING FIELDS ARE GENERAL INSTANCE FIELDS FOR THE CONTROLLER **** */
-
-    /**
-     * Represents a Timeline object used for managing and animating hero dialogue sequences
-     * within the game interface.
-     * This variable likely governs the timing and transitions of dialogue displayed for the hero.
-     */
-    private Timeline myHeroDialogueTimeline;
 
     /**
      * A Random instance used to generate random values within the GameViewController class.
@@ -237,6 +241,17 @@ public class GameViewController implements PropertyChangeListener {
      */
     private List<Item> myInventoryItems = new ArrayList<>();
 
+    /**
+     * Holds a reference to the RoomView canvas.
+     */
+    private RoomView myRoomView;
+
+    /**
+     * Hold a reference to the active inventory panel
+     * (a JavaFX HBox).
+     */
+    private InventoryPanel myInventoryPanel;
+
 
     /* *** FXML HELPER METHODS *** */
 
@@ -254,9 +269,9 @@ public class GameViewController implements PropertyChangeListener {
     @FXML
     private void initialize() {
         // *** GET THE SINGLETON INSTANCE OF gameManager ***
-        GameManager gameManager = GameManager.getInstance();
+        final GameManager gameManager = GameManager.getInstance();
 
-        // *** PERFORM NULL CHECKS ***
+        // *** PERFORM NULL CHECKS AND INITIALIZE FIELDS ***
         if (myHeroImageView == null) {
             myHeroImageView = new ImageView();
         }
@@ -264,6 +279,11 @@ public class GameViewController implements PropertyChangeListener {
         if (myHeroDialogueLabel == null) {
             myHeroDialogueLabel = new Label();
         }
+
+        myRoomView = new RoomView((int)roomViewPane.getPrefWidth(), (int)roomViewPane.getPrefHeight(),
+                GameManager.getInstance().getHero().getClass().getSimpleName().toLowerCase());
+
+        myInventoryPanel = new InventoryPanel();
 
         // *** OBSERVER REGISTRATION ***
         gameManager.addPropertyChangeListener(this);
@@ -286,6 +306,13 @@ public class GameViewController implements PropertyChangeListener {
             myMonsterHealthBar.setVisible(false);
         }
 
+        // ADD room view to the scene
+        roomViewPane.getChildren().add(myRoomView);
+        myRoomView.toBack();
+
+        // ADD inventory panel to the scene
+        heroControlsSpaceRight.getChildren().add(myInventoryPanel);
+
         // *** SET the name label, UPDATE movement buttons, HIDE battle controls, SET health bar, and START hero dialogue ***
         myHeroNameLabel.setText(gameManager.getGameSettings().getName());
         updateMovementButtons(gameManager.getCurrentRoom().getAvailableDirections());
@@ -303,8 +330,63 @@ public class GameViewController implements PropertyChangeListener {
      */
     @FXML
     private void saveAndQuitButtonEvent() {
-        // TODO: Add save logic here. Current state (hero, dungeon, etc.) should be saved.
-        Platform.exit();
+
+        // Prompt user to save before quitting.
+        final Alert savePrompt = new Alert(Alert.AlertType.CONFIRMATION);
+        savePrompt.setTitle("Quit Game");
+        savePrompt.setHeaderText("Do you want to save before quitting?");
+        savePrompt.setContentText("Choose your option:");
+
+        final ButtonType saveAndQuit = new ButtonType("Yes, Save First");
+        final ButtonType quitWithoutSaving = new ButtonType("No, Quit Now");
+        final ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        savePrompt.getButtonTypes().setAll(saveAndQuit, quitWithoutSaving, cancel);
+
+        final Optional<ButtonType> saveResponse = savePrompt.showAndWait();
+
+        if (saveResponse.isPresent()) {
+            if (saveResponse.get() == saveAndQuit) {
+                final File savedFile = new File("saved_game.txt");
+
+                try {
+                    GameManager.getInstance().saveGame(savedFile);
+
+                    // Let user know that the game saved successfully
+                    final Alert savedAlert = new Alert(Alert.AlertType.INFORMATION);
+                    savedAlert.setTitle("Save Successful");
+                    savedAlert.setHeaderText(null);
+                    savedAlert.setContentText("Game saved successfully!");
+                    savedAlert.showAndWait();
+
+                    // Ask if they still want to quit
+                    final Alert exitPrompt = new Alert(Alert.AlertType.CONFIRMATION);
+                    exitPrompt.setTitle("Exit Game?");
+                    exitPrompt.setHeaderText("Do you still want to exit the application?");
+                    exitPrompt.setContentText("Choose your option:");
+
+                    final ButtonType exitNow = new ButtonType("Yes, Exit");
+                    final ButtonType stay = new ButtonType("No, Continue Playing");
+
+                    exitPrompt.getButtonTypes().setAll(exitNow, stay);
+
+                    final Optional<ButtonType> exitResponse = exitPrompt.showAndWait();
+                    if (exitResponse.isPresent() && exitResponse.get() == exitNow) {
+                        Platform.exit();
+                    }
+
+                } catch (Exception e) {
+                    final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Save Error");
+                    errorAlert.setHeaderText("Could not save game.");
+                    errorAlert.setContentText("An error occurred while saving.");
+                    errorAlert.showAndWait();
+                }
+
+            } else if (saveResponse.get() == quitWithoutSaving) {
+                Platform.exit();
+            }
+        }
     }
 
     /**
@@ -361,6 +443,7 @@ public class GameViewController implements PropertyChangeListener {
      * @param theActionEvent the ActionEvent instance triggered by the user interaction
      *                       that initiates the navigation to the Inventory View.
      */
+    /*
     @FXML
     private void goToInventoryView(final ActionEvent theActionEvent) {
         final FXMLLoader loader = new FXMLLoader(getClass()
@@ -370,8 +453,8 @@ public class GameViewController implements PropertyChangeListener {
         InventoryController ic = loader.getController();
         ic.setInventoryList(myInventoryItems);
 
-        unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCH
-    }
+        unloadObserver(); // UNLOAD PCL FROM LIST BECAUSE THE CURRENT INSTANCE WILL BE KILLED OFF UPON SCENE SWITCHES
+    }*/
 
     /**
      * Handles the room movement buttons in the game interface.
@@ -490,7 +573,12 @@ public class GameViewController implements PropertyChangeListener {
      * throughout the gameplay or until the timeline is stopped manually.
      */
     private void startHeroDialogue() {
-        myHeroDialogueTimeline = new Timeline(new KeyFrame(
+        // Start hidden
+        // Fade in
+        // Fade out after a pause
+        // Label stays visible for 2 seconds
+
+        Timeline myHeroDialogueTimeline = new Timeline(new KeyFrame(
                 Duration.seconds(5 + myRandom.nextInt(6)),
                 event -> {
                     final String randomSentence = myHeroDialogues.get(myRandom.nextInt(myHeroDialogues.size()));
@@ -607,7 +695,7 @@ public class GameViewController implements PropertyChangeListener {
         if (!theShow) {
             if (GameManager.getInstance().getCurrentRoom() != null) {
                 updateMovementButtons(GameManager.getInstance().getCurrentRoom().getAvailableDirections());
-                myInventoryButton.setVisible(true);
+                //myInventoryButton.setVisible(true);
             }
         }
 
@@ -622,16 +710,22 @@ public class GameViewController implements PropertyChangeListener {
     private void showMonsterNameAndHealthBar(final Monster theMonster) {
 
         if (theMonster == null) {
-            myMonsterNameLabel.setVisible(false);
-            myMonsterHealthBar.setVisible(false);
+            if (myMonsterNameLabel != null) {
+                myMonsterNameLabel.setVisible(false);
+            }
+            if (myMonsterHealthBar != null) {
+                myMonsterHealthBar.setVisible(false);
+            }
             return;
         }
 
         if (myMonsterNameLabel != null) {
             myMonsterNameLabel.setText(theMonster.getName());
+            myMonsterNameLabel.setVisible(true);
         }
         if (myMonsterHealthBar != null) {
             updateHealthBar(theMonster);
+            myMonsterHealthBar.setVisible(true);
         }
     }
 
@@ -651,10 +745,10 @@ public class GameViewController implements PropertyChangeListener {
         if (myWestButton != null) {
             myWestButton.setVisible(false);
         }
-        if (myInventoryButton != null) {
-            myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
+        //if (myInventoryButton != null) {
+        //    myInventoryButton.setVisible(false); // Had to disable inventory here, otherwise player can skip battles
                                                  // accidentally.
-        }
+        //}
     }
 
     /**
@@ -709,7 +803,9 @@ public class GameViewController implements PropertyChangeListener {
      * @param theResult The result given by processing the player's attack, which updates the battle status.
      */
     private void continueBattleAfterPlayerMove(final String theResult) {
+
         updateBattleStatus(theResult);
+        updateHealthBar(GameManager.getInstance().getCurrentRoom().getMonster());
 
         final boolean battleOverAfterPlayer = myCurrentBattle.isBattleOver();
 
@@ -720,6 +816,11 @@ public class GameViewController implements PropertyChangeListener {
                             final String monsterResult = myCurrentBattle.processMonsterAttacks();
                             updateBattleStatus(monsterResult); // Show monster attack results
                             updateHealthBar(GameManager.getInstance().getHero()); // Update Hero health
+
+                            if (myCurrentBattle.isBattleOver()) {
+                                onBattleEnd(GameManager.getInstance().getCurrentRoom(), myCurrentBattle.didHeroWin());
+                            }
+
                         }
                     }),
                     new KeyFrame(Duration.seconds(1.5), event -> {
@@ -897,6 +998,15 @@ public class GameViewController implements PropertyChangeListener {
         myInventoryItems = itemList;
     }
 
+    private void updateRoomView(final Object theRoomMatrix) {
+        if (theRoomMatrix instanceof IRoom.RoomViewModel[][]) {
+            myRoomView.updateRoom((IRoom.RoomViewModel[][])theRoomMatrix);
+        }
+    }
+
+    /**
+     * Helper method that removes this controller classes as a listener of the current instance of GameManager.
+     */
     private void unloadObserver() {
         GameManager.getInstance().removePropertyChangeListener(this);
     }
@@ -919,6 +1029,9 @@ public class GameViewController implements PropertyChangeListener {
             case "Dead" -> handleGameOver();
             case "Exit" -> onExitRoomEntered(GameManager.getInstance().getHero());
             case "INVENTORY_CHANGE" -> updateInventoryList(theEvent.getNewValue());
+            case "ROOM_CHANGE" -> updateRoomView(theEvent.getNewValue());
+            case "HERO_HEALTH_CHANGE" -> updateHealthBar(GameManager.getInstance().getHero());
+            case "VISION_POWERS" -> myRoomView.setVisionPowers((boolean) theEvent.getNewValue());
         }
     }
 }
