@@ -167,6 +167,11 @@ public final class GameManager {
         col = newCoordinates[1];
         final Room newRoom = validateAndGetRoom(row, col, maxRow, maxCol);
 
+        // Although the GUI does not allow invalid moves (they are hidden),
+        // the two helper methods above do NOT indicate whether they player
+        // is able to actually move. movePlayer() can be called and the following
+        // COULD occur, and the Hero may remain in the same room.
+
         chanceToSpawnMonster(newRoom); // May spawn a monster
 
         myCurrentRoom = newRoom; // Moves the character by updating the room. That room is then set as visited.
@@ -231,7 +236,7 @@ public final class GameManager {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace(); // Might want to log this exception
+            e.printStackTrace(); // Might want to log these exceptions
         }
     }
 
@@ -307,11 +312,12 @@ public final class GameManager {
         int newRow = theRow;
         int newCol = theCol;
 
+        // Does not indicate whether player moved.
         switch (theDirection) {
             case NORTH -> { if (theRow > 0) newRow--; }
             case SOUTH -> { if (theRow < theMaxRow) newRow++; }
             case EAST -> {if (theCol < theMaxCol) newCol++; }
-            case WEST -> { if (theCol > 0) newCol--; }
+            case WEST -> { if (theCol > 0) newCol--; } // Coverage here can vary
         }
 
         return new int[] {newRow, newCol};
@@ -329,6 +335,7 @@ public final class GameManager {
      */
     private Room validateAndGetRoom(final int theRow, final int theCol, final int theMaxRow, final int theMaxCol) {
 
+        // The following should NEVER happen
         if (theRow < 0 || theRow > theMaxRow || theCol < 0 || theCol > theMaxCol) {
             throw new IllegalArgumentException("Row and/or column coordinates of the given directional step are invalid");
         }
@@ -434,7 +441,6 @@ public final class GameManager {
             }
         }
 
-
     }
 
     /**
@@ -482,7 +488,8 @@ public final class GameManager {
      * alerting subscribers of a change in the player's health.
      */
     public void sendHeroHealthUpdate() {
-        myPCS.firePropertyChange("HERO_HEALTH_CHANGE", null, myHero.getHP());
+        myPCS.firePropertyChange("HERO_HEALTH_CHANGE",
+                null, myHero.getHP());
     }
 
     /**
