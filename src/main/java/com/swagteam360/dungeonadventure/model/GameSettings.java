@@ -41,9 +41,10 @@ public final class GameSettings implements Serializable {
      * @param theDifficulty the selected difficulty level for the game session.
      */
     public GameSettings(final String theName, final String theHero, final String theDifficulty) {
-        myName = theName;
-        myHero = theHero;
-        myDifficulty = theDifficulty;
+        setName(theName);
+        setHero(theHero);
+        setDifficulty(theDifficulty); // Call class's own setter, which calls helper method to validate data
+                                      // Name, Hero, and Difficulty all cannot be null or empty.
     }
 
     /**
@@ -79,6 +80,7 @@ public final class GameSettings implements Serializable {
      * @param theName the name to be associated with the player.
      */
     public void setName(final String theName) {
+        validate(theName, "Name");
         myName = theName;
     }
 
@@ -86,6 +88,7 @@ public final class GameSettings implements Serializable {
      * Sets the name of the hero selected by the player for the game session.
      */
     public void setHero(final String theHero) {
+        validate(theHero, "Hero");
         myHero = theHero;
     }
 
@@ -96,7 +99,23 @@ public final class GameSettings implements Serializable {
      * @param theDifficulty the difficulty level to be set, expressed as a String.
      */
     public void setDifficulty(final String theDifficulty) {
+        validate(theDifficulty, "Difficulty");
         myDifficulty = theDifficulty;
+    }
+
+    /**
+     * Helper method that validates data used by the setter methods. All instances fields of GameSettings cannot be
+     * empty or null.
+     *
+     * @param theValue The value given to be set.
+     * @param theField The particular field name that is examined.
+     */
+    private void validate(final String theValue, final String theField) {
+        if (theValue == null) {
+            throw new NullPointerException(theField + " cannot be null.");
+        } else if (theValue.isEmpty()) {
+            throw new IllegalArgumentException(theField + " cannot be empty.");
+        }
     }
 
 }

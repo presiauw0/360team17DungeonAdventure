@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Priestess test suite.
+ * Priestess and Hero superclass test suite.
  * This file performs unit tests against
- * the Priestess class.
+ * the Priestess, Hero and DungeonCharacter class.
  *
  * @author Preston Sia (psia97)
  * @version 1.0.0, 6 June 2025
@@ -245,16 +245,20 @@ public class PriestessTest {
         int hitChance = 0;
 
         boolean foundNumGreater = false;
+        List<Integer> nums = new ArrayList<>(100);
 
         for (int i = 0; i < 100; i++) {
             int testCondition =  myPriestess.attack(testMin, testMax, hitChance);
+            nums.add(testCondition);
             if (testCondition > testMin) {
                 foundNumGreater = true;
                 break;
             }
         }
 
-        assertTrue(foundNumGreater, "Did not generate a number greater than the min");
+        assertTrue(foundNumGreater,
+                "Did not generate a number greater than the min. " +
+                        "\nNums found: " + nums + "\nMin number: " + testMin);
     }
 
     @Test
@@ -403,6 +407,27 @@ public class PriestessTest {
                 myHitChance,
                 myPriestess.getMyHitChance(),
                 "Incorrect hit chance"
+        );
+    }
+
+    @Test
+    void testSetMyAttackSpeed() {
+        int attackParam = 4;
+        myPriestess.setMyAttackSpeed(attackParam);
+        assertEquals(
+                attackParam,
+                myPriestess.getMyAttackSpeed(),
+                "Attack speed not set correctly"
+        );
+    }
+
+    @Test
+    void testSetMyAttackSpeedNegative() {
+        int attackParam = -1;
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> myPriestess.setMyAttackSpeed(attackParam),
+                "Failed to protect against negative parameters"
         );
     }
 

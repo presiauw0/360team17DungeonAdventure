@@ -17,7 +17,7 @@ import java.util.List;
  * @version 1.0.0, 12 June 2025
  */
 public class ThiefTest {
-    private final String myName = "Test Priestess";
+    private final String myName = "Test Thief";
     private final int myHp = 15;
     private final int myAttackSpeed = 1;
     private final int myDamageMin = 1;
