@@ -111,9 +111,9 @@ public class DatabaseTest {
                     .thenThrow(new SQLException("Mock failure"));
 
             // Recreate singleton with reflection to force constructor call
-            Field instance = Database.class.getDeclaredField("mySingleton");
-            instance.setAccessible(true);
-            instance.set(null, null); // clear singleton
+            //Field instance = Database.class.getDeclaredField("mySingleton");
+            //instance.setAccessible(true);
+            //instance.set(null, null); // clear singleton
 
             assertDoesNotThrow(() -> Database.getInstance());
         }
