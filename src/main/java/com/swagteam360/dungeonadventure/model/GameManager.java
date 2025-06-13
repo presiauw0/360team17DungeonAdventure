@@ -405,14 +405,6 @@ public final class GameManager {
         myPCS.firePropertyChange("ROOM_CHANGE", null,
                 myDungeon.getAdjacentRoomViewModels(myCurrentRoom.getRow(), myCurrentRoom.getCol()));
 
-        if (myCurrentRoom.hasMonster()) {
-            final Monster monster = myCurrentRoom.getMonster();
-            if (monster.getHP() > 0) {
-                myPCS.firePropertyChange("Fight", null, monster);
-                return;
-            }
-        }
-
         if (myCurrentRoom.hasPit()) {
             myHero.takeDamage(PIT_DAMAGE); // Take damage from the pit and update the UI.
             myPCS.firePropertyChange("Pit", null, PIT_DAMAGE);
@@ -433,6 +425,16 @@ public final class GameManager {
         if (myCurrentRoom.isExit()) {
             myPCS.firePropertyChange("Exit", null, myCurrentRoom);
         }
+
+        // Flipped around order of events. If room has multiple events to handle, fighting a monster will be last.
+        if (myCurrentRoom.hasMonster()) {
+            final Monster monster = myCurrentRoom.getMonster();
+            if (monster.getHP() > 0) {
+                myPCS.firePropertyChange("Fight", null, monster);
+            }
+        }
+
+
     }
 
     /**
