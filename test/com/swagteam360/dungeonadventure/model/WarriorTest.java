@@ -123,7 +123,7 @@ public class WarriorTest {
     void testConstructorNegativeBlockChance() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new Warrior(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, myBlockChance),
+                () -> new Warrior(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, -5),
                 "Failed to protect against negative block chance"
         );
     }
@@ -175,8 +175,6 @@ public class WarriorTest {
         );
     }
 
-    // FIXME Sometimes the special move indicates that it was successful
-    //  but deals 0 damage
     @Test
     void testSpecialMoveValue() {
         // custom warrior with a fixed damage amount

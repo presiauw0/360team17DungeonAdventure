@@ -53,7 +53,12 @@ public class Warrior extends Hero {
         if (roll < 30) {
             final int damage = 2 * attack(getDamageRangeMin(), getDamageRangeMax(), 30);
             theMonster.takeDamage(damage);
-            result = "Bash successful! You dealt " + damage + " damage.";
+            if (damage <= 0) { // the damage is sometimes rolled as 0. In that case, the bash still fails.
+                result = "Bash failed! You missed!";
+            } else {
+                result = "Bash successful! You dealt " + damage + " damage.";
+            }
+
         } else {
             result = "Bash failed! You missed!";
         }

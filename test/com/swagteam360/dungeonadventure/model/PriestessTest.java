@@ -136,7 +136,7 @@ public class PriestessTest {
     void testConstructorNegativeBlockChance() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new Priestess(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, myBlockChance),
+                () -> new Priestess(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, -5),
                 "Failed to protect against negative block chance"
         );
     }
@@ -153,21 +153,6 @@ public class PriestessTest {
         );
     }
 
-    /*  DungeonCharacter TEST SUITE  */
-    /*
-    @Test
-    void testAttackBadMinAndMax() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> myPriestess.attack(5, 4, 3),
-                "Failed to protect against paradoxical minimum and maximum damage values. " +
-                        "The minimum cannot be greater than the maximum."
-        );
-    }*/
-    // FIXME LUKE YOU NEED TO DOCUMENT THAT BAD MINS AND MAXES ARE ALREADY HANDLED!
-    // FIXME WHAT IS THE RANGE OF theHitChance? THIS SHOULD BE SPECIFIED.
-    // FIXME SPECIFY THAT THE VALUE 0 IS RETURNED IF THERE IS NO HIT (hit roll less than hit chance)
-
 
     @Test
     void testAttackNegativeHitChance() {
@@ -178,11 +163,29 @@ public class PriestessTest {
         );
     }
 
+    /**
+     * If the wrong order is given, the minimum attack value should be used.
+     */
+    @Test
+    void testAttackWrongOrder() {
+        int testMin = 5;
+        int testMax = 2;
+        int hitChance = 100;
+
+        int testCondition = myPriestess.attack(testMin, testMax, hitChance);
+
+        assertEquals(
+                testMin,
+                testCondition,
+                "Incorrect value used when in the wrong order"
+        );
+    }
+
     @Test
     void testAttackGuaranteedHit() {
         int testMin = 2;
         int testMax = 5;
-        int hitChance = 0;
+        int hitChance = 100;
 
         int testCondition = myPriestess.attack(testMin, testMax, hitChance);
 
@@ -196,7 +199,7 @@ public class PriestessTest {
     void testAttackGuaranteedMiss() {
         int testMin = 2;
         int testMax = 5;
-        int hitChance = 101; // I read your code to figure this out
+        int hitChance = 0; // I read your code to figure this out
 
         int testCondition = myPriestess.attack(testMin, testMax, hitChance);
 
@@ -207,7 +210,7 @@ public class PriestessTest {
         );
     }
 
-    // FIXME It appears it sometimes deals 0 damage
+    // FIXME It appears it sometimes deals 0 damage - when no hit is rolled but this seems to do weird stuff
 
     /**
      * Calls the method 100 times to see if
@@ -218,7 +221,7 @@ public class PriestessTest {
     void testAttackBelowMaxBound() {
         int testMin = 2;
         int testMax = 30;
-        int hitChance = 0;
+        int hitChance = 100;
 
         boolean foundNumLess = false;
 
@@ -242,7 +245,7 @@ public class PriestessTest {
     void testAttackAboveMinBound() {
         int testMin = 2;
         int testMax = 30;
-        int hitChance = 0;
+        int hitChance = 100;
 
         boolean foundNumGreater = false;
         List<Integer> nums = new ArrayList<>(100);
@@ -371,15 +374,6 @@ public class PriestessTest {
                 "Incorrect maximum health points"
         );
     }
-    // TODO DOCUMENT HOW maxHP gets set. Initial HP set on construction is the maximum.
-
-    /*
-    @Test
-    void testSetHP() {
-
-    }*/
-    // FIXME PLEASE SET THE setHP METHOD TO PACKAGE OR PROTECTED VISIBILITY
-    //  (better yet, use the heal and takeDamage methods)
 
     @Test
     void testGetDamageRangeMin() {
@@ -398,8 +392,6 @@ public class PriestessTest {
                 "Incorrect maximum damage"
         );
     }
-
-    // FIXME REMOVE setDamageRangeMax
 
     @Test
     void testGetMyHitChance() {
@@ -440,8 +432,8 @@ public class PriestessTest {
                 "Hit Chance: " + myHitChance + "\n";
 
         assertEquals(
-                myPriestess.toString(),
                 correctString,
+                myPriestess.toString(),
                 "Incorrect toString format"
         );
     }
@@ -453,8 +445,8 @@ public class PriestessTest {
 
         assertAll(
                 () -> assertEquals(
-                        priestess.getInventory().size(),
                         0,
+                        priestess.getInventory().size(),
                         "Something is wrong with the initial inventory"
                 )
                 /*TODO getter method for myBlockChance and corresponding test*/
@@ -464,8 +456,8 @@ public class PriestessTest {
     @Test
     void testGetInitialInventory() {
         assertEquals(
-                myPriestess.getInventory().size(),
                 0,
+                myPriestess.getInventory().size(),
                 "Inventory should be empty on construction"
         );
     }
@@ -516,6 +508,32 @@ public class PriestessTest {
     }
 
     @Test
+    void testRemoveFromInventory() {
+        // setup
+        final List<Item> testItems = new ArrayList<>();
+        testItems.add(new VisionPotion());
+        testItems.add(new HealthPotion(5));
+        // add
+        myPriestess.addToInventory(testItems);
+        // remove
+        myPriestess.removeFromInventory(testItems.getFirst()); // remove first item
+
+        assertAll(
+                () -> assertEquals(
+                        1,
+                        myPriestess.getInventory().size(),
+                        "Incorrect inventory size - item might not have been removed"
+                ),
+                () -> assertEquals(
+                        testItems.getLast(),
+                        myPriestess.getInventory().getFirst(),
+                        "Incorrect item removed."
+                )
+        );
+
+    }
+
+    @Test
     void testGetPillarCount() {
         final List<Item> testItems = new ArrayList<>();
         testItems.add(new Pillar(PillarType.GOLD));
@@ -526,8 +544,8 @@ public class PriestessTest {
         myPriestess.addToInventory(testItems);
 
         assertEquals(
-                myPriestess.getPillarCount(),
                 2,
+                myPriestess.getPillarCount(),
                 "Wrong pillar count."
         );
     }
@@ -551,14 +569,13 @@ public class PriestessTest {
                 "Should have blocked"
         );
     }
-    // TODO THE BLOCK CHANCE BOUNDS NEED TO BE DOCUMENTED
 
     /* PRIESTESS TEST SUITE */
 
     // FIXME This test is flaky
     @Test
     void testSpecialMove() {
-        int damage = myHp - 1;
+        int damage = myHp - 1; // damage to deal
         myPriestess.takeDamage(damage);
         int maxHeal = (int)(0.75 * myHp); // Can heal up to 75% of max health points
         int hpAfterDamage = myPriestess.getHP();

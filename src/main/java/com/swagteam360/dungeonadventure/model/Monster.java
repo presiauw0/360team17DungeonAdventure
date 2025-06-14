@@ -39,6 +39,19 @@ public abstract class Monster extends DungeonCharacter {
                    int theDamageRangeMax, int theHitChance, double theHealChance, int theMinHealPoints,
                    int theMaxHealPoints) {
         super(theName, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax, theHitChance);
+
+        // protect against negative and paradoxical values
+        if (theHealChance < 0 || theMinHealPoints < 0 || theMaxHealPoints < 0
+        || theMinHealPoints > theMaxHealPoints) {
+            throw new IllegalArgumentException("Parameters cannot be negative, and" +
+                    "minimum health points cannot be greater than maximum points");
+        }
+
+        // protect against heal chances greater than 100%
+        if (theHealChance > 1) {
+            throw new IllegalArgumentException("Heal chance cannot exceed 100% (1.0d");
+        }
+
         myHealChance = theHealChance;
         myMinHealPoints = theMinHealPoints;
         myMaxHealPoints = theMaxHealPoints;
@@ -61,7 +74,8 @@ public abstract class Monster extends DungeonCharacter {
             int maxHP = this.getMaxHP();
 
             int actualHeal = Math.min(healAmount, maxHP - currentHP);
-            this.setHP(currentHP + actualHeal);
+            //this.setHP(currentHP + actualHeal);
+            super.heal(actualHeal);
 
             return actualHeal;
         }
