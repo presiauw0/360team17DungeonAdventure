@@ -2,6 +2,12 @@ package com.swagteam360.dungeonadventure.model;
 
 import java.util.Objects;
 
+/**
+ * Represents the pillar logic for the game.
+ *
+ * @author Preston Sia (psia97)
+ * @version 1.0.0
+ */
 public class Pillar implements Item {
 
     private final PillarType myPillarType;
@@ -10,7 +16,7 @@ public class Pillar implements Item {
      * Constructs a new pillar of the given pillar type.
      * @param thePillarType Enum type of pillar
      */
-    public Pillar(final PillarType thePillarType) {
+    Pillar(final PillarType thePillarType) {
         myPillarType = Objects.requireNonNull(thePillarType);
     }
 

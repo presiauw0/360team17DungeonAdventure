@@ -8,7 +8,7 @@ package com.swagteam360.dungeonadventure.model;
  * A HealthPotion is initialized with a definitive amount of HP it can restore,
  * which is used to generate the effect description when applied.
  *
- * @author Jonathan Hernandez
+ * @author Jonathan Hernandez, Preston Sia
  * @version 1.0 (April 30th, 2025)
  */
 public class HealthPotion implements Item {

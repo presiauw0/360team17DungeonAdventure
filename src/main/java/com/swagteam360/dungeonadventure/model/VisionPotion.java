@@ -9,15 +9,13 @@ package com.swagteam360.dungeonadventure.model;
  * This class implements the Item interface, which requires defining specific
  * functionality through the buff method.
  *
- * @author Jonathan Hernandez
+ * @author Jonathan Hernandez, Preston Sia
  * @version 1.0 (April 30th, 2025)
  */
 public class VisionPotion implements Item {
 
     private static final String NAME = "Vision Potion";
 
-    // This class will eventually tie into the game logic to provide
-    // enhanced vision of the surrounding area. Come back later.
 
     /**
      * Constructs a new instance of the VisionPotion class.
