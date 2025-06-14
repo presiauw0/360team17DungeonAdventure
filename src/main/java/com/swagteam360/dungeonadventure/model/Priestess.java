@@ -36,6 +36,7 @@ public class Priestess extends Hero{
      * "Heal" is the ability of the priestess, in which they can heal
      * their HP by a value up to 75% of their maximum health points.
      *
+     *
      * @return String representing the outcome of this special move.
      */
     @Override
@@ -44,7 +45,7 @@ public class Priestess extends Hero{
 
         int minHeal = 10;
         int maxHeal = (int)(0.75 * maximumHP);
-        int healAmt = rand.nextInt(maxHeal - minHeal + 1) + minHeal;
+        int healAmt = rand.nextInt(maxHeal - minHeal) + minHeal;
 
         //making sure overhealing doesn't happen.
         healAmt = (Math.min(super.getHP() + healAmt, maximumHP));

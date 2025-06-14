@@ -61,7 +61,8 @@ public abstract class Monster extends DungeonCharacter {
             int maxHP = this.getMaxHP();
 
             int actualHeal = Math.min(healAmount, maxHP - currentHP);
-            this.setHP(currentHP + actualHeal);
+            //this.setHP(currentHP + actualHeal);
+            super.heal(actualHeal);
 
             return actualHeal;
         }

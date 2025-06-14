@@ -9,7 +9,9 @@ import java.io.Serializable;
  * it be a player character or a non-player character, and defines basic
  * attributes that are common throughout all characters in the DungeonAdventure
  * game.
- *
+ * For dungeon characters, the maximum number of health points is set based
+ * on the initial number of health points given to the character. In otherwords,
+ * characters start out with full health, and that amount of health is their max.
  * Every character has a name, base HP, damage range, attack speed, hit chance,
  * and a "character type," an enumerated value to help identify characters.
  *
@@ -80,10 +82,15 @@ public abstract class DungeonCharacter implements Serializable {
 
     /**
      * Attack method, uses a random number between the minimum and the maximum
-     * to damage the opponent.
+     * to damage the opponent. HitChance controls the percent chance
+     * that a hit is actually made. If no hit is made, the method will
+     * return a value of 0. If theDamageRangeMin is GREATER than theDamageRangeMax,
+     * and a hit is made, the value specified in theDamageRangeMin is used (which
+     * may be the maximum in this case).
      * @param theDamageRangeMin represents min amount of damage that can be inflicted.
      * @param theDamageRangeMax represents max amount of damage that can be inflicted.
-     * @param theHitChance represents chance to miss a hit
+     * @param theHitChance represents chance to miss a hit. This should be a number between 0 and 100,
+     *                     representing a whole number percent.
      * @return int representing amount of damage dealt.
      */
     public int attack(final int theDamageRangeMin, final int theDamageRangeMax,
@@ -106,7 +113,7 @@ public abstract class DungeonCharacter implements Serializable {
             int dmg = 0;
             if (theDamageRangeMax > theDamageRangeMin) {
                 dmg = random.nextInt(theDamageRangeMax - theDamageRangeMin + 1) + theDamageRangeMin; //ensures always above the min
-            } else {
+            } else { // if the min is greater than the max, use theDamageRangeMin value.
                 dmg = theDamageRangeMin;
             }
 
@@ -132,6 +139,10 @@ public abstract class DungeonCharacter implements Serializable {
 
     /**
      * Method to heal the health points of a dungeon character.
+     * If the amount will cause the character to exceed its
+     * maximum health, then the maximum health is set.
+     * If passed a negative parameter, an IllegalArgumentException
+     * is thrown.
      * @param theAdded represents the health added to the character
      */
     public void heal(int theAdded) {
@@ -140,7 +151,9 @@ public abstract class DungeonCharacter implements Serializable {
             throw new IllegalArgumentException("Parameter cannot be negative");
         }
 
-        this.myHP += theAdded;
+        //this.myHP += theAdded;
+        int hpCalc = myHP + theAdded;
+        myHP = Math.min(hpCalc, myMaxHP); // Do NOT exceed the maximum HP
     }
     /**
      * Getter method to fetch character name.
@@ -157,41 +170,16 @@ public abstract class DungeonCharacter implements Serializable {
     public int getMaxHP() {return myMaxHP;}
 
     /**
-     * Setter method to change characters health points.
-     * @param theHP represents new value of health points.
-     */
-    public void setHP(final int theHP) {
-        myHP = theHP;
-    }
-
-    /**
      * Getter method fetches damage range minimum.
      * @return int damage range min.
      */
     public int getDamageRangeMin() {return myDamageRangeMin;}
 
     /**
-     * Setter to set damage range min.
-     * @param theDamageRangeMin represents new value of damage range min.
-     */
-    public void setDamageRangeMin(final int theDamageRangeMin) {
-        myDamageRangeMin = theDamageRangeMin;
-    }
-
-    /**
      * Getter to fetch damage range max.
      * @return int representing damage range max.
      */
     public int getDamageRangeMax() {return myDamageRangeMax;}
-
-    /**
-     * Setter to set damage range maxmimum.
-     * @param theDamageRangeMax represents new value of damage range maximum.
-     */
-    public void setDamageRangeMax(final int theDamageRangeMax) {
-        myDamageRangeMax = theDamageRangeMax;
-    }
-
 
     /**
      * Getter method to fetch character attack speed.

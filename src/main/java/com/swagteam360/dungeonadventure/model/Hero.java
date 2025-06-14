@@ -36,7 +36,8 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
      * @param theDamageRangeMin represents minimum damage range.
      * @param theDamageRangeMax represents maximum damage range.
      * @param theHitChance represents the hit chance of the hero.
-     * @param theBlockChance represents the block chance of the hero.
+     * @param theBlockChance represents the block chance of the hero. An integer between
+     *                       0 and 100, representing whole number percentages.
      */
     public Hero(final String theName, final int theHP,
                             final int theAttackSpeed, final int theDamageRangeMin, final int theDamageRangeMax,
@@ -44,6 +45,11 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
         super(theName, theHP, theAttackSpeed, theDamageRangeMin, theDamageRangeMax,
                 theHitChance);
         myInventory = new ArrayList<>();
+
+        if (theBlockChance < 0) {
+            throw new IllegalArgumentException("Block chance cannot be negative");
+        }
+
         this.myBlockChance = theBlockChance;
     }
 
@@ -97,8 +103,8 @@ public abstract class Hero extends DungeonCharacter implements Serializable {
     public abstract String specialMove(final Monster theMonster);
 
     /**
-     * Hero's have a chance to block an attack. This method handles that chance and returns whether a random int number
-     * is below myBlockChance.
+     * Heroes have a chance to block an attack. This method handles that chance and returns whether a random int number
+     * (between 0 and 100) is below myBlockChance.
      *
      * @return True if a block was successful, otherwise false.
      */
