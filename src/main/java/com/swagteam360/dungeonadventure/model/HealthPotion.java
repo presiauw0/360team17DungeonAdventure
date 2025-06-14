@@ -27,6 +27,10 @@ public class HealthPotion implements Item {
      * @param theHealAmount The amount of HP this health potion can restore.
      */
     HealthPotion(int theHealAmount) {
+        if (theHealAmount < 0) {
+            throw new IllegalArgumentException("Heal amount cannot be negative");
+        }
+
         myHealAmount = theHealAmount;
     }
 

@@ -551,11 +551,9 @@ public class PriestessTest {
                 "Should have blocked"
         );
     }
-    // TODO THE BLOCK CHANCE BOUNDS NEED TO BE DOCUMENTED
 
     /* PRIESTESS TEST SUITE */
 
-    // FIXME This test is flaky
     @Test
     void testSpecialMove() {
         int damage = myHp - 1;
