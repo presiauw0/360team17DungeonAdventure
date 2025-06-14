@@ -11,7 +11,7 @@ import java.util.Random;
  * @author Luke Willis
  * @version 3 May 2025
  */
-public class Priestess extends Hero{
+public class Priestess extends Hero {
 
     /** Field utilized for the heal ability of the priestess */
     private final int maximumHP;

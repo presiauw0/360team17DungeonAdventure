@@ -160,7 +160,7 @@ public final class BattleSystem {
             return "It is not your turn yet!";
         }
 
-        String result = myHero.specialMove(myMonster);
+        final String result = myHero.specialMove(myMonster);
         myTurn = false;
         return result;
 
