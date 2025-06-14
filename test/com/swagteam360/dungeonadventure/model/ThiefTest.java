@@ -1,17 +1,19 @@
 package com.swagteam360.dungeonadventure.model;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Thief test suite.
  * This file performs unit tests against
- * the Theif class.
+ * the Thief class.
  *
  * @author Preston Sia (psia97)
  * @version 1.0.0, 12 June 2025
@@ -29,7 +31,7 @@ public class ThiefTest {
 
     @BeforeEach
     void setup() {
-        myThief = new Thief(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, myBlockChance);
+        myThief = spy(new Thief(myName, myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance, myBlockChance));
     }
 
     /*  CONSTRUCTOR TESTS  */
@@ -73,33 +75,77 @@ public class ThiefTest {
         );
     }
 
-    // FIXME Jonathan, magic numbers are not good. There should be variables for these
-    //  numbers, and the parameters should be documented. I'm not testing this though
-    //  because it is not documented.
+//    @Test
+//    void testSpecialMoveSuccessful() {
+//        // custom warrior with a fixed damage amount
+//        Thief testThief = new Thief(myName, myHp, myAttackSpeed, 10,
+//                10, myHitChance, myBlockChance);
+//
+//        Monster monster = new Witch("Test", myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance,
+//                0.5, 1, 15);
+//
+//        String result;
+//
+//        do {
+//            result = testThief.specialMove(monster);
+//        } while ("You've been caught! Attack missed!".equals(result)
+//                || "You tried a surprise attack but missed!".equals(result));
+//
+//        assertTrue(
+//                result.equals("You performed a normal attack for " + 10 + " damage!"),
+//                "What was returned: " + result
+//        );
+//    }
 
-    // FIXME - too complicated for me right now
-    /**
-     *
-     */
     @Test
-    void testSpecialMoveSuccessful() {
-        // custom warrior with a fixed damage amount
-        Thief testThief = new Thief(myName, myHp, myAttackSpeed, 10,
-                10, myHitChance, myBlockChance);
+    void testSpecialMoveCaught() {
+        // Mock
+        final Monster monster = mock(Monster.class);
+        final Random mockRand = mock(Random.class);
 
-        Monster monster = new Witch("Test", myHp, myAttackSpeed, myDamageMin, myDamageMax, myHitChance,
-                0.5, 1, 15);
+        when(mockRand.nextInt(100)).thenReturn(5);
+        final String result = myThief.specialMove(monster, mockRand);
 
-        String result;
+        assertTrue(result.contains("caught"));
+        verify(monster, never()).takeDamage(anyInt());
 
-        do {
-            result = testThief.specialMove(monster);
-        } while ("You've been caught! Attack missed!".equals(result)
-                || "You tried a surprise attack but missed!".equals(result));
-
-        assertTrue(
-                result.equals("You performed a normal attack for " + 10 + " damage!"),
-                "What was returned: " + result
-        );
     }
+
+    @Test
+    void testSpecialMoveNormal() {
+
+        final Monster monster = mock(Monster.class);
+        final Random mockRand = mock(Random.class);
+
+        when(mockRand.nextInt(100)).thenReturn(25);
+        doReturn(10).when(myThief).attack(anyInt(), anyInt(), anyInt());
+        final String result = myThief.specialMove(monster, mockRand);
+
+        assertTrue(result.contains("normal attack"));
+        verify(monster).takeDamage(10);
+    }
+
+    @Test
+    void testSpecialMoveSurprise() {
+
+        final Monster monster = mock(Monster.class);
+        final Random mockRand = mock(Random.class);
+
+        when(mockRand.nextInt(100)).thenReturn(90);
+        doReturn(10, 15).when(myThief).attack(anyInt(), anyInt(), anyInt());
+
+        final String result = myThief.specialMove(monster, mockRand);
+
+        // Assertions to check if the response reflects the two hits
+        assertTrue(result.contains("Surprise attack successful!"));
+        assertTrue(result.contains("Hit 1: 10 damage!"));
+        assertTrue(result.contains("Hit 2: 15 damage!"));
+        assertTrue(result.contains("Total damage: 25!"));
+
+        // Verify the monster took the correct damage twice
+        verify(monster).takeDamage(10);
+        verify(monster).takeDamage(15);
+
+    }
+
 }
