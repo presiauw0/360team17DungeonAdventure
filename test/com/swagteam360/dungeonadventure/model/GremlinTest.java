@@ -107,7 +107,7 @@ public class GremlinTest {
     }
 
     @Test
-    void testConstructorHealChanceLessThanOne() {
+    void testConstructorHealChanceGreaterThanOne() {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> new Gremlin(
